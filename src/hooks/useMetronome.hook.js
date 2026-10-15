@@ -40,13 +40,12 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
             nextNoteTime.current = scheduledTime + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
 
-            // Leave the final note to finish, then pause before the next loop.
-            // Use the scheduled audio time so the scheduler can safely queue
-            // the next loop without relying on a wall-clock callback.
+            // Ensure the next loop cannot start before the final note ends.
+            // Keep the normal beat interval, without adding an extra multi-beat pause.
             if (loopCompleted)
                 nextNoteTime.current = Math.max(
                     nextNoteTime.current,
-                    scheduledTime + 0.42 + secondsPerBeat * 2
+                    scheduledTime + 0.42
                 );
 
             currentBeat.current = currentBeat.current + 1;
