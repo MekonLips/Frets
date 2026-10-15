@@ -1,8 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-
-import { exerciseStageAtom, exerciseSequenceAtom, exerciseBeatAtom, timerRunningAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../recoil/frets.recoil';
+import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
 import { getNoteFrequency } from '../utils/note.utils';
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
@@ -11,9 +9,10 @@ const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url)
 
 const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivisionVolume = 0.25 } = {}) => {
     const { exercise } = useParams();
-    const [ running, setRunning ] = useRecoilState(timerRunningAtom);
-    const selectedInstrumentId = useRecoilValue(selectedInstrumentIdAtom);
-    const instrument = useRecoilValue(getInstrumentSelector(selectedInstrumentId));
+    const running = useFretsStore(state => state.timerRunning);
+    const setRunning = useFretsStore(state => state.setTimerRunning);
+    const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
+    const instrument = getSelectedInstrument(selectedInstrumentId);
     const [ state, setState ] = useState({
         beat: 0,
         subBeat: 0,
@@ -27,9 +26,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const audioContext = useRef(null);
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
-    const setExerciseBeat = useSetRecoilState(exerciseBeatAtom(exercise));
-    const stage = useRecoilValue(exerciseStageAtom(exercise));
-    const sequence = useRecoilValue(exerciseSequenceAtom(exercise));
+    const setExerciseBeat = useFretsStore(state => state.setExerciseBeat);
+    const stage = useFretsStore(state => state.exercises[String(exercise ?? '')]?.stage ?? 1);
+    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? []);
     // const subdivisionFrequency = useRecoilValue(exerciseSubdivisionFrequencySelector(exercise));
     // const beatFrequency = subdivisionFrequency * 2;
     const subdivisionFrequency = useRef(getNoteFrequency(sequence[stage - 1]));
@@ -208,7 +207,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     }, [instrument.strings.length]);
 
     useEffect(() => {
-        setExerciseBeat(beat);
+        setExerciseBeat(exercise, beat);
     }, [beat]);
 
     return { beat, running, stop, reset, skip };
