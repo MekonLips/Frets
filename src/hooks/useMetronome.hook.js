@@ -41,10 +41,11 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const beatInterval = beatsPerMeasure / ticksPerBeat * secondsPerBeat;
             nextNoteTime.current = scheduledTime + beatInterval;
 
-            // The plucked note fades to near-silence before its envelope ends,
-            // so start the next loop slightly before the nominal duration expires.
+            // Make the loop transition relative to the selected tempo instead
+            // of using a fixed delay: resume at 75% of the normal note interval.
+            // The plucked note fades toward silence before its envelope ends.
             if (loopCompleted)
-                nextNoteTime.current = scheduledTime + 0.38;
+                nextNoteTime.current = scheduledTime + beatInterval * 0.75;
 
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
