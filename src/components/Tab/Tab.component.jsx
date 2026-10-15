@@ -19,12 +19,8 @@ const TabComponent = () => {
         : -1;
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedId);
-    // The tab renderer retains each position's original pattern index, so the
-    // highlight must use that same index without a direction-based reversal.
     const hasOnePassPerNote = [4, 5].includes(Number(exercise));
     const notesPerStage = instrument.strings.length * (hasOnePassPerNote ? 1 : 2);
-    // Exercises 4/5 show the current and following note. Other exercises
-    // show the current note's ascending/descending pair.
     const visibleStages = hasOnePassPerNote ? 2 : 1;
     const sliceStart = (stage - 1) * notesPerStage;
     const slice = pattern.slice(
@@ -41,8 +37,10 @@ const TabComponent = () => {
         return arr;
     }, [<pre key="Tab/Break/0">{pad(selectedNote, ' ', 2)}</pre>]);
 
-    const createLine = (line, string, fret, isActive) => {
-        const position = (string - 1) * 3 + 1;
+    // The left-to-right position follows playback order within each string
+    // group, while the row itself stays on its physical guitar string.
+    const createLine = (line, string, fret, isActive, sequenceOffset) => {
+        const position = sequenceOffset * 3 + 1;
         const width = fret < 10 ? 1 : 2;
         const template = new Array(20).fill('-');
         template.splice(position, width, ...String(fret).split(''));
@@ -60,20 +58,20 @@ const TabComponent = () => {
         for (let i = 0; i < valuePattern.length; i += valueInstrument.strings.length) {
             const entries = valuePattern
                 .slice(i, i + valueInstrument.strings.length)
-                .map((note, offset) => ({ note, index: i + offset }))
+                .map((note, offset) => ({ note, index: i + offset, sequenceOffset: offset }))
                 .filter(({ note }) => Boolean(note));
 
-            // Tablature rows are always displayed high string at the top
-            // (string 1) and low string at the bottom (highest string number).
-            // Sort only the rendered rows: retain each entry's original pattern
-            // index so the highlight follows playback without changing sound order.
+            // Keep standard tablature row order (string 1 at the top), but
+            // place each fret according to its original sequence position.
+            // Thus ascending starts bottom-left and descending starts top-left.
             const strings = entries
                 .sort((a, b) => a.note.string - b.note.string)
-                .map(({ note, index }) => createLine(
+                .map(({ note, index, sequenceOffset }) => createLine(
                     index,
                     note.string,
                     note.fret,
-                    patternOffset + index === activeIndex
+                    patternOffset + index === activeIndex,
+                    sequenceOffset
                 ));
 
             if (valuePattern[i]) {
