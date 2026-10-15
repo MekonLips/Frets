@@ -45,3 +45,15 @@
   .legacy-instructions h1 { @apply mb-2 text-xl; }
   .legacy-instructions p { @apply my-4 text-sm leading-6; }
 }
+
+  .legacy-nav-icon-button-wrapper { @apply flex items-center justify-center; }
+  .legacy-nav-icon-button-wrapper > button {
+    @apply m-0 flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[2rem] text-gray-400 transition-colors duration-200;
+  }
+  .legacy-nav-icon-button-wrapper > button:hover,
+  .legacy-nav-icon-button-wrapper > button:focus,
+  .legacy-nav-icon-button-wrapper > button:active {
+    color: white;
+    background-color: rgb(8 8 8);
+  }
+  .legacy-nav-icon-button-wrapper > button:active { outline: 0; }
