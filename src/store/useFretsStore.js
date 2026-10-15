@@ -15,6 +15,7 @@ export const useFretsStore = create(persist((set) => ({
   sessionRemaining: SESSION_MS,
   timerRunning: false,
   tempoBpm: 40,
+  exerciseAccidentals: {},
   sequence: [],
   pattern: [],
   stage: 1,
@@ -60,7 +61,8 @@ export const useFretsStore = create(persist((set) => ({
     return { exercises: { ...state.exercises, [key]: { ...current, beat: nextBeat } } };
   }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
-  setTempoBpm: (tempoBpm) => set({ tempoBpm }),
+  setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
+  setExerciseAccidentals: (exercise, enabled) => set((state) => ({ exerciseAccidentals: { ...state.exerciseAccidentals, [String(exercise)]: enabled } })),
   setSequence: (sequence) => set({ sequence, stage: 1, beat: 0 }),
   setPattern: (pattern) => set({ pattern }),
   setStage: (stage) => set((state) => ({ stage: typeof stage === 'function' ? stage(state.stage) : stage })),
@@ -75,6 +77,7 @@ export const useFretsStore = create(persist((set) => ({
     startFret: state.startFret,
     showRange: state.showRange,
     tempoBpm: state.tempoBpm,
+    exerciseAccidentals: state.exerciseAccidentals,
   }),
 }));
 
