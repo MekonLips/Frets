@@ -143,7 +143,7 @@ function ExercisePanel({ exercise }) {
       <button className="button button-primary gap-2" onClick={refresh}><Shuffle size={15} /> Shuffle</button>
     </div>
     {exercise !== 6 && <div className="flex flex-wrap gap-2">
-      {sequence.map((idx, index) => <button key={`${idx}-${index}`} onClick={() => setStage(index + 1)} className={`button min-w-10 ${index + 1 === stage ? 'button-primary' : ''}`}{NOTES[idx]}</button>)}
+      {sequence.map((idx, index) => <button key={`${idx}-${index}`} onClick={() => setStage(index + 1)} className={`button min-w-10 ${index + 1 === stage ? 'button-primary' : ''}`}>{NOTES[idx]}</button>)}
     </div>}
     {exercise !== 6 && <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3">
       <button className="button gap-1" disabled={stage <= 1} onClick={() => setStage(Math.max(1, stage - 1))}><ChevronLeft size={16} /> Previous</button>
