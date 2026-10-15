@@ -46,7 +46,7 @@
   .legacy-instructions p { @apply my-4 text-sm leading-6; }
 }
 
-  .legacy-nav-icon-button-wrapper { @apply flex items-center justify-center; }
+  .legacy-nav-icon-button-wrapper { @apply items-center justify-center; }
   .legacy-nav-icon-button-wrapper > button {
     @apply m-0 flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[2rem] text-gray-400 transition-colors duration-200;
   }
