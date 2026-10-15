@@ -16,3 +16,32 @@
   .note-dot { @apply z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/40 bg-orange-500 text-[10px] font-bold text-white shadow-md; }
   .note-dot-active { @apply scale-110 border-2 border-white bg-emerald-600; }
 }
+
+
+/* Legacy component styles migrated to Tailwind's semantic component layer. */
+@layer components {
+  .legacy-nav-panel {
+    @apply fixed bottom-0 left-0 right-1/4 top-0 bg-neutral-900 transition-transform duration-300;
+    background-color: rgb(16 16 16);
+  }
+  .legacy-nav-panel-open { @apply translate-x-0; }
+  .legacy-nav-panel-closed { @apply -translate-x-full; }
+  .legacy-overlay {
+    @apply fixed inset-0 cursor-pointer opacity-0 pointer-events-none transition-opacity duration-300;
+    backdrop-filter: blur(12px);
+  }
+  .legacy-overlay-visible { @apply opacity-100 pointer-events-auto; }
+  .legacy-nav-content { @apply flex h-full; }
+  .legacy-nav-list { @apply m-0 flex list-none flex-wrap items-stretch p-0; }
+  .legacy-nav-item { @apply w-1/2; }
+  .legacy-nav-link {
+    @apply flex h-full flex-col items-stretch p-[5vh] text-white no-underline transition-colors duration-200;
+  }
+  .legacy-nav-link:hover,
+  .legacy-nav-link:focus,
+  .legacy-nav-link:active { background-color: rgb(32 32 32); }
+  .legacy-nav-link h1 { @apply mb-2 text-xl; }
+  .legacy-nav-link p { @apply my-[0.4rem] text-sm; }
+  .legacy-instructions h1 { @apply mb-2 text-xl; }
+  .legacy-instructions p { @apply my-4 text-sm leading-6; }
+}
