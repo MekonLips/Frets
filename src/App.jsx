@@ -59,7 +59,7 @@ function Fretboard({ exercise }) {
       for (const fret of visibleFrets) {
         const noteIdx = noteIndexAtFret(strings[string - 1], fret);
         const isExerciseNote = !exercise || noteIdx === sequence[Math.max(0, stage - 1)];
-        const isSelected = selectedNoteIdx === null || selectedNoteIdx === noteIdx || mode === 'all' || (mode === 'naturals' && [0,2,3,5,7,8,10].includes(noteIdx)) || (mode === 'accidentals' && [1,4,6,9,11].includes(noteIdx));
+        const isSelected = exercise || selectedNoteIdx === null || selectedNoteIdx === noteIdx || mode === 'all' || (mode === 'naturals' && [0,2,3,5,7,8,10].includes(noteIdx)) || (mode === 'accidentals' && [1,4,6,9,11].includes(noteIdx));
         if (!isExerciseNote || !isSelected) continue;
         positions.push({ string, fret, noteIdx });
       }
