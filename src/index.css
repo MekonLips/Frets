@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Open+Sans:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: dark; font-family: 'Open Sans', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  html, body, #root { min-height: 100%; width: 100%; margin: 0; }
+  body { min-width: 320px; background: #1a1a1a; color: #f7f7f7; }
+  button, input, select { font: inherit; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #f59e0b; outline-offset: 3px; }
+}
+@layer components {
+  .app-shell { @apply min-h-screen w-full overflow-x-hidden bg-neutral-900 text-white; }
+  .app-header { @apply flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 md:px-8; }
+  .brand { @apply font-serif text-2xl tracking-wide text-amber-400; font-family: 'Bree Serif', Georgia, serif; }
+  .button { @apply inline-flex min-h-10 items-center justify-center rounded-md border border-white/25 bg-white/5 px-3 py-2 text-sm transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40; }
+  .button-primary { @apply border-amber-500/70 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25; }
+  .field { @apply min-h-10 w-full rounded-md border border-white/20 bg-neutral-800 px-3 py-2 text-sm text-white; }
+  .panel { @apply rounded-lg border border-white/10 bg-black/20 p-4; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-neutral-400; }
+  .fretboard { @apply relative overflow-hidden rounded-md border border-neutral-600 bg-[#2b1d0e]; }
+  .fret-cell { @apply relative flex items-center justify-center border-r border-neutral-500/80; }
+  .note-dot { @apply z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/40 bg-orange-500 text-[10px] font-bold text-white shadow-md; }
+  .note-dot-active { @apply scale-110 border-2 border-white bg-emerald-600; }
+}
