@@ -24,7 +24,7 @@ export const useFretsStore = create(persist((set) => ({
   setSelectedNotesMode: (selectedNotesMode) => set({ selectedNotesMode, selectedNoteIdx: null }),
   setSequence: (sequence) => set({ sequence, stage: 1, beat: 0 }),
   setPattern: (pattern) => set({ pattern }),
-  setStage: (stage) => set({ stage, beat: 0 }),
+  setStage: (stage) => set({ stage }),
   setBeat: (beat) => set((state) => ({ beat: typeof beat === 'function' ? beat(state.beat) : beat })),
   setTempo: (tempo) => set({ tempo }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
