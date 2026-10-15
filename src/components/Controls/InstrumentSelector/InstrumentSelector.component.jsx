@@ -2,7 +2,6 @@ import React from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { instrumentsAtom, selectedInstrumentIdAtom } from '../../../recoil/frets.recoil';
-import { Select } from '../../../styles/form.styles';
 
 const InstrumentSelector = () => {
     const instruments = useRecoilValue(instrumentsAtom);
