@@ -24,8 +24,10 @@ const MetronomeComponent = () => {
     const setStage = useFretsStore(state => state.setExerciseStage);
 
     useEffect(() => {
-        const newStage = beat > 0 && beat % stringsPerNote === 0;
-        const completedStage = Math.floor(beat / stringsPerNote);
+        // The stage should switch on the first beat of the next note, not
+        // on the final string of the previous note.
+        const newStage = beat > 0 && (beat - 1) % stringsPerNote === 0;
+        const completedStage = Math.floor((beat - 1) / stringsPerNote);
         if (running && newStage && completedStage > stage - 1 && completedStage < sequence.length)
             setStage(exercise, completedStage + 1);
     }, [beat, stringsPerNote, stage, sequence.length, exercise, setStage, running]);
