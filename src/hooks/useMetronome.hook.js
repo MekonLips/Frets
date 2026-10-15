@@ -2,7 +2,8 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
-import { getNoteFrequency } from '../utils/note.utils';
+import { getMidiPitch } from '../utils/pitch.utils';
+import { playPluckedNote } from '../utils/audio.utils';
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
 const EMPTY_ARRAY = Object.freeze([]);
 
@@ -29,11 +30,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const currentBeat = useRef(0);
     const setExerciseBeat = useFretsStore(state => state.setExerciseBeat);
     const stage = useFretsStore(state => state.exercises[String(exercise ?? '')]?.stage ?? 1);
-    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_ARRAY);
-    // const subdivisionFrequency = useRecoilValue(exerciseSubdivisionFrequencySelector(exercise));
-    // const beatFrequency = subdivisionFrequency * 2;
-    const subdivisionFrequency = useRef(getNoteFrequency(sequence[stage - 1]));
-    const beatFrequency = useRef(subdivisionFrequency.current * 2);
+    const pattern = useFretsStore(state => state.exercises[String(exercise ?? '')]?.pattern ?? EMPTY_ARRAY);
+    const exerciseStep = useRef(0);
 
     const runScheduler = () => {
         const context = audioContext.current;
@@ -63,8 +61,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
 
         if (state.subdivision === 4) {
             playTick = true;
-            osc.frequency.setTargetAtTime(subdivisionFrequency.current, audioContext.current.currentTime, 0.001);
-            gainNode.gain.setTargetAtTime(subdivisionVolume, audioContext.current.currentTime, 0.001);
+            osc.frequency.setValueAtTime(900, time);
+            gainNode.gain.setValueAtTime(subdivisionVolume, time);
         }
         if (state.subdivision === 3 && isTripletBeat) {
             playTick = true;
@@ -80,15 +78,31 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
         if (isQuarterBeat) {
             playTick = true;
             osc.frequency.setTargetAtTime(subdivisionFrequency.current, audioContext.current.currentTime, 0.001);
-            gainNode.gain.setTargetAtTime(beatVolume, audioContext.current.currentTime, 0.001);
+            gainNode.gain.setValueAtTime(beatVolume, time);
         }
         if (isFirstBeat) {
             playTick = true;
-            osc.frequency.setTargetAtTime(beatFrequency.current, audioContext.current.currentTime, 0.0001);
+            osc.frequency.setValueAtTime(1400, time);
             gainNode.gain.setTargetAtTime(beatVolume, audioContext.current.currentTime, 0.001);
         }
 
         if (isFirstBeat || isQuarterBeat) {
+            if (exercise && pattern.length) {
+                const position = pattern[exerciseStep.current % pattern.length];
+                if (position) {
+                    try {
+                        playPluckedNote(getMidiPitch(instrument, position.string, position.fret), {
+                            context: audioContext.current,
+                            time,
+                            duration: 0.42,
+                            volume: 0.22,
+                        });
+                    } catch (error) {
+                        // Keep the metronome running if note playback is unavailable.
+                    }
+                }
+                exerciseStep.current = (exerciseStep.current + 1) % pattern.length;
+            }
             setState(prevState => ({
                 ...state,
                 beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
@@ -108,6 +122,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const start = () => {
         setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
         currentBeat.current = 0;
+        exerciseStep.current = 0;
         if (!audioContext.current) {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             if (AudioContextClass) audioContext.current = new AudioContextClass();
@@ -131,11 +146,13 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
         worker.postMessage({ type: STOP });
         setBeat(0);
         currentBeat.current = 0;
+        exerciseStep.current = 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
 
     const skip = useCallback(num => {
         setBeat(num);
+        exerciseStep.current = pattern.length ? num % pattern.length : 0;
         currentBeat.current = 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
@@ -151,23 +168,6 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     };
 
     const onerror = async e => console.log('%cworker.onerror', 'color: red;', e);
-
-    useEffect(() => {
-
-        // only works on first run as change doesn't get processed
-        // on subsequent runs due to beat === 0
-        // shuffling does reset properly - check what shuffle does and duplicate
-
-        // need to make notes unclikcable while timer is running
-
-        // tab is upside down e.g. c shows 8 > 1 > 5 > 10 > 3 > 8 but should show reverse
-        // right hand tab is correct, left hand tab is incorrect
-
-        if (beat && beat % (instrument.strings.length * 2) === 0) {
-            subdivisionFrequency.current = getNoteFrequency(sequence[stage + 1]);
-            beatFrequency.current = subdivisionFrequency.current * 2;
-        }
-    }, [beat, stage, sequence, instrument.strings.length]);
 
     useEffect(() => {
         worker.onerror = onerror;
