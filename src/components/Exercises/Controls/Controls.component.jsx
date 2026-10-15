@@ -18,8 +18,8 @@ const ControlsComponent = () => {
 
     return <>
         <div className="legacy-practice-controls">
-            <label>
-                Tempo: <strong>{tempoBpm} BPM</strong>
+            <label className="legacy-tempo-control">
+                <span>Tempo:</span>
                 <input
                     aria-label="Tempo in beats per minute"
                     type="range"
@@ -29,6 +29,7 @@ const ControlsComponent = () => {
                     value={tempoBpm}
                     onChange={event => setTempoBpm(Number(event.target.value))}
                 />
+                <strong>{tempoBpm} BPM</strong>
             </label>
         </div>
         {isExercise && <>
