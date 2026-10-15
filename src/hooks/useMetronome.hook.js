@@ -75,7 +75,10 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const start = () => {
-        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
+        // Audio playback restarts from pattern position zero, so reset the displayed
+        // beat counter too. Keeping a prior measure count here desynchronizes the
+        // tablature highlight from the notes, especially when a pattern loops.
+        setBeat(0);
         currentBeat.current = 0;
         exerciseStep.current = 0;
         if (!audioContext.current) {
