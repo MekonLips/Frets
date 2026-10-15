@@ -1,16 +1,14 @@
 import React, { useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useFretsStore } from '../../../store/useFretsStore';
 
-import { showNavAtom } from '../../../recoil/frets.recoil';
-
-const CloseButton = ({ children }) => {
-    const setVisible = useSetRecoilState(showNavAtom);
+const CloseButton = ({ children, className = '' }) => {
+    const setVisible = useFretsStore(state => state.setShowNav);
     const ref = useRef();
     const clickHandler = () => {
         ref.current.blur();
         setVisible(false);
     };
-    return <button ref={ref} onClick={clickHandler}>{children}</button>
+    return <button className={className} ref={ref} onClick={clickHandler}>{children}</button>;
 };
 
 export default CloseButton;

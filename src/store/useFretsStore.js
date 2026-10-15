@@ -1,0 +1,70 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { INSTRUMENTS, SESSION_MS, START_FRET } from '../config/frets.js';
+
+const initialExerciseState = () => ({ sequence: [], notes: [], pattern: [], stage: 1, beat: 0 });
+
+export const useFretsStore = create(persist((set) => ({
+  selectedInstrumentId: 1,
+  startFret: START_FRET,
+  showRange: false,
+  showNav: false,
+  selectedNoteIdx: null,
+  selectedNotesMode: 1,
+  selectedNotesModeIndex: 1,
+  sessionRemaining: SESSION_MS,
+  timerRunning: false,
+  exercises: {},
+  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, timerRunning: false }),
+  setStartFret: (startFret) => set({ startFret }),
+  setShowRange: (showRange) => set({ showRange }),
+  setShowNav: (showNav) => set({ showNav }),
+  setSelectedNote: (selectedNoteIdx) => set({ selectedNoteIdx }),
+  setSelectedNotesMode: (selectedNotesMode) => set({ selectedNotesMode, selectedNotesModeIndex: selectedNotesMode, selectedNoteIdx: null }),
+  setExerciseField: (exercise, field, value) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    const nextValue = typeof value === 'function' ? value(current[field]) : value;
+    return { exercises: { ...state.exercises, [key]: { ...current, [field]: nextValue } } };
+  }),
+  setExerciseSequence: (exercise, sequence) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    return { exercises: { ...state.exercises, [key]: { ...current, sequence, stage: 1, beat: 0 } } };
+  }),
+  setExerciseNotes: (exercise, notes) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    return { exercises: { ...state.exercises, [key]: { ...current, notes } } };
+  }),
+  setExercisePattern: (exercise, pattern) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    return { exercises: { ...state.exercises, [key]: { ...current, pattern } } };
+  }),
+  setExerciseStage: (exercise, stage) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    const nextStage = typeof stage === 'function' ? stage(current.stage) : stage;
+    return { exercises: { ...state.exercises, [key]: { ...current, stage: nextStage } } };
+  }),
+  setExerciseBeat: (exercise, beat) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    const nextBeat = typeof beat === 'function' ? beat(current.beat) : beat;
+    return { exercises: { ...state.exercises, [key]: { ...current, beat: nextBeat } } };
+  }),
+  setTimerRunning: (timerRunning) => set({ timerRunning }),
+  setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
+  resetSession: () => set({ sessionRemaining: SESSION_MS, timerRunning: false }),
+}), {
+  name: 'frets-preferences',
+  storage: createJSONStorage(() => localStorage),
+  partialize: (state) => ({
+    selectedInstrumentId: state.selectedInstrumentId,
+    startFret: state.startFret,
+    showRange: state.showRange,
+  }),
+}));
+
+export const getSelectedInstrument = (id) => INSTRUMENTS.find((item) => item.id === id) ?? INSTRUMENTS[0];

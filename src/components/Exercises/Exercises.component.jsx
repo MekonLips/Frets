@@ -1,21 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import useExercise from '../../hooks/useExercise.hook';
 
 const ExercisesComponent = () => {
     const { exercise, sequence, instrument, start, createSequence, createNotes, createPattern } = useExercise();
+    const lastRequestedExercise = useRef(null);
     
     useEffect(() => {
-        if (!sequence.length)
+        // React StrictMode replays effects in development. Avoid racing duplicate worker requests.
+        if (!sequence.length && lastRequestedExercise.current !== exercise) {
+            lastRequestedExercise.current = exercise;
             createSequence();
-    }, [exercise]);
+        }
+    }, [exercise, sequence.length, createSequence]);
 
     useEffect(() => {
         if (sequence.length) {
             createNotes();
             createPattern();
         }
-    }, [exercise, instrument.strings.length, start]);
+    }, [exercise, instrument, sequence, start]);
 
     return null;
 };

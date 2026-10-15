@@ -22,7 +22,7 @@ const createNotes = ({ sequence, strings }) => {
 const createPattern = ({ exercise, sequence, strings, start }) => 
     getExercisePattern({ exercise: parseInt(exercise), noteIdxs: sequence, strings, start });
 
-onmessage = async e => {
+self.onmessage = async e => {
     const type = e.data.type;
     let sequence, notes, pattern;
     switch (type) {
@@ -30,17 +30,17 @@ onmessage = async e => {
             sequence = getRandomNoteSequence(e.data.payload);
             notes = createNotes({ sequence, ...e.data.payload });
             pattern = createPattern({ sequence, ...e.data.payload });
-            postMessage({ type, payload: { success: true, sequence, notes, pattern, ...e.data.payload } });
+            self.postMessage({ type, payload: { success: true, sequence, notes, pattern, ...e.data.payload } });
             break;
         case NOTES:
             notes = createNotes(e.data.payload);
-            postMessage({ type, payload: { success: true, notes, ...e.data.payload } });
+            self.postMessage({ type, payload: { success: true, notes, ...e.data.payload } });
             break;
         case PATTERN:
             pattern = createPattern(e.data.payload);
-            postMessage({ type, payload: { success: true, pattern, ...e.data.payload } });
+            self.postMessage({ type, payload: { success: true, pattern, ...e.data.payload } });
             break;
         default:
-            postMessage({ type, payload: { error: true, message: `type ${type} not recognised` } });
+            self.postMessage({ type, payload: { error: true, message: `type ${type} not recognised` } });
     }
 };

@@ -1,68 +1,57 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Frets
 
-## Available Scripts
+Frets is a client-only guitar and bass fretboard practice app. The migration branch uses Vite and Tailwind tooling, while the original routed component tree is still active during the staged migration.
 
-In the project directory, you can run:
+## Development
 
-### `npm start`
+```sh
+npm install
+npm run dev
+```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Production build
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```sh
+npm run build
+npm run preview
+```
 
-### `npm test`
+The production output is written to `dist/`. The app is deployed at the domain root, so Vite emits root-relative asset URLs. For direct refreshes on paths such as `/exercises/1`, configure the static host to serve `index.html` for unknown paths. For S3 website hosting, configure `index.html` as the error document and verify that the response behavior is suitable for your domain/CDN.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## State and privacy
 
-### `npm run build`
+There is no account, API, or backend. Zustand persists only local preferences (instrument, start fret, and range highlight) to browser localStorage. The metronome remains at the existing 120 BPM; adjustable tempo is intentionally outside this migration. Session state and exercise progress are transient.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Migration status
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+The legacy `src/App.js` entry and original component hierarchy remain active so existing appearance and exercise behavior can be preserved while the migration proceeds. Tailwind semantic classes have replaced styling for the navigation panel, overlay, navigation links/buttons, exercise instructions, and timer wrapper. Most fretboard, tab, range, grid, and remaining control styles still use styled-components; `src/App.scss` also remains.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The active legacy component tree still uses Recoil. Zustand exists in the branch but has not yet replaced Recoil as the source of truth for the active app. Do not treat the migration as complete or deploy it yet.
 
-### `npm run eject`
+### Remaining migration checklist
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. Port the remaining styled-components rules to Tailwind utilities and semantic `@apply` classes, preserving the original responsive layout and fretboard geometry.
+2. Remove `src/App.scss` once its global rules have been safely moved to the Tailwind entry styles.
+3. Migrate active app state from Recoil to Zustand, including exercise sequence/stage, instrument and fret-range preferences, navigation visibility, and timer/metronome state. Persist only the intended preferences in localStorage.
+4. Remove Recoil and styled-components only after no active source imports them; remove obsolete dependencies only after checking all imports.
+5. Validate `npm run build`, tests, and manual behavior for the home page and `/exercises/1` through `/exercises/6`, including direct URL loads and refreshes, all supported instruments/tunings, shuffle, fret window, timer, and metronome.
+6. Confirm the S3/CDN fallback for direct exercise routes and compare the migrated appearance against the original before merging or deploying.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+No new feature work should begin until the style port and migration checks are complete.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Feature backlog
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+These are planned additions, separate from the faithful migration and its stability work.
 
-## Learn More
+### Fretboard appearance
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Neck wood:** let users switch between dark rosewood and light maple. Explore layered CSS gradients for a subtle wood-grain effect, with restrained contrast so fret markers and notes remain easy to read.
+- **Wound strings:** style the lower strings with a core-and-winding appearance using CSS gradients or repeating gradients. The effect should suggest metal windings without reducing note visibility or fretboard legibility.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Triad exercises
 
-### Code Splitting
+- **Exercise 7 — Major triads:** play major triads across three-string sets, progressing from the lowest available triad to the highest, then back down, following the existing exercises' ascending/descending flow.
+- **Exercise 8 — Minor triads:** use the same traversal and string-set approach as Exercise 7, but with minor triads.
+- **Exercise 9 — Mixed triads:** combine major and minor triads in one exercise.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+For triad exercises, preserve the app's existing instrument/tuning support and fret-window behavior. Define the string-set order, available inversions/voicings, and exact ascending/descending sequence before implementation.

@@ -3,7 +3,7 @@ import { isNatural, isAccidental, getNoteByIdx } from '../utils/note.utils';
 
 const { NOTE, NATURALS, ACCIDENTALS } = ACTIONS.NOTES;
 
-onmessage = async e => {
+self.onmessage = async e => {
     const type = e.data.type;
     switch (type) {
         case NOTE:
@@ -22,9 +22,9 @@ onmessage = async e => {
                         fretNotes.push({ string, fret, note: getNoteByIdx(idx) });
                 }
             }
-            postMessage({ type, payload: { success: true, fretNotes } });
+            self.postMessage({ type, payload: { success: true, fretNotes } });
             break;
         default:
-            postMessage({ type, payload: { error: true, message: `type ${type} not recognised` } });
+            self.postMessage({ type, payload: { error: true, message: `type ${type} not recognised` } });
     }
 };

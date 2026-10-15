@@ -1,21 +1,19 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-
-import { exerciseSubdivisionFrequencySelector, exerciseStageAtom, exerciseSequenceAtom, exerciseBeatAtom, timerRunningAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../recoil/frets.recoil';
+import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
 import { getNoteFrequency } from '../utils/note.utils';
-import Worker from '../workers/timer.worker';
-
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
+const EMPTY_ARRAY = Object.freeze([]);
 
-const worker = new Worker();
+const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
 
 const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivisionVolume = 0.25 } = {}) => {
     const { exercise } = useParams();
-    const [ running, setRunning ] = useRecoilState(timerRunningAtom);
-    const selectedInstrumentId = useRecoilValue(selectedInstrumentIdAtom);
-    const instrument = useRecoilValue(getInstrumentSelector(selectedInstrumentId));
+    const running = useFretsStore(state => state.timerRunning);
+    const setRunning = useFretsStore(state => state.setTimerRunning);
+    const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
+    const instrument = getSelectedInstrument(selectedInstrumentId);
     const [ state, setState ] = useState({
         beat: 0,
         subBeat: 0,
@@ -25,19 +23,22 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const [ beatsPerMeasure, setBeatsPerMeasure ] = useState(instrument.strings.length);
     const [ beat, setBeat ] = useState(0);
     const ticksPerBeat = beatsPerMeasure % 3 === 0 || state.subdivision % 3 === 0 ? TICKS_PER_BEAT_TERNARY : TICKS_PER_BEAT_BINARY;
-    const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)());
+    // Create AudioContext on demand: a constructor inside useRef still runs on every render.
+    const audioContext = useRef(null);
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
-    const setExerciseBeat = useSetRecoilState(exerciseBeatAtom(exercise));
-    const stage = useRecoilValue(exerciseStageAtom(exercise));
-    const sequence = useRecoilValue(exerciseSequenceAtom(exercise));
+    const setExerciseBeat = useFretsStore(state => state.setExerciseBeat);
+    const stage = useFretsStore(state => state.exercises[String(exercise ?? '')]?.stage ?? 1);
+    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_ARRAY);
     // const subdivisionFrequency = useRecoilValue(exerciseSubdivisionFrequencySelector(exercise));
     // const beatFrequency = subdivisionFrequency * 2;
     const subdivisionFrequency = useRef(getNoteFrequency(sequence[stage - 1]));
     const beatFrequency = useRef(subdivisionFrequency.current * 2);
 
     const runScheduler = () => {
-        while (nextNoteTime.current < audioContext.current.currentTime + SCHEDULE_AHEAD_TIME) {
+        const context = audioContext.current;
+        if (!context || context.state === 'closed') return;
+        while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
             tick(currentBeat.current, nextNoteTime.current);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
             nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
@@ -107,6 +108,12 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const start = () => {
         setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
         currentBeat.current = 0;
+        if (!audioContext.current) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) audioContext.current = new AudioContextClass();
+        }
+        if (!audioContext.current) return;
+        if (audioContext.current.state === 'suspended') audioContext.current.resume();
         nextNoteTime.current = audioContext.current.currentTime;
         worker.postMessage({ type: START, interval: 25, ...state });
         setState({
@@ -120,24 +127,18 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
         setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
     };
 
-    const reset = () => {
+    const reset = useCallback(() => {
         worker.postMessage({ type: STOP });
         setBeat(0);
         currentBeat.current = 0;
-        setState({
-            ...state,
-            beat: 0,
-        });
-    };
+        setState(prevState => ({ ...prevState, beat: 0 }));
+    }, []);
 
-    const skip = num => {
+    const skip = useCallback(num => {
         setBeat(num);
         currentBeat.current = 0;
-        setState({
-            ...state,
-            beat: 0,
-        });
-    };
+        setState(prevState => ({ ...prevState, beat: 0 }));
+    }, []);
 
     const onmessage = async e => {
         switch (e.data) {
@@ -170,7 +171,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
 
     useEffect(() => {
         worker.onerror = onerror;
-        return () => worker.terminate();
+        // Keep the module-level worker alive across React StrictMode's development
+        // effect cleanup/re-run cycle. It is shared for the lifetime of this app.
     }, [worker]);
 
     useEffect(() => {
@@ -200,7 +202,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     }, [instrument.strings.length]);
 
     useEffect(() => {
-        setExerciseBeat(beat);
+        setExerciseBeat(exercise, beat);
     }, [beat]);
 
     return { beat, running, stop, reset, skip };

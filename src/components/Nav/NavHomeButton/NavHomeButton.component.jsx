@@ -4,17 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 import NavHomeButton from '../HomeButton/HomeButton.component';
-import { Button } from './NavHomeButton.styled';
 
 const HomeButton = () => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
     if (isExercise)
-        return <Button>
+        return <div className="legacy-nav-icon-button-wrapper">
             <NavHomeButton show={isExercise}>
                 <FontAwesomeIcon icon={faHome} />
             </NavHomeButton>
-        </Button>
+        </div>
     else
         return null;
 };
