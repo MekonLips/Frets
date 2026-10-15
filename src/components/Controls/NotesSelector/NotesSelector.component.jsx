@@ -5,7 +5,7 @@ import { ACTIONS } from '../../../config/frets.config';
 const { NOTE, NATURALS, ACCIDENTALS } = ACTIONS.NOTES;
 
 const NotesSelector = () => {
-    const selected = useFretsStore(state => state.selectedNotesModeIndex ?? 0);
+    const selected = useFretsStore(state => state.selectedNotesModeIndex ?? 1);
     const setSelected = useFretsStore(state => state.setSelectedNotesMode);
     const changeHandler = e => setSelected(parseInt(e.target.value));
     return <label>
