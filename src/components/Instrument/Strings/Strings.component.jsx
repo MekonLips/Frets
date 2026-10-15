@@ -8,11 +8,9 @@ import { minmax } from '../../../utils/math.utils';
 const StringsComponent = () => {
     const selectedInstrumentId = useRecoilValue(selectedInstrumentIdAtom);
     const instrument = useRecoilValue(getInstrumentSelector(selectedInstrumentId));
-    const strings = [];
-    for (let i = 0; i < instrument.strings.length; i++)
-        strings.push(<String key={`String/${i}`} string={i} />);
-    return <div className="legacy-strings" style={{ '--string-count': strings.length, '--strings-height': `${GRID_ROW_HEIGHT * strings.length}vh`, '--strings-min-height': `${GRID_ROW_HEIGHT_MIN * strings.length}px` }}>
-        {strings.map((_, i) => <div className="legacy-string-row" key={`String/${i}`} style={{ '--string-index': i, '--string-thickness': `${minmax(i, 2, 5)}px`, zIndex: Z_INDEX.String }} />)}
+    const stringCount = instrument.strings.length;
+    return <div className="legacy-strings" style={{ '--string-count': stringCount, '--strings-height': `${GRID_ROW_HEIGHT * stringCount}vh`, '--strings-min-height': `${GRID_ROW_HEIGHT_MIN * stringCount}px` }}>
+        {Array.from({ length: stringCount }, (_, i) => <div className="legacy-string-row" key={`String/${i}`} style={{ '--string-thickness': `${minmax(i, 2, 5)}px`, zIndex: Z_INDEX.String }} />)}
     </div>
 };
 
