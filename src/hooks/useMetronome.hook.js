@@ -29,7 +29,6 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
     const setExerciseBeat = useFretsStore(state => state.setExerciseBeat);
-    const stage = useFretsStore(state => state.exercises[String(exercise ?? '')]?.stage ?? 1);
     const pattern = useFretsStore(state => state.exercises[String(exercise ?? '')]?.pattern ?? EMPTY_ARRAY);
     const exerciseStep = useRef(0);
 
@@ -152,7 +151,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
 
     const skip = useCallback(num => {
         setBeat(num);
-        exerciseStep.current = pattern.length ? num % pattern.length : 0;
+        exerciseStep.current = num;
         currentBeat.current = 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
