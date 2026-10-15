@@ -75,9 +75,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const start = () => {
-        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
+        // Preserve the current pattern position when resuming. Initial starts
+        // and explicit resets already leave exerciseStep at the right position.
         currentBeat.current = 0;
-        exerciseStep.current = 0;
         if (!audioContext.current) {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             if (AudioContextClass) audioContext.current = new AudioContextClass();
@@ -93,8 +93,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const stop = () => {
+        // Pausing must not snap the displayed position away from the note that
+        // was just played; start() resumes from the matching pattern step.
         worker.postMessage({ type: STOP });
-        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
     };
 
     const reset = useCallback(() => {
