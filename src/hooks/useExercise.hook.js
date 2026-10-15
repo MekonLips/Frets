@@ -23,7 +23,7 @@ export const useExercise = () => {
     const start = useFretsStore(state => state.startFret);
     const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
 
-    const createSequence = useCallback((accidentalsOverride) => {
+    const createSequence = useCallback((accidentalsOverride, shuffle = false) => {
         const exerciseNumber = parseInt(exercise);
         const accidentals = exerciseNumber === 3
             ? true
@@ -32,7 +32,7 @@ export const useExercise = () => {
                 : false;
         worker.postMessage({
             type: SEQUENCE,
-            payload: { exercise, strings: instrument.strings, start, accidentals },
+            payload: { exercise, strings: instrument.strings, start, accidentals, shuffle },
         });
     }, [exercise, instrument.strings, start, useAccidentals]);
 
