@@ -51,13 +51,13 @@ const TabComponent = () => {
         const position = (string - 1) * 3 + 1;
         const width = fret < 10 ? 1 : 2;
         const template = new Array(20).fill('-');
-        template.splice(position, width, fret);
+        template.splice(position, width, ...String(fret).split(''));
         const key = `Tab/Line/${line}/String/${string}/Fret/${fret}`;
 
         if (!isActive)
             return <pre key={key}>{template.join('')}</pre>;
 
-        return <pre key={key}>{template.slice(0, position).join('')}<span style={{ display: 'inline-block', position: 'relative', width: `${width}ch`, height: '1em', verticalAlign: 'middle', textAlign: 'center' }}><span style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: `${width === 1 ? 1.15 : 1.2}em`, height: `${width === 1 ? 1.15 : 1.2}em`, borderRadius: '50%', backgroundColor: 'rgba(32,128,32,1)', color: '#fff', fontWeight: 'bold', fontSize: width === 1 ? '1em' : '0.7em', lineHeight: 1, boxSizing: 'border-box' }}>{fret}</span></span>{template.slice(position + width).join('')}</pre>;
+        return <pre key={key}>{template.slice(0, position).join('')}<span style={{ display: 'inline-block', position: 'relative', width: `${width}ch`, height: '1em', verticalAlign: 'middle', textAlign: 'center' }}><span style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: `${width === 1 ? 1.35 : 1.8}em`, height: `${width === 1 ? 1.35 : 1.8}em`, borderRadius: '50%', backgroundColor: 'rgba(32,128,32,1)', color: '#fff', fontWeight: 'bold', lineHeight: 1, boxSizing: 'border-box' }}>{fret}</span></span>{template.slice(position + width).join('')}</pre>;
     };
 
     const createTab = (valuePattern, valueInstrument, patternOffset) => {
