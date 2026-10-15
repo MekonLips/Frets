@@ -3,11 +3,11 @@ import { INSTRUMENTS } from '../config/frets.js';
 import { getMidiPitch, getOpenStringMidi, midiToFrequency } from './pitch.utils.js';
 
 describe('instrument string pitch', () => {
-  it('defines an exact open-string MIDI pitch for every supported tuning', () => {
+  it('defines open-string MIDI pitches in visible row order for every supported tuning', () => {
     expect(INSTRUMENTS.map(({ openStringMidi }) => openStringMidi)).toEqual([
-      [40, 45, 50, 55, 59, 64], // Standard guitar: E2 A2 D3 G3 B3 E4
-      [39, 44, 49, 54, 58, 63], // Eb guitar
-      [38, 45, 50, 54, 57, 62], // Open D guitar: D2 A2 D3 F#3 A3 D4
+      [64, 59, 55, 50, 45, 40], // Standard guitar: high E to low E
+      [63, 58, 54, 49, 44, 39], // Eb guitar
+      [62, 57, 54, 50, 45, 38], // Open D guitar: D4 A3 F#3 D3 A2 D2
       [43, 38, 33, 28],         // Standard bass: G2 D2 A1 E1
       [42, 37, 32, 27],         // Eb bass
     ]);
@@ -16,12 +16,12 @@ describe('instrument string pitch', () => {
     });
   });
 
-  it('calculates pitch from the selected string and fret', () => {
+  it('calculates pitch from the selected visible string row and fret', () => {
     const guitar = INSTRUMENTS[0];
-    expect(getOpenStringMidi(guitar, 1)).toBe(40);
-    expect(getMidiPitch(guitar, 1, 0)).toBe(40);
-    expect(getMidiPitch(guitar, 1, 5)).toBe(45);
-    expect(getMidiPitch(guitar, 6, 12)).toBe(76);
+    expect(getOpenStringMidi(guitar, 1)).toBe(64);
+    expect(getMidiPitch(guitar, 1, 0)).toBe(64);
+    expect(getMidiPitch(guitar, 6, 0)).toBe(40);
+    expect(getMidiPitch(guitar, 6, 5)).toBe(45);
     expect(getMidiPitch(INSTRUMENTS[3], 4, 0)).toBe(28);
   });
 
