@@ -47,14 +47,13 @@ const TabComponent = () => {
     const createTab = (valuePattern, valueInstrument, patternOffset) => {
         const sections = [];
         for (let i = 0; i < valuePattern.length; i += valueInstrument.strings.length) {
-            // Always render tablature strings from the highest-pitched string
-            // at the top to the lowest-pitched string at the bottom. The
-            // playback pattern itself runs bottom-to-top for ascending notes.
+            // Preserve playback order in the tablature: ascending patterns
+            // start on the lowest note/string and move upward; descending
+            // patterns naturally render in the reverse order.
             const strings = valuePattern
                 .slice(i, i + valueInstrument.strings.length)
                 .map((note, offset) => ({ note, index: i + offset }))
                 .filter(({ note }) => Boolean(note))
-                .sort((a, b) => a.note.string - b.note.string)
                 .map(({ note, index }) => createLine(
                     index,
                     note.string,
