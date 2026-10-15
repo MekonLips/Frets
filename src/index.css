@@ -64,3 +64,20 @@
   .legacy-tab { @apply flex items-end; z-index: 0; }
   .legacy-tab pre { @apply m-0 p-0; }
 }
+
+@layer components {
+  .legacy-strings {
+    @apply absolute left-0 top-0 grid w-[200vw] grid-cols-1;
+    height: var(--strings-height);
+    min-height: var(--strings-min-height);
+    grid-template-rows: repeat(var(--string-count), minmax(0, 1fr));
+  }
+  .legacy-string-row { @apply grid items-center; }
+  .legacy-string-row::after {
+    content: "";
+    @apply block w-full;
+    height: var(--string-thickness);
+    background: linear-gradient(0deg, #777 0%, #eee 50%, #999 80%);
+    box-shadow: 0 3px 3px 0 rgb(0 0 0 / 60%), 0 -3px 3px 0 rgb(0 0 0 / 60%);
+  }
+}
