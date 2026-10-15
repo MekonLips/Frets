@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { EXERCISES, FRETS, NOTES, SESSION_MS, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
@@ -10,17 +10,19 @@ const formatTime = (ms) => {
 };
 
 function useExerciseRoute() {
-  const { exercise: routeExercise } = useParams();
-  const exercise = Number(routeExercise);
+  const { pathname } = useLocation();
+  const match = pathname.match(/^\\/exercises\\/(\\d+)\\/?$/);
+  if (!match) return null;
+  const exercise = Number(match[1]);
   return Number.isInteger(exercise) && exercise >= 1 && exercise <= 6 ? exercise : null;
 }
 
-function Header({ exercise, onMenu }) {
+function Header({ exercise, onMenu, showNav }) {
   return <header className="app-header">
     <div className="flex items-center gap-3"><Guitar className="text-amber-400" size={25} /><Link to="/" className="brand">Frets</Link></div>
     <div className="flex items-center gap-2">
       {exercise && <span className="hidden text-sm text-neutral-400 sm:inline">Exercise {exercise} of 6</span>}
-      <button className="button" onClick={onMenu} aria-label="Toggle navigation">{useFretsStore.getState().showNav ? <X size={18} /> : <Menu size={18} />}</button>
+      <button className="button" onClick={onMenu} aria-label="Toggle navigation">{showNav ? <X size={18} /> : <Menu size={18} />}</button>
     </div>
   </header>;
 }
@@ -47,7 +49,8 @@ function Fretboard({ exercise }) {
   const beat = useFretsStore((state) => state.beat);
   const instrument = getSelectedInstrument(instrumentId);
   const strings = instrument.strings;
-  const active = useFretsStore((state) => state.timerRunning) && exercise ? getPattern(sequence, strings, startFret)[Math.max(0, beat - 1)] : null;
+  const currentPattern = useMemo(() => getPattern(sequence, strings, startFret), [sequence, strings, startFret]);
+  const active = useFretsStore((state) => state.timerRunning) && exercise && currentPattern.length ? currentPattern[(Math.max(0, beat - 1)) % currentPattern.length] : null;
   const visibleFrets = Array.from({ length: 12 }, (_, index) => startFret + index);
   const notePositions = useMemo(() => {
     const positions = [];
@@ -169,10 +172,47 @@ function PracticeTimer({ exercise }) {
   useEffect(() => {
     if (remaining <= 0 && running) setRunning(false);
   }, [remaining, running, setRunning]);
+  const audioContext = useRef(null);
   useEffect(() => {
     if (!running || !exercise) return undefined;
-    const id = window.setInterval(() => setBeat((beat) => beat + 1), 60000 / tempo);
-    return () => window.clearInterval(id);
+    let cancelled = false;
+    let nextBeatAt = performance.now();
+    const playBeat = () => {
+      if (cancelled) return;
+      const now = performance.now();
+      if (now >= nextBeatAt) {
+        setBeat((beat) => beat + 1);
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            if (!audioContext.current) audioContext.current = new AudioContextClass();
+            if (audioContext.current.state === 'suspended') audioContext.current.resume();
+            const context = audioContext.current;
+            const oscillator = context.createOscillator();
+            const gain = context.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 880;
+            gain.gain.setValueAtTime(0.0001, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, context.currentTime + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.06);
+            oscillator.connect(gain);
+            gain.connect(context.destination);
+            oscillator.start();
+            oscillator.stop(context.currentTime + 0.065);
+          }
+        } catch (error) {
+          // Audio is an enhancement; the visual beat and timer remain usable if audio is unavailable.
+        }
+        nextBeatAt += 60000 / tempo;
+        const patternLength = useFretsStore.getState().pattern.length || 1;
+        if (useFretsStore.getState().beat % patternLength === 0) {
+          const count = useFretsStore.getState().sequence.length || 1;
+          useFretsStore.getState().setStage((Math.floor(useFretsStore.getState().beat / Math.max(1, patternLength / count)) % count) + 1);
+        }
+      }
+    };
+    const id = window.setInterval(playBeat, 20);
+    return () => { cancelled = true; window.clearInterval(id); };
   }, [running, exercise, tempo, setBeat]);
   return <section className="panel space-y-4">
     <div className="flex items-center justify-between"><h2 className="eyebrow">Practice session</h2><span className="rounded-full bg-white/5 px-3 py-1 text-xs text-neutral-300">5 minutes</span></div>
@@ -203,7 +243,7 @@ export default function App() {
     if (match && (Number(match[1]) < 1 || Number(match[1]) > 6)) navigate('/', { replace: true });
   }, [location.pathname, navigate]);
   return <main className="app-shell">
-    <Header exercise={exercise} onMenu={() => setShowNav(!showNav)} />
+    <Header exercise={exercise} showNav={showNav} onMenu={() => setShowNav(!showNav)} />
     <Navigation open={showNav} onClose={() => setShowNav(false)} />
     <div className="mx-auto w-full max-w-[1440px] space-y-5 p-4 md:p-8">
       {exercise ? <ExercisePage key={exercise} exercise={exercise} /> : <FretboardHome />}
