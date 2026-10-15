@@ -8,10 +8,13 @@ self.onmessage = async e => {
     const type = e.data.type;
     switch (type) {
         case START:
+            // START may be posted more than once during React StrictMode effect replay.
+            // Keep the worker idempotent so duplicate starts never accelerate the timer.
+            if (timer) clearInterval(timer);
             timer = setInterval(() => self.postMessage(TICK), e.data.interval);
             break;
         case STOP:
-            clearInterval(timer);
+            if (timer) clearInterval(timer);
             timer = null;
             break;
         case UPDATE:
