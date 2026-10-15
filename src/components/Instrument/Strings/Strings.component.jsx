@@ -2,7 +2,8 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { selectedInstrumentIdAtom, getInstrumentSelector } from '../../../recoil/frets.recoil';
-import { Strings, String } from './Strings.styled';
+import { Z_INDEX, GRID_ROW_HEIGHT, GRID_ROW_HEIGHT_MIN } from '../../../config/frets.config';
+import { minmax } from '../../../utils/math.utils';
 
 const StringsComponent = () => {
     const selectedInstrumentId = useRecoilValue(selectedInstrumentIdAtom);
@@ -10,9 +11,9 @@ const StringsComponent = () => {
     const strings = [];
     for (let i = 0; i < instrument.strings.length; i++)
         strings.push(<String key={`String/${i}`} string={i} />);
-    return <Strings strings={strings.length}>
-        {strings}
-    </Strings>
+    return <div className="legacy-strings" style={{ '--string-count': strings.length, '--strings-height': `${GRID_ROW_HEIGHT * strings.length}vh`, '--strings-min-height': `${GRID_ROW_HEIGHT_MIN * strings.length}px` }}>
+        {strings.map((_, i) => <div className="legacy-string-row" key={`String/${i}`} style={{ '--string-index': i, '--string-thickness': `${minmax(i, 2, 5)}px`, zIndex: Z_INDEX.String }} />)}
+    </div>
 };
 
 export default StringsComponent;
