@@ -20,7 +20,7 @@ The production output is written to `dist/`. The app is deployed at the domain r
 
 ## State and privacy
 
-There is no account, API, or backend. Zustand persists only local preferences (instrument, start fret, range highlight, and tempo) to browser localStorage. Session state and exercise progress are transient.
+There is no account, API, or backend. Zustand persists only local preferences (instrument, start fret, and range highlight) to browser localStorage. The metronome remains at the existing 120 BPM; adjustable tempo is intentionally outside this migration. Session state and exercise progress are transient.
 
 ## Migration validation
 
