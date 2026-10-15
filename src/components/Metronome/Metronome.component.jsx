@@ -7,7 +7,8 @@ import useMetronome from '../../hooks/useMetronome.hook';
 const MetronomeComponent = () => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
-    const { beat, reset, skip } = useMetronome();
+    const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
+    const { beat, reset, skip } = useMetronome({ tempo: tempoBpm });
     const exerciseState = useFretsStore(state => state.exercises[String(exercise ?? '')]);
     const sequence = exerciseState?.sequence ?? [];
     const running = useFretsStore(state => state.timerRunning);
