@@ -41,14 +41,14 @@ const TabComponent = () => {
         return sections;
     };
     if (isExercise && parseInt(exercise) !== EXERCISES_NUM)
-        return <Container>
-            <Content start={start} end={end}>
-                <Tab>
-                    <Header>{createHeader(instrument)}</Header>
+        return <div className="legacy-tab-container" style={{ zIndex: Z_INDEX.Tab }}>
+            <div className="legacy-tab-content">
+                <div className="legacy-tab">
+                    <div className="legacy-tab-header">{createHeader(instrument)}</div>
                     {createTab(slice, instrument)}
-                </Tab>
-            </Content>
-        </Container>
+                </div>
+            </div>
+        </div>;
     else
         return null;
 };
