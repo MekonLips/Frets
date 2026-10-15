@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { EXERCISES, NOTES, getNoteFrequency, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
@@ -284,14 +284,14 @@ function ExercisePage({ exercise }) {
 export default function App() {
   const exercise = useExerciseRoute();
   const location = useLocation();
-  const navigate = useNavigate();
+  const history = useHistory();
   const showNav = useFretsStore((state) => state.showNav);
   const setShowNav = useFretsStore((state) => state.setShowNav);
   useEffect(() => {
     const match = location.pathname.match(/^\/exercises\/(\d+)\/?$/);
-    if (location.pathname !== '/' && !match) navigate('/', { replace: true });
+    if (location.pathname !== '/' && !match) history.replace('/');
     if (match && (Number(match[1]) < 1 || Number(match[1]) > 6)) navigate('/', { replace: true });
-  }, [location.pathname, navigate]);
+  }, [location.pathname, history]);
   return <main className="app-shell">
     <Header exercise={exercise} showNav={showNav} onMenu={() => setShowNav(!showNav)} />
     <Navigation open={showNav} onClose={() => setShowNav(false)} />
