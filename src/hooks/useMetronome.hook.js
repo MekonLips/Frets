@@ -41,13 +41,10 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const beatInterval = beatsPerMeasure / ticksPerBeat * secondsPerBeat;
             nextNoteTime.current = scheduledTime + beatInterval;
 
-            // Tighten the loop transition slightly, while ensuring the next note
-            // never starts before the final note's 0.42-second duration has elapsed.
+            // Start the next loop as soon as the final note has finished,
+            // rather than waiting for another full beat interval.
             if (loopCompleted)
-                nextNoteTime.current = Math.max(
-                    scheduledTime + beatInterval - 0.05,
-                    scheduledTime + 0.42
-                );
+                nextNoteTime.current = scheduledTime + 0.42;
 
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
