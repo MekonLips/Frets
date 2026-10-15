@@ -81,3 +81,14 @@
     box-shadow: 0 3px 3px 0 rgb(0 0 0 / 60%), 0 -3px 3px 0 rgb(0 0 0 / 60%);
   }
 }
+
+@layer components {
+  .legacy-instrument {
+    @apply relative w-[200vw];
+    height: var(--instrument-height);
+    min-height: var(--instrument-min-height);
+    background-color: var(--instrument-bg);
+    box-shadow: 0 -20px 20px 0 rgb(0 0 0 / 50%), 0 20px 20px 0 rgb(0 0 0 / 50%);
+  }
+  .legacy-fret-grid { @apply relative h-full w-screen transition-transform duration-300; }
+}
