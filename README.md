@@ -29,7 +29,6 @@ These are ideas for future additions.
 ### Fretboard appearance
 
 - **Neck wood:** let users switch between dark rosewood and light maple. Explore layered CSS gradients for a subtle wood-grain effect, with restrained contrast so fret markers and notes remain easy to read.
-- **Wound strings:** style the lower strings with a core-and-winding appearance using CSS gradients or repeating gradients. The effect should suggest metal windings without reducing note visibility or fretboard legibility.
 
 ### Triad exercises
 
