@@ -1,17 +1,18 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS } from '../config/frets.config';
 
 const { SEQUENCE, NOTES, PATTERN } = ACTIONS.PATTERNS;
+const EMPTY_ARRAY = Object.freeze([]);
 
 const worker = new Worker(new URL('../workers/exercise.worker.js', import.meta.url), { type: 'module' });
 
 export const useExercise = () => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
-    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? []);
+    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_ARRAY);
     const notes = useFretsStore(state => state.exercises[String(exercise ?? '')]?.notes ?? []);
     const pattern = useFretsStore(state => state.exercises[String(exercise ?? '')]?.pattern ?? []);
     const setSequence = useFretsStore(state => state.setExerciseSequence);
@@ -21,7 +22,7 @@ export const useExercise = () => {
     const instrument = getSelectedInstrument(selectedInstrumentId);
     const start = useFretsStore(state => state.startFret);
 
-    const createSequence = () =>
+    const createSequence = useCallback(() =>
         worker.postMessage({
             type: SEQUENCE,
             payload: {
@@ -30,19 +31,19 @@ export const useExercise = () => {
                 start,
                 accidentals: parseInt(exercise) === 3,
             },
-        });
+        }), [exercise, instrument.strings, start]);
 
-    const createNotes = () =>
+    const createNotes = useCallback(() =>
         worker.postMessage({
             type: NOTES,
             payload: { exercise, strings: instrument.strings, start, sequence },
-        });
+        }), [exercise, instrument.strings, start, sequence]);
 
-    const createPattern = () =>
+    const createPattern = useCallback(() =>
         worker.postMessage({
             type: PATTERN,
             payload: { exercise, strings: instrument.strings, start, sequence },
-        });
+        }), [exercise, instrument.strings, start, sequence]);
 
     useEffect(() => {
         worker.onerror = e => console.log('%cworker.onerror', 'color: red;', e);
