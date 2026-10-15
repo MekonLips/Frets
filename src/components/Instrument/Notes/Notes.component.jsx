@@ -17,13 +17,15 @@ const NotesComponent = () => {
     const pattern = exerciseState?.pattern ?? [];
     const stage = exerciseState?.stage ?? 1;
     const notes = exerciseState?.notes ?? [];
-    const sequence = exerciseState?.sequence ?? [];
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedInstrumentId);
     const running = useFretsStore(state => state.timerRunning);
-    const activeIndex = running && beat > 0 ? beat - 1 : beat;
-    const activeString = pattern.length && beat < instrument.strings.length * 2 * sequence.length ? pattern[activeIndex]?.string ?? '' : '';
-    const activeFret = pattern.length && beat < instrument.strings.length * 2 * sequence.length ? pattern[activeIndex]?.fret ?? '' : '';
+    const activeIndex = running && beat > 0 && pattern.length
+        ? (beat - 1) % pattern.length
+        : -1;
+    const activePosition = activeIndex >= 0 ? pattern[activeIndex] : null;
+    const activeString = activePosition?.string ?? '';
+    const activeFret = activePosition?.fret ?? '';
 
     const playNote = (obj) => {
         try {
@@ -38,7 +40,7 @@ const NotesComponent = () => {
             {stage && notes.length && notes[stage - 1]?.map((obj, idx) =>
                 <div
                     className={`legacy-note ${obj.string === activeString && obj.fret === activeFret ? 'legacy-note-active' : ''}`}
-                    key={`Notes/${idx}`}
+                    key={`Notes/${obj.string}/${obj.fret}/${obj.note}/${idx}`}
                     style={{ '--note-column': obj.fret + 1, '--note-row': obj.string, cursor: 'pointer' }}
                     role="button"
                     tabIndex={0}
