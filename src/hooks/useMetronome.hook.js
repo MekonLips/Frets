@@ -35,17 +35,18 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         const context = audioContext.current;
         if (!context || context.state === 'closed') return;
         while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
-            const loopCompleted = tick(currentBeat.current, nextNoteTime.current);
+            const scheduledTime = nextNoteTime.current;
+            const loopCompleted = tick(currentBeat.current, scheduledTime);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
-            nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+            nextNoteTime.current = scheduledTime + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
 
-            // Anchor the loop pause to the end of the final note, not just
-            // to the scheduler's next tick. This prevents the next loop from
-            // starting while the final note is still sounding.
+            // Leave the final note to finish, then pause before the next loop.
+            // Use the scheduled audio time so the scheduler can safely queue
+            // the next loop without relying on a wall-clock callback.
             if (loopCompleted)
                 nextNoteTime.current = Math.max(
                     nextNoteTime.current,
-                    time + 0.42 + secondsPerBeat * 2
+                    scheduledTime + 0.42 + secondsPerBeat * 2
                 );
 
             currentBeat.current = currentBeat.current + 1;
