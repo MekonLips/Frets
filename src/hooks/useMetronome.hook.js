@@ -23,7 +23,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const [ beatsPerMeasure, setBeatsPerMeasure ] = useState(instrument.strings.length);
     const [ beat, setBeat ] = useState(0);
     const ticksPerBeat = beatsPerMeasure % 3 === 0 || state.subdivision % 3 === 0 ? TICKS_PER_BEAT_TERNARY : TICKS_PER_BEAT_BINARY;
-    const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)());
+    // Create AudioContext on demand: a constructor inside useRef still runs on every render.
+    const audioContext = useRef(null);
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
     const setExerciseBeat = useSetRecoilState(exerciseBeatAtom(exercise));
@@ -35,7 +36,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const beatFrequency = useRef(subdivisionFrequency.current * 2);
 
     const runScheduler = () => {
-        while (nextNoteTime.current < audioContext.current.currentTime + SCHEDULE_AHEAD_TIME) {
+        const context = audioContext.current;
+        if (!context || context.state === 'closed') return;
+        while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
             tick(currentBeat.current, nextNoteTime.current);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
             nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
@@ -105,6 +108,12 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const start = () => {
         setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
         currentBeat.current = 0;
+        if (!audioContext.current) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) audioContext.current = new AudioContextClass();
+        }
+        if (!audioContext.current) return;
+        if (audioContext.current.state === 'suspended') audioContext.current.resume();
         nextNoteTime.current = audioContext.current.currentTime;
         worker.postMessage({ type: START, interval: 25, ...state });
         setState({
