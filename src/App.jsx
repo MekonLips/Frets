@@ -153,6 +153,29 @@ function ExercisePanel({ exercise }) {
   </section>;
 }
 
+function Tablature({ exercise }) {
+  const pattern = useFretsStore((state) => state.pattern);
+  const stage = useFretsStore((state) => state.stage);
+  const instrument = getSelectedInstrument(useFretsStore((state) => state.selectedInstrumentId));
+  if (!exercise || exercise === 6 || !pattern.length) return null;
+  const sectionLength = instrument.strings.length * 2;
+  const section = pattern.slice((stage - 1) * sectionLength, stage * sectionLength);
+  return <section className="panel space-y-3">
+    <div className="flex items-center justify-between"><h2 className="eyebrow">Tab · {NOTES[section[0]?.noteIdx] ?? '—'}</h2><span className="text-xs text-neutral-500">Current note pattern</span></div>
+    <div className="overflow-x-auto">
+      <div className="min-w-[620px] space-y-1">
+        {instrument.strings.map((openNote, stringIndex) => {
+          const string = stringIndex + 1;
+          return <div key={string} className="grid items-center gap-1" style={{ gridTemplateColumns: `44px repeat(${section.length}, minmax(28px, 1fr))` }}>
+            <span className="text-xs font-semibold text-neutral-400">{NOTES[openNote]}</span>
+            {section.map((position, index) => <span key={`${string}-${index}`} className={`relative flex h-7 items-center justify-center border-b border-neutral-600 font-mono text-xs ${position.string === string ? 'font-bold text-amber-300' : 'text-neutral-700'}`}>{position.string === string ? position.fret : '—'}</span>)}
+          </div>;
+        })}
+      </div>
+    </div>
+  </section>;
+}
+
 function PracticeTimer({ exercise }) {
   const remaining = useFretsStore((state) => state.sessionRemaining);
   const running = useFretsStore((state) => state.timerRunning);
@@ -241,7 +264,7 @@ function FretboardHome() {
 }
 
 function ExercisePage({ exercise }) {
-  return <div className="space-y-5"><ExercisePanel exercise={exercise} /><div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]"><section className="panel space-y-4"><h2 className="eyebrow">Fretboard practice</h2><Fretboard exercise={exercise} /></section><div className="space-y-4"><PracticeTimer exercise={exercise} /><Preferences /></div></div><div className="flex flex-wrap justify-between gap-3"><Link className="button" to={exercise > 1 ? `/exercises/${exercise - 1}` : '/'}>Previous exercise</Link><Link className="button button-primary" to={exercise < 6 ? `/exercises/${exercise + 1}` : '/'}>{exercise < 6 ? 'Next exercise' : 'Finish'}</Link></div></div>;
+  return <div className="space-y-5"><ExercisePanel exercise={exercise} /><Tablature exercise={exercise} /><div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]"><section className="panel space-y-4"><h2 className="eyebrow">Fretboard practice</h2><Fretboard exercise={exercise} /></section><div className="space-y-4"><PracticeTimer exercise={exercise} /><Preferences /></div></div><div className="flex flex-wrap justify-between gap-3"><Link className="button" to={exercise > 1 ? `/exercises/${exercise - 1}` : '/'}>Previous exercise</Link><Link className="button button-primary" to={exercise < 6 ? `/exercises/${exercise + 1}` : '/'}>{exercise < 6 ? 'Next exercise' : 'Finish'}</Link></div></div>;
 }
 
 export default function App() {
