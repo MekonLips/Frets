@@ -11,33 +11,44 @@ const MetronomeComponent = () => {
     const { beat, reset, skip } = useMetronome({ tempo: tempoBpm });
     const exerciseState = useFretsStore(state => state.exercises[String(exercise ?? '')]);
     const sequence = exerciseState?.sequence ?? [];
+    const pattern = exerciseState?.pattern ?? [];
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedInstrumentId);
-    const lastBeat = instrument.strings.length * 2 * sequence.length;
+    // Exercises 4 and 5 play one pass across the strings per note; other exercises
+    // retain their existing up-and-down pattern (two passes per note).
+    const stringsPerNote = instrument.strings.length * ([4, 5].includes(Number(exercise)) ? 1 : 2);
+    const lastBeat = pattern.length;
     const stage = exerciseState?.stage ?? 1;
     const setStage = useFretsStore(state => state.setExerciseStage);
 
     useEffect(() => {
-        const length = instrument.strings.length * 2;
-        const start = stage * length;
-        const end = start + length;
-        const newStage = (beat - 1) % length === 0;
-        if (beat > start && beat < end && newStage)
-            setStage(exercise, value => value < sequence.length ? value + 1 : value);
-    }, [beat, instrument.strings.length, stage, sequence.length, exercise, setStage]);
+        // The stage should switch on the first beat of the next note, not
+        // on the final string of the previous note.
+        const newStage = beat > 0 && (beat - 1) % stringsPerNote === 0;
+        const completedStage = Math.floor((beat - 1) / stringsPerNote);
+        if (running && newStage && completedStage > stage - 1 && completedStage < sequence.length)
+            setStage(exercise, completedStage + 1);
+    }, [beat, stringsPerNote, stage, sequence.length, exercise, setStage, running]);
 
     useEffect(() => {
-        if (!running) skip((stage - 1) * instrument.strings.length * 2);
-    }, [stage, running, instrument.strings.length, skip]);
+        if (!running) skip((stage - 1) * stringsPerNote);
+    }, [stage, running, stringsPerNote, skip]);
 
     useEffect(() => {
         if (lastBeat > 0 && beat >= lastBeat) {
-            reset();
-            setRunning(false);
+            if (Number(exercise) === 4) {
+                // Exercise 4 repeats the ordered note sequence until the timer stops.
+                setStage(exercise, 1);
+                skip(0);
+            } else {
+                // Exercises with a finite pattern stop after one pass.
+                reset();
+                setRunning(false);
+            }
         }
-    }, [beat, lastBeat, reset, setRunning]);
+    }, [beat, lastBeat, exercise, reset, skip, setRunning, setStage]);
 
     if (isExercise) return <p>{beat}</p>;
     return null;

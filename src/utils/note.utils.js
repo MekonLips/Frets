@@ -23,15 +23,29 @@ export const getAccidentalIdxs = () => getNoteIdxs().reduce((arr, note, idx) => 
 
 export const getNotesFromIdxs = arr => arr.map(idx => getNoteByIdx(idx));
 
-export const getRandomNoteSequence = ({ accidentals = null, length = null } = {}) => {
+const NATURAL_NOTE_ORDER = [3, 5, 7, 8, 10, 0, 2];
+const ACCIDENTAL_NOTE_ORDER = [4, 6, 9, 11, 1];
+const CHROMATIC_NOTE_ORDER = [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2];
+
+export const getRandomNoteSequence = ({ exercise, accidentals = null, length = null, shuffle = false } = {}) => {
+    const exerciseNumber = Number(exercise);
     const sequence = [];
-    if (accidentals === false)
-        sequence.push(...getNaturalIdxs());
-    else if (accidentals === true)
-        sequence.push(...getAccidentalIdxs());
-    else
-        sequence.push(...getNoteIdxs());
-    arrayShuffle(sequence);
+
+    if (exerciseNumber === 3 || accidentals === true) {
+        // Exercise 3 uses accidentals only; other accidental-enabled exercises
+        // use the full chromatic sequence.
+        sequence.push(...(exerciseNumber === 3 ? ACCIDENTAL_NOTE_ORDER : CHROMATIC_NOTE_ORDER));
+    } else if (accidentals === false) {
+        sequence.push(...NATURAL_NOTE_ORDER);
+    } else {
+        sequence.push(...CHROMATIC_NOTE_ORDER);
+    }
+
+    // Exercise 5 is the only exercise that starts randomized. Other exercises
+    // follow the musical order unless the user explicitly presses Shuffle.
+    if (exerciseNumber === 5 || shuffle)
+        arrayShuffle(sequence);
+
     if (length)
         sequence.splice(0, sequence.length - length);
     return sequence;
@@ -88,39 +102,20 @@ export const getExercisePattern = ({ exercise, noteIdxs, strings, start = 1 }) =
             }, []));
             break;
         case 4:
-            // play note 1 up
-            // play note 2 down
-            // pattern.push(...noteIdxs.reduce((arr, noteIdx, idx) => {
-            //     arr.push(
-            //         ...(idx % 2 === 0 ? 
-            //             getAscendingNotes(noteIdx, strings, start) :  
-            //             getDescendingNotes(noteIdx, strings, start))
-            //     );
-            //     return arr;
-            // }, []));
-            pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
-                arr.push(
-                    ...getAscendingNotes(noteIdx, strings, start), 
-                    ...getDescendingNotes(noteIdx, strings, start)
-                );
+        case 5:
+            // Alternate direction by note: first note ascends, second descends.
+            pattern.push(...noteIdxs.reduce((arr, noteIdx, idx) => {
+                arr.push(...(idx % 2 === 0
+                    ? getAscendingNotes(noteIdx, strings, start)
+                    : getDescendingNotes(noteIdx, strings, start)));
                 return arr;
             }, []));
             break;
-        case 5:
         case 6:
-            // play all notes
-            // alternate playing up and down
-            // pattern.push(...noteIdxs.reduce((arr, noteIdx, idx) => {
-            //     arr.push(
-            //         ...(idx % 2 === 0 ? 
-            //             getAscendingNotes(noteIdx, strings, start) :  
-            //             getDescendingNotes(noteIdx, strings, start))
-            //     );
-            //     return arr;
-            // }, []));
+            // Exercise 6 retains the previous up-and-down pattern.
             pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
                 arr.push(
-                    ...getAscendingNotes(noteIdx, strings, start), 
+                    ...getAscendingNotes(noteIdx, strings, start),
                     ...getDescendingNotes(noteIdx, strings, start)
                 );
                 return arr;
