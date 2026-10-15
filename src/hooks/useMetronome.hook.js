@@ -77,8 +77,14 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 loopCompleted = exerciseStep.current === 0;
             }
 
-            // Audio is scheduled ahead; update the visible beat when that note
-            // reaches the audio timeline, not when it is merely queued.
+            // Publish the exact exercise position when it is scheduled. The
+            // shared store is the single source of truth for both the fretboard
+            // and tablature; updating it here prevents the final position from
+            // being lost if a playback-time callback races with a loop boundary.
+            if (scheduledExerciseIndex !== null)
+                setExerciseBeat(exercise, scheduledExerciseIndex + 1);
+
+            // Keep the metronome's own beat counter aligned to the audible time.
             const context = audioContext.current;
             const delay = context ? Math.max(0, (time - context.currentTime) * 1000) : 0;
             setTimeout(() => {
@@ -89,8 +95,6 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 const nextExerciseBeat = scheduledExerciseIndex === null
                     ? null
                     : scheduledExerciseIndex + 1;
-                if (nextExerciseBeat !== null)
-                    setExerciseBeat(exercise, nextExerciseBeat);
                 setBeat(prevBeat => nextExerciseBeat === null
                     ? prevBeat + 1
                     : nextExerciseBeat);
