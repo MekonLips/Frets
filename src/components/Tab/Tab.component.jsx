@@ -49,11 +49,7 @@ const TabComponent = () => {
         if (!isActive)
             return <pre key={key}>{template.join('')}</pre>;
 
-        return <pre key={key}>
-            {template.slice(0, position).join('')}
-            <span style={{ color: 'rgba(32,128,32,1)', fontWeight: 'bold' }}>{fret}</span>
-            {template.slice(position + width).join('')}
-        </pre>;
+        return <pre key={key}>{template.slice(0, position).join('')}<span style={{ color: 'rgba(32,128,32,1)', fontWeight: 'bold' }}>{fret}</span>{template.slice(position + 1).join('')}</pre>;
     };
 
     const createTab = (valuePattern, valueInstrument, patternOffset) => {
