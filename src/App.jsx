@@ -146,6 +146,10 @@ function ExercisePanel({ exercise }) {
     {exercise !== 6 && <div className="flex flex-wrap gap-2">
       {sequence.map((idx, index) => <button key={`${idx}-${index}`} onClick={() => setStage(index + 1)} className={`button min-w-10 ${index + 1 === stage ? 'button-primary' : ''}`}>{NOTES[idx]}</button>)}
     </div>}
+    {(exercise === 4 || exercise === 5) && <label className="flex items-center gap-2 text-sm text-neutral-300">
+      <input type="checkbox" checked={useAccidentals} onChange={(event) => setUseAccidentals(event.target.checked)} />
+      Use accidentals?
+    </label>}
     {exercise !== 6 && <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3">
       <button className="button gap-1" disabled={stage <= 1} onClick={() => setStage(Math.max(1, stage - 1))}><ChevronLeft size={16} /> Previous</button>
       <p className="text-sm text-neutral-300">Current note: <strong className="text-amber-300">{current === undefined ? '—' : NOTES[current]}</strong></p>
