@@ -35,9 +35,18 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         const context = audioContext.current;
         if (!context || context.state === 'closed') return;
         while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
-            tick(currentBeat.current, nextNoteTime.current);
+            const scheduledTime = nextNoteTime.current;
+            const loopCompleted = tick(currentBeat.current, scheduledTime);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
-            nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+            const beatInterval = beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+            nextNoteTime.current = scheduledTime + beatInterval;
+
+            // Make the loop transition relative to the selected tempo instead
+            // of using a fixed delay: resume at 75% of the normal note interval.
+            // The plucked note fades toward silence before its envelope ends.
+            if (loopCompleted)
+                nextNoteTime.current = scheduledTime + beatInterval * 0.75;
+
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
                 currentBeat.current = 0;
@@ -50,8 +59,11 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
 
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {
+            let loopCompleted = false;
+            let scheduledExerciseIndex = null;
             if (exercise && pattern.length) {
-                const position = pattern[exerciseStep.current % pattern.length];
+                scheduledExerciseIndex = exerciseStep.current % pattern.length;
+                const position = pattern[scheduledExerciseIndex];
                 if (position) {
                     try {
                         playPluckedNote(getMidiPitch(instrument, position.string, position.fret), {
@@ -65,26 +77,53 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                     }
                 }
                 exerciseStep.current = (exerciseStep.current + 1) % pattern.length;
+                loopCompleted = exerciseStep.current === 0;
             }
-            setState(prevState => ({
-                ...prevState,
-                beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
-            }));
-            setBeat(prevBeat => prevBeat + 1);
+
+            // Publish the exact exercise position when it is scheduled. The
+            // shared store is the single source of truth for both the fretboard
+            // and tablature; updating it here prevents the final position from
+            // being lost if a playback-time callback races with a loop boundary.
+            if (scheduledExerciseIndex !== null)
+                setExerciseBeat(exercise, scheduledExerciseIndex + 1);
+
+            // Keep the metronome's own beat counter aligned to the audible time.
+            const context = audioContext.current;
+            const delay = context ? Math.max(0, (time - context.currentTime) * 1000) : 0;
+            setTimeout(() => {
+                setState(prevState => ({
+                    ...prevState,
+                    beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
+                }));
+                const nextExerciseBeat = scheduledExerciseIndex === null
+                    ? null
+                    : scheduledExerciseIndex + 1;
+                setBeat(prevBeat => nextExerciseBeat === null
+                    ? prevBeat + 1
+                    : nextExerciseBeat);
+            }, delay);
+            return loopCompleted;
         }
+
+        return false;
     };
 
     const start = () => {
-        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
-        currentBeat.current = 0;
-        exerciseStep.current = 0;
         if (!audioContext.current) {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             if (AudioContextClass) audioContext.current = new AudioContextClass();
         }
         if (!audioContext.current) return;
         if (audioContext.current.state === 'suspended') audioContext.current.resume();
-        nextNoteTime.current = audioContext.current.currentTime;
+
+        // Do not restart the audio timeline at "now" if a note has already
+        // been queued just ahead of it. Otherwise a resumed note can overtake
+        // that queued note and the displayed string no longer matches audio.
+        if (nextNoteTime.current <= audioContext.current.currentTime) {
+            currentBeat.current = 0;
+            nextNoteTime.current = audioContext.current.currentTime;
+        }
+
         worker.postMessage({ type: START, interval: 25, ...state });
         setState({
             ...state,
@@ -93,8 +132,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const stop = () => {
+        // Keep the scheduled audio and exercise cursor intact for a clean resume.
         worker.postMessage({ type: STOP });
-        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
     };
 
     const reset = useCallback(() => {
@@ -102,6 +141,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         setBeat(0);
         currentBeat.current = 0;
         exerciseStep.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
 
@@ -109,6 +149,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         setBeat(num);
         exerciseStep.current = num;
         currentBeat.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
 
@@ -118,7 +159,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 runScheduler();
                 break;
             default:
-                console.log(`%ctype ${e.data} not recognised`, 'color: red;');
+                console.log(`%ctype ${e.data} not recognised`, 'color: red;',);
         }
     };
 
@@ -151,12 +192,11 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         stop();
         setRunning(false);
         setBeat(beat => 0);
+        currentBeat.current = 0;
+        exerciseStep.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setBeatsPerMeasure(instrument.strings.length);
     }, [instrument.strings.length]);
-
-    useEffect(() => {
-        setExerciseBeat(exercise, beat);
-    }, [beat]);
 
     return { beat, running, stop, reset, skip };
 };

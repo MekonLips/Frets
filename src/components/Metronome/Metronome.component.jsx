@@ -39,9 +39,9 @@ const MetronomeComponent = () => {
     useEffect(() => {
         if (lastBeat > 0 && beat >= lastBeat) {
             if (Number(exercise) === 4) {
-                // Exercise 4 repeats the ordered note sequence until the timer stops.
+                // The scheduler already wraps its exercise cursor. Resetting
+                // it here would also reset nextNoteTime and erase the loop pause.
                 setStage(exercise, 1);
-                skip(0);
             } else {
                 // Exercises with a finite pattern stop after one pass.
                 reset();
