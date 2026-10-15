@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
-import { EXERCISES, NOTES, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
+import { EXERCISES, NOTES, getNoteFrequency, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
 
 const formatTime = (ms) => {
@@ -47,6 +47,7 @@ function Fretboard({ exercise }) {
   const sequence = useFretsStore((state) => state.sequence);
   const stage = useFretsStore((state) => state.stage);
   const beat = useFretsStore((state) => state.beat);
+  const showRange = useFretsStore((state) => state.showRange);
   const instrument = getSelectedInstrument(instrumentId);
   const strings = instrument.strings;
   const currentPattern = useMemo(() => getPattern(sequence, strings, startFret), [sequence, strings, startFret]);
@@ -66,7 +67,7 @@ function Fretboard({ exercise }) {
   }, [strings, startFret, selectedNoteIdx, mode]);
   return <div className="space-y-2">
     <div className="flex justify-between text-xs text-neutral-400"><span>Nut</span><span>Fret {startFret}–{startFret + 11}</span><span>Bridge →</span></div>
-    <div className="fretboard">
+    <div className={`fretboard ${showRange ? "ring-1 ring-inset ring-amber-400/70" : ""}`}>
       <div className="grid" style={{ gridTemplateColumns: `repeat(12, minmax(0, 1fr))` }}>
         {visibleFrets.map((fret) => <div key={fret} className="flex h-7 items-center justify-center border-r border-neutral-700 bg-black/20 text-[10px] text-neutral-400">{fret}</div>)}
       </div>
@@ -191,7 +192,8 @@ function PracticeTimer({ exercise }) {
             const oscillator = context.createOscillator();
             const gain = context.createGain();
             oscillator.type = 'sine';
-            oscillator.frequency.value = 880;
+            const noteIdx = useFretsStore.getState().sequence[Math.max(0, useFretsStore.getState().stage - 1)] ?? 0;
+            oscillator.frequency.value = getNoteFrequency(noteIdx);
             gain.gain.setValueAtTime(0.0001, context.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.12, context.currentTime + 0.005);
             gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.06);
