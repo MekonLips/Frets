@@ -37,19 +37,16 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
             tick(currentBeat.current, nextNoteTime.current);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
-            // Keep a fixed subdivision grid per beat. The old calculation spread
-            // 16/12 ticks across an entire measure, which made beat spacing uneven
-            // for six-string instruments and caused exercise loops to drift.
-            nextNoteTime.current = nextNoteTime.current + secondsPerBeat / ticksPerBeat;
+            nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
             currentBeat.current = currentBeat.current + 1;
-            if (currentBeat.current === ticksPerBeat * beatsPerMeasure)
+            if (currentBeat.current === ticksPerBeat)
                 currentBeat.current = 0;
         }
     };
 
     const tick = (beat, time) => {
         const isFirstBeat = beat === 0;
-        const isQuarterBeat = beat % ticksPerBeat === 0;
+        const isQuarterBeat = beat % (ticksPerBeat / beatsPerMeasure) === 0;
 
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {
@@ -78,10 +75,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const start = () => {
-        // Audio playback restarts from pattern position zero, so reset the displayed
-        // beat counter too. Keeping a prior measure count here desynchronizes the
-        // tablature highlight from the notes, especially when a pattern loops.
-        setBeat(0);
+        setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
         currentBeat.current = 0;
         exerciseStep.current = 0;
         if (!audioContext.current) {
