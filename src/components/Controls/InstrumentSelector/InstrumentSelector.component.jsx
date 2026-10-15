@@ -1,11 +1,11 @@
 import React from 'react';
-import { useRecoilValue, useRecoilState } from 'recoil';
-
-import { instrumentsAtom, selectedInstrumentIdAtom } from '../../../recoil/frets.recoil';
+import { useFretsStore } from '../../../store/useFretsStore';
+import { INSTRUMENTS } from '../../../config/frets.js';
 
 const InstrumentSelector = () => {
-    const instruments = useRecoilValue(instrumentsAtom);
-    const [ selectedId, setSelected ] = useRecoilState(selectedInstrumentIdAtom);
+    const instruments = useFretsStore(state => state.instruments) || INSTRUMENTS;
+    const selectedId = useFretsStore(state => state.selectedInstrumentId);
+    const setSelected = useFretsStore(state => state.setInstrument);
     const changeHandler = e => setSelected(parseInt(e.target.value));
     return <label>
         <select className="legacy-form-select" onChange={changeHandler} value={selectedId}>
