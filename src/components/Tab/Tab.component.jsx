@@ -20,11 +20,10 @@ const TabComponent = () => {
     const activePosition = activeIndex >= 0 ? pattern[activeIndex] : null;
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedId);
-    // Tab rows are visually ordered opposite to the ascending playback pass.
-    // Map the active beat to the corresponding visual row for exercises 4/5.
-    const tabActiveIndex = activeIndex >= 0
-        && [4, 5].includes(Number(exercise))
-        && activePosition?.dir === 'up'
+    // Tab rows are visually ordered opposite to ascending playback.
+    // Apply the same index mapping to every exercise, whenever the active
+    // pattern position is ascending; descending positions already align.
+    const tabActiveIndex = activeIndex >= 0 && activePosition?.dir === 'up'
         ? Math.floor(activeIndex / instrument.strings.length) * instrument.strings.length
             + (instrument.strings.length - 1 - (activeIndex % instrument.strings.length))
         : activeIndex;
