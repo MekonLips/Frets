@@ -187,7 +187,8 @@ function PracticeTimer({ exercise }) {
   const setRemaining = useFretsStore((state) => state.setSessionRemaining);
   const setRunning = useFretsStore((state) => state.setTimerRunning);
   const resetSession = useFretsStore((state) => state.resetSession);
-  const [tempo, setTempo] = useState(40);
+  const tempo = useFretsStore((state) => state.tempoBpm);
+  const setTempo = useFretsStore((state) => state.setTempoBpm);
   const setBeat = useFretsStore((state) => state.setBeat);
   useEffect(() => {
     if (!running) return undefined;
