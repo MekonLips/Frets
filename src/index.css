@@ -323,3 +323,25 @@
     margin-bottom: 0.75rem;
   }
 }
+
+
+/* Keep intrinsic content from expanding the legacy grid columns. */
+@layer components {
+  .legacy-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  }
+  .legacy-grid > div {
+    min-width: 0;
+  }
+  .legacy-grid > div:nth-child(2) > div:first-child {
+    min-width: 0;
+  }
+  .legacy-sequence-container {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .legacy-sequence {
+    min-width: 0;
+    overflow-x: auto;
+  }
+}
