@@ -305,3 +305,14 @@
     accent-color: orange;
   }
 }
+
+
+@layer components {
+  .legacy-accidentals-toggle {
+    @apply my-2 flex items-center justify-start gap-2 text-sm;
+  }
+  .legacy-accidentals-toggle input[type="checkbox"] {
+    order: 2;
+    accent-color: orange;
+  }
+}
