@@ -11,7 +11,7 @@ const RefreshButton = ({ children }) => {
     const setStage = useFretsStore(state => state.setExerciseStage);
     const clickHandler = () => {
         setStage(exercise, 1);
-        createSequence();
+        createSequence(undefined, true);
     };
     if (isExercise && parseInt(exercise) !== EXERCISES_NUM)
         return <button onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
