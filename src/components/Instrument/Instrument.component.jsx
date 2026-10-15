@@ -1,7 +1,6 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { selectedInstrumentIdAtom, getInstrumentSelector, startFretAtom } from '../../recoil/frets.recoil';
+import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
 import Numbers from './Numbers/Numbers.component';
 import Frets from './Frets/Frets.component';
 import Strings from './Strings/Strings.component';
@@ -19,7 +18,7 @@ const InstrumentComponent = () => {
             <Frets />
             <Strings />
         </div>
-    </div>
+    </div>;
 };
 
 export default InstrumentComponent;
