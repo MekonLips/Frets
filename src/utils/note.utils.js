@@ -105,6 +105,16 @@ export const getExercisePattern = ({ exercise, noteIdxs, strings, start = 1 }) =
                 return arr;
             }, []));
             break;
+        case 6:
+            // Exercise 6 retains the previous up-and-down pattern.
+            pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
+                arr.push(
+                    ...getAscendingNotes(noteIdx, strings, start),
+                    ...getDescendingNotes(noteIdx, strings, start)
+                );
+                return arr;
+            }, []));
+            break;
         default:
             break;
     }
