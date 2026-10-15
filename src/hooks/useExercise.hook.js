@@ -62,14 +62,19 @@ export const useExercise = () => {
             const payload = e.data.payload;
             switch (type) {
                 case SEQUENCE:
+                    // Only sequence-generation responses may replace the sequence.
+                    // NOTES and PATTERN worker payloads echo the input sequence too;
+                    // writing that clone back into Recoil retriggered the exercise
+                    // effect indefinitely, causing randomization and runaway renders.
+                    if (payload.sequence) setSequence(payload.sequence);
+                    if (payload.notes) setNotes(payload.notes);
+                    if (payload.pattern) setPattern(payload.pattern);
+                    break;
                 case NOTES:
+                    if (payload.notes) setNotes(payload.notes);
+                    break;
                 case PATTERN:
-                    if (payload.sequence)
-                        setSequence(payload.sequence);
-                    if (payload.notes)
-                        setNotes(payload.notes);
-                    if (payload.pattern)
-                        setPattern(payload.pattern);
+                    if (payload.pattern) setPattern(payload.pattern);
                     break;
                 default:
                     console.log(`%ctype ${type} not recognised`, 'color: red;');
