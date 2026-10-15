@@ -316,3 +316,10 @@
     accent-color: orange;
   }
 }
+
+
+@layer components {
+  .legacy-tempo-control {
+    margin-bottom: 0.75rem;
+  }
+}
