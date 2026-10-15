@@ -15,10 +15,15 @@ const TabComponent = () => {
     const start = useFretsStore(state => state.startFret);
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedId);
-    const notesPerStage = instrument.strings.length * ([4, 5].includes(Number(exercise)) ? 1 : 2);
-    // Keep the current note and the following note visible. Exercises 4/5 have
-    // one string pass per note, unlike the older two-pass exercises.
-    const slice = pattern.slice((stage - 1) * notesPerStage, (stage + 1) * notesPerStage);
+    const hasOnePassPerNote = [4, 5].includes(Number(exercise));
+    const notesPerStage = instrument.strings.length * (hasOnePassPerNote ? 1 : 2);
+    // Exercises 1-3 (and 6) show the current note's up/down pair. Exercises
+    // 4/5 show the current and following note, with one string pass per note.
+    const visibleStages = hasOnePassPerNote ? 2 : 1;
+    const slice = pattern.slice(
+        (stage - 1) * notesPerStage,
+        (stage - 1 + visibleStages) * notesPerStage
+    );
     const createHeader = value => value.strings.map((noteIdx, idx) => <pre key={`Tab/Header/${idx}`}>{pad(getNoteByIdx(noteIdx), ' ', 3)}</pre>);
     const createBreak = (selectedNote, value) => value.strings.reduce((arr, val, idx) => {
         arr.push(<pre key={`Tab/Break/${idx + 1}`}>|-</pre>);
