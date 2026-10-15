@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
 import { getNoteFrequency } from '../utils/note.utils';
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
+const EMPTY_ARRAY = Object.freeze([]);
 
 const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
 
@@ -28,7 +29,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
     const currentBeat = useRef(0);
     const setExerciseBeat = useFretsStore(state => state.setExerciseBeat);
     const stage = useFretsStore(state => state.exercises[String(exercise ?? '')]?.stage ?? 1);
-    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? []);
+    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_ARRAY);
     // const subdivisionFrequency = useRecoilValue(exerciseSubdivisionFrequencySelector(exercise));
     // const beatFrequency = subdivisionFrequency * 2;
     const subdivisionFrequency = useRef(getNoteFrequency(sequence[stage - 1]));
@@ -126,24 +127,18 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
         setBeat(beat => Math.floor(beat / beatsPerMeasure) * beatsPerMeasure);
     };
 
-    const reset = () => {
+    const reset = useCallback(() => {
         worker.postMessage({ type: STOP });
         setBeat(0);
         currentBeat.current = 0;
-        setState({
-            ...state,
-            beat: 0,
-        });
-    };
+        setState(prevState => ({ ...prevState, beat: 0 }));
+    }, []);
 
-    const skip = num => {
+    const skip = useCallback(num => {
         setBeat(num);
         currentBeat.current = 0;
-        setState({
-            ...state,
-            beat: 0,
-        });
-    };
+        setState(prevState => ({ ...prevState, beat: 0 }));
+    }, []);
 
     const onmessage = async e => {
         switch (e.data) {
