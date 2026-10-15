@@ -9,10 +9,10 @@ const InstrumentSelector = () => {
     const [ selectedId, setSelected ] = useRecoilState(selectedInstrumentIdAtom);
     const changeHandler = e => setSelected(parseInt(e.target.value));
     return <label>
-        <Select onChange={changeHandler} value={selectedId}>
+        <select className="legacy-form-select" onChange={changeHandler} value={selectedId}>
             {instruments.map(({ id, name }) =>
                 <option key={`InstrumentSelector/Option/${id}`} value={id}>{name}</option>)}
-        </Select>
+        </select>
     </label>
 };
 
