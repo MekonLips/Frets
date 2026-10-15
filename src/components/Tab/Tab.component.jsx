@@ -6,7 +6,7 @@ import { exerciseStageAtom, exercisePatternAtom, startFretAtom, endFretAtom, sel
 
 import { getNoteByIdx } from '../../utils/note.utils';
 import { pad } from '../../utils/string.utils';
-import { EXERCISES_NUM } from '../../config/frets.config';
+import { EXERCISES_NUM, Z_INDEX } from '../../config/frets.config';
 
 const TabComponent = () => {
     const { exercise } = useParams();
