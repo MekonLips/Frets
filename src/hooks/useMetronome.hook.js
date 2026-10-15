@@ -35,9 +35,15 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         const context = audioContext.current;
         if (!context || context.state === 'closed') return;
         while (nextNoteTime.current < context.currentTime + SCHEDULE_AHEAD_TIME) {
-            tick(currentBeat.current, nextNoteTime.current);
+            const loopCompleted = tick(currentBeat.current, nextNoteTime.current);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
             nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+
+            // Leave one extra beat after the final exercise note so the last
+            // tablature position remains visible before the next loop begins.
+            if (loopCompleted)
+                nextNoteTime.current += secondsPerBeat;
+
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
                 currentBeat.current = 0;
@@ -50,6 +56,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
 
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {
+            let loopCompleted = false;
             if (exercise && pattern.length) {
                 const position = pattern[exerciseStep.current % pattern.length];
                 if (position) {
@@ -65,6 +72,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                     }
                 }
                 exerciseStep.current = (exerciseStep.current + 1) % pattern.length;
+                loopCompleted = exerciseStep.current === 0;
             }
 
             // Audio is scheduled ahead; update the visible beat when that note
@@ -78,7 +86,10 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 }));
                 setBeat(prevBeat => prevBeat + 1);
             }, delay);
+            return loopCompleted;
         }
+
+        return false;
     };
 
     const start = () => {
