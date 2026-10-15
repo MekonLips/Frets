@@ -209,3 +209,42 @@
   .legacy-range-blur-left { left: 0; width: var(--blur-edge); }
   .legacy-range-blur-right { right: 0; width: var(--blur-edge); }
 }
+
+@layer components {
+  .legacy-grid {
+    @apply grid h-full w-full;
+    background: linear-gradient(180deg, rgb(0 0 0 / 60%) 0%, transparent 20%, transparent 80%, rgb(0 0 0 / 60%) 100%);
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+  .legacy-grid > div { @apply flex p-4; }
+  .legacy-grid > div:nth-child(1) {
+    z-index: var(--grid-z);
+    @apply flex-col;
+  }
+  .legacy-grid > div:nth-child(1) button { @apply h-[3.4rem] w-[3.4rem] rounded-full; }
+  .legacy-grid > div:nth-child(2) {
+    z-index: var(--grid-z);
+    @apply flex-row items-start justify-between;
+  }
+  .legacy-grid > div:nth-child(2) > label {
+    @apply mb-2 flex w-full items-center justify-center;
+  }
+  .legacy-grid > div:nth-child(2) > div:first-child { @apply grow; }
+  .legacy-grid > div:nth-child(2) > div:last-child { white-space: nowrap; }
+  .legacy-grid > div:nth-child(3) {
+    z-index: var(--grid-z);
+    @apply flex-col items-start justify-start;
+  }
+  .legacy-grid > div:nth-child(3) > p,
+  .legacy-grid > div:nth-child(3) > label {
+    @apply mb-2 flex w-full items-center justify-end;
+  }
+  .legacy-grid > div:nth-child(4) {
+    height: var(--grid-board-height);
+    @apply col-start-1 col-end-4 row-start-2 row-end-3 items-center justify-center p-0;
+  }
+  .legacy-grid > div:nth-child(5) { z-index: var(--grid-z); @apply flex-row items-end justify-start; }
+  .legacy-grid > div:nth-child(6) { z-index: var(--grid-z); @apply flex-col items-start justify-start; }
+  .legacy-grid > div:nth-child(7) { z-index: var(--grid-z); @apply items-end justify-end; }
+}
