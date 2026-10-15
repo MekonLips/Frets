@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { startFretAtom } from '../../../recoil/frets.recoil';
-import { Select } from '../../../styles/form.styles';
 import { NOTES_NUM } from '../../../config/frets.config';
 
 const RangeSelector = () => {
