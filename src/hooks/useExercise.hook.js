@@ -21,17 +21,20 @@ export const useExercise = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedInstrumentId);
     const start = useFretsStore(state => state.startFret);
+    const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
 
-    const createSequence = useCallback(() =>
+    const createSequence = useCallback((accidentalsOverride) => {
+        const exerciseNumber = parseInt(exercise);
+        const accidentals = exerciseNumber === 3
+            ? true
+            : (exerciseNumber === 4 || exerciseNumber === 5)
+                ? (accidentalsOverride ?? useAccidentals) ? null : false
+                : false;
         worker.postMessage({
             type: SEQUENCE,
-            payload: {
-                exercise,
-                strings: instrument.strings,
-                start,
-                accidentals: parseInt(exercise) === 3,
-            },
-        }), [exercise, instrument.strings, start]);
+            payload: { exercise, strings: instrument.strings, start, accidentals },
+        });
+    }, [exercise, instrument.strings, start, useAccidentals]);
 
     const createNotes = useCallback(() =>
         worker.postMessage({

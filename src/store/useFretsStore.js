@@ -14,6 +14,12 @@ export const useFretsStore = create(persist((set) => ({
   selectedNotesModeIndex: 1,
   sessionRemaining: SESSION_MS,
   timerRunning: false,
+  tempoBpm: 40,
+  exerciseAccidentals: {},
+  sequence: [],
+  pattern: [],
+  stage: 1,
+  beat: 0,
   exercises: {},
   setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, timerRunning: false }),
   setStartFret: (startFret) => set({ startFret }),
@@ -55,6 +61,12 @@ export const useFretsStore = create(persist((set) => ({
     return { exercises: { ...state.exercises, [key]: { ...current, beat: nextBeat } } };
   }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
+  setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
+  setExerciseAccidentals: (exercise, enabled) => set((state) => ({ exerciseAccidentals: { ...state.exerciseAccidentals, [String(exercise)]: enabled } })),
+  setSequence: (sequence) => set({ sequence, stage: 1, beat: 0 }),
+  setPattern: (pattern) => set({ pattern }),
+  setStage: (stage) => set((state) => ({ stage: typeof stage === 'function' ? stage(state.stage) : stage })),
+  setBeat: (beat) => set((state) => ({ beat: typeof beat === 'function' ? beat(state.beat) : beat })),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
   resetSession: () => set({ sessionRemaining: SESSION_MS, timerRunning: false }),
 }), {
@@ -64,6 +76,8 @@ export const useFretsStore = create(persist((set) => ({
     selectedInstrumentId: state.selectedInstrumentId,
     startFret: state.startFret,
     showRange: state.showRange,
+    tempoBpm: state.tempoBpm,
+    exerciseAccidentals: state.exerciseAccidentals,
   }),
 }));
 

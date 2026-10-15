@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { EXERCISES, NOTES, getNoteFrequency, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
@@ -129,11 +129,12 @@ function ExercisePanel({ exercise }) {
   const instrumentId = useFretsStore((state) => state.selectedInstrumentId);
   const startFret = useFretsStore((state) => state.startFret);
   const instrument = getSelectedInstrument(instrumentId);
+  const [useAccidentals, setUseAccidentals] = useState(false);
   const refresh = useCallback(() => {
-    const next = getSequence(exercise);
+    const next = getSequence(exercise, useAccidentals);
     setSequence(next);
     setPattern(getPattern(next, instrument.strings, startFret));
-  }, [exercise, instrumentId, startFret]);
+  }, [exercise, instrumentId, startFret, useAccidentals]);
   useEffect(() => { refresh(); }, [refresh]);
   useEffect(() => { setPattern(getPattern(sequence, instrument.strings, startFret)); }, [sequence, instrumentId, startFret]);
   const current = sequence[Math.max(0, stage - 1)];
@@ -145,6 +146,10 @@ function ExercisePanel({ exercise }) {
     {exercise !== 6 && <div className="flex flex-wrap gap-2">
       {sequence.map((idx, index) => <button key={`${idx}-${index}`} onClick={() => setStage(index + 1)} className={`button min-w-10 ${index + 1 === stage ? 'button-primary' : ''}`}>{NOTES[idx]}</button>)}
     </div>}
+    {(exercise === 4 || exercise === 5) && <label className="flex items-center gap-2 text-sm text-neutral-300">
+      <input type="checkbox" checked={useAccidentals} onChange={(event) => setUseAccidentals(event.target.checked)} />
+      Use accidentals?
+    </label>}
     {exercise !== 6 && <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3">
       <button className="button gap-1" disabled={stage <= 1} onClick={() => setStage(Math.max(1, stage - 1))}><ChevronLeft size={16} /> Previous</button>
       <p className="text-sm text-neutral-300">Current note: <strong className="text-amber-300">{current === undefined ? '—' : NOTES[current]}</strong></p>
@@ -182,7 +187,8 @@ function PracticeTimer({ exercise }) {
   const setRemaining = useFretsStore((state) => state.setSessionRemaining);
   const setRunning = useFretsStore((state) => state.setTimerRunning);
   const resetSession = useFretsStore((state) => state.resetSession);
-  const tempo = 120;
+  const tempo = useFretsStore((state) => state.tempoBpm);
+  const setTempo = useFretsStore((state) => state.setTempoBpm);
   const setBeat = useFretsStore((state) => state.setBeat);
   useEffect(() => {
     if (!running) return undefined;
@@ -252,8 +258,16 @@ function PracticeTimer({ exercise }) {
   return <section className="panel space-y-4">
     <div className="flex items-center justify-between"><h2 className="eyebrow">Practice session</h2><span className="rounded-full bg-white/5 px-3 py-1 text-xs text-neutral-300">5 minutes</span></div>
     <div className="text-center"><p className="font-mono text-4xl font-semibold tabular-nums">{formatTime(remaining)}</p><p className="mt-1 text-xs text-neutral-400">{remaining === 0 ? 'Session complete' : running ? 'Session in progress' : 'Ready when you are'}</p></div>
-    <div className="flex gap-2"><button className="button button-primary flex-1 gap-2" onClick={() => setRunning(!running)}>{running ? <Pause size={16} /> : <Play size={16} />}{running ? 'Pause' : 'Start'}</button><button className="button gap-2" onClick={() => { resetSession(); setBeat(0); }}><RotateCcw size={16} /> Reset</button></div>
-    {exercise && <p className="text-xs leading-5 text-neutral-500">Metronome: {tempo} BPM. Start the session to begin the beat.</p>}
+    <div className="flex flex-wrap items-end gap-3">
+      <label className="min-w-[200px] flex-1 space-y-2">
+        <span className="flex items-center justify-between text-sm text-neutral-300"><span>Tempo</span><strong className="font-mono text-amber-300">{tempo} BPM</strong></span>
+        <input aria-label="Tempo in beats per minute" className="w-full accent-amber-400" type="range" min="40" max="200" step="1" value={tempo} onChange={(event) => setTempo(Number(event.target.value))} />
+        <span className="flex justify-between text-xs text-neutral-500"><span>40 BPM</span><span>200 BPM</span></span>
+      </label>
+      <button className="button button-primary flex-1 gap-2" onClick={() => setRunning(!running)}>{running ? <Pause size={16} /> : <Play size={16} />}{running ? 'Pause' : 'Start'}</button>
+      <button className="button gap-2" onClick={() => { resetSession(); setBeat(0); }}><RotateCcw size={16} /> Reset</button>
+    </div>
+    {exercise && <p className="text-xs leading-5 text-neutral-500">Start the session to practise at the selected tempo.</p>}
   </section>;
 }
 
@@ -270,14 +284,14 @@ function ExercisePage({ exercise }) {
 export default function App() {
   const exercise = useExerciseRoute();
   const location = useLocation();
-  const navigate = useNavigate();
+  const history = useHistory();
   const showNav = useFretsStore((state) => state.showNav);
   const setShowNav = useFretsStore((state) => state.setShowNav);
   useEffect(() => {
     const match = location.pathname.match(/^\/exercises\/(\d+)\/?$/);
-    if (location.pathname !== '/' && !match) navigate('/', { replace: true });
+    if (location.pathname !== '/' && !match) history.replace('/');
     if (match && (Number(match[1]) < 1 || Number(match[1]) > 6)) navigate('/', { replace: true });
-  }, [location.pathname, navigate]);
+  }, [location.pathname, history]);
   return <main className="app-shell">
     <Header exercise={exercise} showNav={showNav} onMenu={() => setShowNav(!showNav)} />
     <Navigation open={showNav} onClose={() => setShowNav(false)} />

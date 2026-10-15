@@ -43,4 +43,16 @@ describe('fretboard note helpers', () => {
     expect(accidentals.every((note) => ACCIDENTAL_NOTE_INDICES.includes(note))).toBe(true);
     expect(NOTES).toHaveLength(12);
   });
+
+  it('lets exercises 4 and 5 include or exclude accidentals', () => {
+    for (const exercise of [4, 5]) {
+      const naturalsOnly = getSequence(exercise, false);
+      expect(naturalsOnly).toHaveLength(NATURAL_NOTE_INDICES.length);
+      expect(naturalsOnly.every((note) => NATURAL_NOTE_INDICES.includes(note))).toBe(true);
+
+      const allNotes = getSequence(exercise, true);
+      expect(allNotes).toHaveLength(NOTES.length);
+      expect(allNotes).toEqual(expect.arrayContaining([...NATURAL_NOTE_INDICES, ...ACCIDENTAL_NOTE_INDICES]));
+    }
+  });
 });

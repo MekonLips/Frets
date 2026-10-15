@@ -1,5 +1,5 @@
 // music theory
-export const NOTES = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+export const NOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 
 export const NATURALS = [0,2,3,5,7,8,10];
 
@@ -47,7 +47,6 @@ export const EXERCISE_INSTRUCTIONS = [
         'continue until pattern completed or until timer runs out',
     ],
     [
-        'accidentals optional',
         'play note 1 up then note 2 down then loop',
         'continue until feels easy or until timer runs out',
     ],

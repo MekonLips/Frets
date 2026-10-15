@@ -287,3 +287,39 @@
   .legacy-form-select option { color: white; background-color: rgb(0 0 0 / 50%); }
   .legacy-form-button { @apply cursor-pointer border border-white text-white; margin: 0 0.5vw; padding: 1vh 1vw; background-color: transparent; font-size: 1.2rem; }
 }
+
+/* Practice additions use the existing legacy controls rather than a new page layout. */
+@layer components {
+  .legacy-practice-controls {
+    @apply flex flex-col items-start gap-2;
+    white-space: nowrap;
+  }
+  .legacy-practice-controls label {
+    @apply flex items-center gap-2 text-sm;
+  }
+  .legacy-practice-controls input[type="range"] {
+    width: 9rem;
+    accent-color: orange;
+  }
+  .legacy-practice-controls input[type="checkbox"] {
+    accent-color: orange;
+  }
+}
+
+
+@layer components {
+  .legacy-accidentals-toggle {
+    @apply my-2 flex items-center justify-start gap-2 text-sm;
+  }
+  .legacy-accidentals-toggle input[type="checkbox"] {
+    order: 2;
+    accent-color: orange;
+  }
+}
+
+
+@layer components {
+  .legacy-tempo-control {
+    margin-bottom: 0.75rem;
+  }
+}
