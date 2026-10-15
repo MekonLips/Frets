@@ -96,7 +96,7 @@
 @layer components {
   .legacy-notes {
     @apply absolute left-0 top-0 grid h-full w-screen;
-    min-height: var(--string-count);
+    min-height: var(--notes-min-height);
     grid-template-columns: var(--grid-columns);
     grid-template-rows: repeat(var(--string-count), minmax(0, 1fr));
   }
@@ -184,13 +184,11 @@
     background-color: var(--dot-bg);
   }
   .legacy-fret-marker::before { display: none; }
-  .legacy-fret-marker[style*="--fret-index: 12"]::before,
-  .legacy-fret-marker[style*="--fret-index: 24"]::before {
+  .legacy-fret-double-marker::before {
     top: calc(33.3333333333% - 0.5rem);
     display: block;
   }
-  .legacy-fret-marker[style*="--fret-index: 12"]::after,
-  .legacy-fret-marker[style*="--fret-index: 24"]::after { top: calc(66.6666666666% - 0.5rem); }
+  .legacy-fret-double-marker::after { top: calc(66.6666666666% - 0.5rem); }
   .legacy-range { @apply pointer-events-none absolute left-0 top-0 h-screen w-screen; z-index: var(--range-z); }
   .legacy-range-focus {
     @apply absolute top-0 h-screen opacity-0 transition-all duration-300;
