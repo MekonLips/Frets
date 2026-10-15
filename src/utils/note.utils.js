@@ -24,22 +24,28 @@ export const getAccidentalIdxs = () => getNoteIdxs().reduce((arr, note, idx) => 
 export const getNotesFromIdxs = arr => arr.map(idx => getNoteByIdx(idx));
 
 const NATURAL_NOTE_ORDER = [3, 5, 7, 8, 10, 0, 2];
+const ACCIDENTAL_NOTE_ORDER = [4, 6, 9, 11, 1];
 const CHROMATIC_NOTE_ORDER = [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2];
 
 export const getRandomNoteSequence = ({ exercise, accidentals = null, length = null, shuffle = false } = {}) => {
+    const exerciseNumber = Number(exercise);
     const sequence = [];
-    if (exercise === '4' || exercise === 4) {
-        sequence.push(...(accidentals === false ? NATURAL_NOTE_ORDER : CHROMATIC_NOTE_ORDER));
-        if (shuffle) arrayShuffle(sequence);
+
+    if (exerciseNumber === 3 || accidentals === true) {
+        // Exercise 3 uses accidentals only; other accidental-enabled exercises
+        // use the full chromatic sequence.
+        sequence.push(...(exerciseNumber === 3 ? ACCIDENTAL_NOTE_ORDER : CHROMATIC_NOTE_ORDER));
+    } else if (accidentals === false) {
+        sequence.push(...NATURAL_NOTE_ORDER);
     } else {
-        if (accidentals === false)
-            sequence.push(...getNaturalIdxs());
-        else if (accidentals === true)
-            sequence.push(...getAccidentalIdxs());
-        else
-            sequence.push(...getNoteIdxs());
-        arrayShuffle(sequence);
+        sequence.push(...CHROMATIC_NOTE_ORDER);
     }
+
+    // Exercise 5 is the only exercise that starts randomized. Other exercises
+    // follow the musical order unless the user explicitly presses Shuffle.
+    if (exerciseNumber === 5 || shuffle)
+        arrayShuffle(sequence);
+
     if (length)
         sequence.splice(0, sequence.length - length);
     return sequence;
