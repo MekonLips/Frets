@@ -5,7 +5,6 @@ import { RecoilRoot } from 'recoil';
 import App from './App.js';
 import 'normalize.css';
 import './index.css';
-import './index.scss';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
