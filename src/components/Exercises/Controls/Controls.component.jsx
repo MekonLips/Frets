@@ -18,7 +18,7 @@ const ControlsComponent = () => {
     const setExerciseAccidentals = useFretsStore(state => state.setExerciseAccidentals);
     const { createSequence } = useExercise();
 
-    if (!isExercise || exerciseNumber === EXERCISES_NUM) return null;
+    if (isExercise && exerciseNumber === EXERCISES_NUM) return null;
 
     return <>
         <div className="legacy-practice-controls">
@@ -47,8 +47,10 @@ const ControlsComponent = () => {
                 Use accidentals?
             </label>}
         </div>
-        <TimerToggleButton>{!timerRunning ? 'Start timer' : 'Pause timer'}</TimerToggleButton>
-        <ExerciseRefreshButton>Shuffle notes</ExerciseRefreshButton>
+        {isExercise && <>
+            <TimerToggleButton>{!timerRunning ? 'Start timer' : 'Pause timer'}</TimerToggleButton>
+            <ExerciseRefreshButton>Shuffle notes</ExerciseRefreshButton>
+        </>}
     </>;
 };
 
