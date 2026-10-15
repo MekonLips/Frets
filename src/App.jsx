@@ -11,7 +11,7 @@ const formatTime = (ms) => {
 
 function useExerciseRoute() {
   const { pathname } = useLocation();
-  const match = pathname.match(/^\\/exercises\\/(\\d+)\\/?$/);
+  const match = pathname.match(/^\/exercises\/(\d+)\/?$/);
   if (!match) return null;
   const exercise = Number(match[1]);
   return Number.isInteger(exercise) && exercise >= 1 && exercise <= 6 ? exercise : null;
