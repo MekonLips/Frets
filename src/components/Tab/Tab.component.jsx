@@ -12,6 +12,11 @@ const TabComponent = () => {
     const exerciseState = useFretsStore(state => state.exercises[String(exercise ?? '')]);
     const stage = exerciseState?.stage ?? 1;
     const pattern = exerciseState?.pattern ?? [];
+    const beat = exerciseState?.beat ?? 0;
+    const running = useFretsStore(state => state.timerRunning);
+    const activeIndex = running && beat > 0 && pattern.length
+        ? (beat - 1) % pattern.length
+        : -1;
     const start = useFretsStore(state => state.startFret);
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedId);
@@ -20,8 +25,9 @@ const TabComponent = () => {
     // Exercises 1-3 (and 6) show the current note's up/down pair. Exercises
     // 4/5 show the current and following note, with one string pass per note.
     const visibleStages = hasOnePassPerNote ? 2 : 1;
+    const sliceStart = (stage - 1) * notesPerStage;
     const slice = pattern.slice(
-        (stage - 1) * notesPerStage,
+        sliceStart,
         (stage - 1 + visibleStages) * notesPerStage
     );
     const createHeader = value => value.strings.map((noteIdx, idx) => <pre key={`Tab/Header/${idx}`}>{pad(getNoteByIdx(noteIdx), ' ', 3)}</pre>);
@@ -29,17 +35,26 @@ const TabComponent = () => {
         arr.push(<pre key={`Tab/Break/${idx + 1}`}>|-</pre>);
         return arr;
     }, [<pre key="Tab/Break/0">{pad(selectedNote, ' ', 2)}</pre>]);
-    const createLine = (line, string, fret) => {
+    const createLine = (line, string, fret, isActive) => {
+        const position = (string - 1) * 3 + 1;
+        const width = fret < 10 ? 1 : 2;
         const template = new Array(20).fill('-');
-        template.splice((string - 1) * 3 + 1, fret < 10 ? 1 : 2, fret);
-        return <pre key={`Tab/Line/${line}/String/${string}/Fret/${fret}`}>{template.join('')}</pre>;
+        template.splice(position, width, fret);
+        if (!isActive)
+            return <pre key={`Tab/Line/${line}/String/${string}/Fret/${fret}`}>{template.join('')}</pre>;
+        return <pre key={`Tab/Line/${line}/String/${string}/Fret/${fret}`}>{template.slice(0, position).join('')}<span style={{ color: 'rgba(32,128,32,1)', fontWeight: 'bold' }}>{fret}</span>{template.slice(position + 1).join('')}</pre>;
     };
-    const createTab = (valuePattern, valueInstrument) => {
+    const createTab = (valuePattern, valueInstrument, patternOffset) => {
         const sections = [];
         for (let i = 0; i < valuePattern.length; i += valueInstrument.strings.length) {
             const strings = [];
             for (let j = i; j < i + valueInstrument.strings.length; j++) {
-                if (valuePattern[j]) strings.push(createLine(j, valuePattern[j].string, valuePattern[j].fret));
+                if (valuePattern[j]) strings.push(createLine(
+                    j,
+                    valuePattern[j].string,
+                    valuePattern[j].fret,
+                    patternOffset + j === activeIndex
+                ));
             }
             if (valuePattern[i]) {
                 sections.push(<div className="legacy-tab-break" key={`Tab/Breaks/${i}`}>{createBreak(getNoteByIdx(valuePattern[i].noteIdx), valueInstrument)}</div>);
@@ -53,7 +68,7 @@ const TabComponent = () => {
             <div className="legacy-tab-content">
                 <div className="legacy-tab">
                     <div className="legacy-tab-header">{createHeader(instrument)}</div>
-                    {createTab(slice, instrument)}
+                    {createTab(slice, instrument, sliceStart)}
                 </div>
             </div>
         </div>;
