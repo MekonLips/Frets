@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body, #root { height: 100%; }
+  body { margin: 0; font-family: 'Open Sans', 'Helvetica Neue', sans-serif; color: white; background-color: #1a1a1a; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  code { font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace; }
+  #root { width: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow: hidden; }
+}
+
 @layer components {
   .app-shell { @apply min-h-screen w-full overflow-x-hidden bg-neutral-900 text-white; }
   .app-header { @apply flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 md:px-8; }
@@ -245,4 +253,30 @@
   .legacy-grid > div:nth-child(5) { z-index: var(--grid-z); @apply flex-row items-end justify-start; }
   .legacy-grid > div:nth-child(6) { z-index: var(--grid-z); @apply flex-col items-start justify-start; }
   .legacy-grid > div:nth-child(7) { z-index: var(--grid-z); @apply items-end justify-end; }
+}
+
+
+@layer components {
+  .legacy-nav-close-button { @apply absolute top-0 h-full w-12 cursor-pointer border-0 p-0 text-xl text-gray-400 transition-colors duration-200; right: calc(-3rem + 1px); background-color: rgb(0 0 0); box-shadow: -3px 0 6px 0 rgb(0 0 0 / 40%), 6px 0 12px 0 rgb(0 0 0 / 40%); display: none; }
+  .legacy-nav-close-button.is-visible { display: block; }
+  .legacy-nav-close-button:hover, .legacy-nav-close-button:focus, .legacy-nav-close-button:active { color: white; background-color: rgb(8 8 8); }
+  .legacy-nav-close-button:active { outline: 0; }
+  .legacy-sequence-container { @apply flex w-full items-center justify-between; }
+  .legacy-sequence { @apply flex w-full items-center justify-between; }
+  .legacy-sequence-note { @apply flex items-center justify-center px-4 text-white no-underline transition-colors duration-300; }
+  .legacy-sequence-note::before { content: ''; position: absolute; z-index: -1; width: 3rem; height: 3rem; border-radius: 50%; background-color: rgb(255 255 255 / 10%); transition: background-color 300ms; display: none; }
+  .legacy-sequence-note:hover::before, .legacy-sequence-note:focus::before, .legacy-sequence-note:active::before { display: block; }
+  .legacy-sequence-note.is-current { @apply relative text-white; }
+  .legacy-sequence-note.is-current::before { background-color: orange; display: block; cursor: default; }
+  .legacy-sequence-button { @apply flex h-12 w-16 items-center justify-center rounded-full border-0 p-0 text-3xl; margin: 0; background-color: transparent; }
+  .legacy-sequence-button:disabled { color: rgb(255 255 255 / 10%); background-color: transparent; }
+  .legacy-sequence-button:hover, .legacy-sequence-button:focus, .legacy-sequence-button:active { background-color: rgb(255 255 255 / 10%); }
+  .legacy-sequence-button:disabled:hover, .legacy-sequence-button:disabled:focus, .legacy-sequence-button:disabled:active { background-color: transparent; cursor: default; }
+  .legacy-sequence-button:first-child { margin-right: 2vw; }
+  .legacy-sequence-button:first-child > svg { transform: translateX(-0.2rem); }
+  .legacy-sequence-button:last-child { margin-left: 2vw; }
+  .legacy-sequence-button:last-child > svg { transform: translateX(0.2rem); }
+  .legacy-form-select { @apply cursor-pointer border-0 text-white; margin: 0 0.2vw; padding: 1vh 1vw; background-color: rgb(255 255 255 / 10%); font-size: 1.2rem; }
+  .legacy-form-select option { color: white; background-color: rgb(0 0 0 / 50%); }
+  .legacy-form-button { @apply cursor-pointer border border-white text-white; margin: 0 0.5vw; padding: 1vh 1vw; background-color: transparent; font-size: 1.2rem; }
 }
