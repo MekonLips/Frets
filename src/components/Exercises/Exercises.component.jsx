@@ -15,7 +15,7 @@ const ExercisesComponent = () => {
             createNotes();
             createPattern();
         }
-    }, [exercise, instrument.strings.length, start]);
+    }, [exercise, instrument, sequence, start]);
 
     return null;
 };
