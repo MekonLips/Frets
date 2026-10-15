@@ -47,7 +47,6 @@ export const EXERCISE_INSTRUCTIONS = [
         'continue until pattern completed or until timer runs out',
     ],
     [
-        'accidentals optional',
         'play note 1 up then note 2 down then loop',
         'continue until feels easy or until timer runs out',
     ],
