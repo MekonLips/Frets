@@ -28,7 +28,7 @@ export const useExercise = () => {
         const accidentals = exerciseNumber === 3
             ? true
             : (exerciseNumber === 4 || exerciseNumber === 5)
-                ? (accidentalsOverride ?? useAccidentals)
+                ? (accidentalsOverride ?? useAccidentals) ? null : false
                 : false;
         worker.postMessage({
             type: SEQUENCE,
