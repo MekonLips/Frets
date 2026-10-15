@@ -86,9 +86,14 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                     ...prevState,
                     beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
                 }));
-                setBeat(prevBeat => scheduledExerciseIndex === null
+                const nextExerciseBeat = scheduledExerciseIndex === null
+                    ? null
+                    : scheduledExerciseIndex + 1;
+                if (nextExerciseBeat !== null)
+                    setExerciseBeat(exercise, nextExerciseBeat);
+                setBeat(prevBeat => nextExerciseBeat === null
                     ? prevBeat + 1
-                    : scheduledExerciseIndex + 1);
+                    : nextExerciseBeat);
             }, delay);
             return loopCompleted;
         }
@@ -185,10 +190,6 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setBeatsPerMeasure(instrument.strings.length);
     }, [instrument.strings.length]);
-
-    useEffect(() => {
-        setExerciseBeat(exercise, beat);
-    }, [beat]);
 
     return { beat, running, stop, reset, skip };
 };
