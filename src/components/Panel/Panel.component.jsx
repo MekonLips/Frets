@@ -1,10 +1,10 @@
 import React from 'react';
-import { Panel } from './Panel.styled';
+import { Z_INDEX } from '../../config/frets.config';
   
 const PanelComponent = ({ children, show = false }) => {
-    return <Panel show={show}>
+    return <div className={`legacy-nav-panel ${show ? 'legacy-nav-panel-open' : 'legacy-nav-panel-closed'}`} style={{ zIndex: Z_INDEX.Panel }}>
         {children}
-    </Panel>
+    </div>
 };
 
 export default PanelComponent;
