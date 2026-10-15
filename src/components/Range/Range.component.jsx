@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router';
-import { useRecoilValue } from 'recoil';
 
-import { startFretAtom } from '../../recoil/frets.recoil';
+import { useFretsStore } from '../../store/useFretsStore';
 import { calcWidth } from '../../utils/grid.utils';
 import { Z_INDEX, NOTES_NUM, GRID_MARGIN, COLORS } from '../../config/frets.config';
 
