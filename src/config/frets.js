@@ -39,10 +39,10 @@ export const shuffle = (items) => {
   }
   return result;
 };
-export const getSequence = (exercise) => {
+export const getSequence = (exercise, useAccidentals = false) => {
   const notes = exercise === 3
     ? ACCIDENTAL_NOTE_INDICES
-    : exercise === 1 || exercise === 2
+    : exercise === 1 || exercise === 2 || ((exercise === 4 || exercise === 5) && !useAccidentals)
       ? NATURAL_NOTE_INDICES
       : NOTES.map((_, index) => index);
   return shuffle(notes);
