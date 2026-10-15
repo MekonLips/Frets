@@ -3,14 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 import NavOpenButton from '../OpenButton/OpenButton.component';
-import { Button } from './NavOpenButton.styled';
 
 export const OpenButton = () => {
-    return <Button>
+    return <div className="legacy-nav-icon-button-wrapper">
         <NavOpenButton>
             <FontAwesomeIcon icon={faBars} />
         </NavOpenButton>
-    </Button>
+    </div>
 };
 
 export default OpenButton;
