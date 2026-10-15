@@ -34,10 +34,17 @@ const MetronomeComponent = () => {
 
     useEffect(() => {
         if (lastBeat > 0 && beat >= lastBeat) {
-            reset();
-            setRunning(false);
+            if (Number(exercise) === 4) {
+                // Exercise 4 repeats the ordered note sequence until the timer stops.
+                setStage(exercise, 1);
+                skip(0);
+            } else {
+                // Exercises with a finite pattern stop after one pass.
+                reset();
+                setRunning(false);
+            }
         }
-    }, [beat, lastBeat, reset, setRunning]);
+    }, [beat, lastBeat, exercise, reset, skip, setRunning, setStage]);
 
     if (isExercise) return <p>{beat}</p>;
     return null;
