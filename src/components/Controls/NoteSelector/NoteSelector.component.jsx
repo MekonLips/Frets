@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { selectedNotesAtom, selectedNoteIdxAtom } from '../../../recoil/frets.recoil';
-import { Select } from '../../../styles/form.styles';
 import { NOTES, ACTIONS } from '../../../config/frets.config';
 
 const NoteSelector = ({ show = false }) => {
