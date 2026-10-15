@@ -11,7 +11,6 @@ export const useFretsStore = create(persist((set) => ({
   selectedNotesMode: 'single',
   sessionRemaining: SESSION_MS,
   timerRunning: false,
-  tempo: 120,
   beat: 0,
   stage: 1,
   sequence: [],
@@ -26,7 +25,6 @@ export const useFretsStore = create(persist((set) => ({
   setPattern: (pattern) => set({ pattern }),
   setStage: (stage) => set({ stage }),
   setBeat: (beat) => set((state) => ({ beat: typeof beat === 'function' ? beat(state.beat) : beat })),
-  setTempo: (tempo) => set({ tempo }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
   resetSession: () => set({ sessionRemaining: SESSION_MS, timerRunning: false, beat: 0, stage: 1 }),
@@ -37,7 +35,6 @@ export const useFretsStore = create(persist((set) => ({
     selectedInstrumentId: state.selectedInstrumentId,
     startFret: state.startFret,
     showRange: state.showRange,
-    tempo: state.tempo,
   }),
 }));
 
