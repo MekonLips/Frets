@@ -10,10 +10,10 @@ const RangeSelector = () => {
     const [ start, setStartFret ] = useRecoilState(startFretAtom);
     const changeHandler = e => setStartFret(parseInt(e.target.value));
     return <label>
-        <Select onChange={changeHandler} value={start}>
+        <select className="legacy-form-select" onChange={changeHandler} value={start}>
             {options.map((idx) =>
                 <option key={`RangeSelector/Option/${idx}`} value={idx}>Frets {idx} to {idx + NOTES_NUM - 1}</option>)}
-        </Select>
+        </select>
     </label>
 };
 
