@@ -136,3 +136,76 @@
     grid-column-end: var(--number-column);
   }
 }
+
+@layer components {
+  .legacy-frets {
+    @apply absolute left-0 top-0 grid w-screen;
+    z-index: var(--frets-z);
+    height: var(--frets-height);
+    min-height: var(--frets-min-height);
+    grid-template-columns: var(--frets-columns);
+    grid-template-rows: 1fr;
+  }
+  .legacy-fret {
+    @apply relative grid h-full items-center justify-center;
+    z-index: var(--fret-z);
+    grid-column-start: var(--fret-column);
+    box-shadow: inset 5px 0 5px 0 rgb(0 0 0 / 30%);
+    border-right: 3px solid var(--fret-border-light);
+    border-left: 3px solid var(--fret-border-dark);
+    background-color: var(--fret-bg);
+  }
+  .legacy-fret:nth-child(2) { box-shadow: inset 10px 0 10px 0 rgb(0 0 0 / 60%); }
+  .legacy-fret-first-real { padding-left: 3px; border-left: 0; }
+  .legacy-fret:first-child {
+    border: 0;
+    border-right: 2rem solid white;
+    background-color: var(--nut-bg);
+  }
+  .legacy-fret-last {
+    padding-right: 3px;
+    border-right: 0;
+    justify-content: start;
+    background-color: transparent;
+  }
+  .legacy-fret-last::after {
+    content: "";
+    @apply block h-full;
+    width: 2vw;
+    border-right: 2vw solid var(--neck-bg);
+    background-color: var(--fret-bg);
+  }
+  .legacy-fret-marker::before,
+  .legacy-fret-marker::after {
+    content: "";
+    @apply absolute block h-4 w-4 rounded-full;
+    top: calc(50% - 0.5rem);
+    left: calc(50% - 0.5rem);
+    background-color: var(--dot-bg);
+  }
+  .legacy-fret-marker::before { display: none; }
+  .legacy-fret-marker[style*="--fret-index: 12"]::before,
+  .legacy-fret-marker[style*="--fret-index: 24"]::before {
+    top: calc(33.3333333333% - 0.5rem);
+    display: block;
+  }
+  .legacy-fret-marker[style*="--fret-index: 12"]::after,
+  .legacy-fret-marker[style*="--fret-index: 24"]::after { top: calc(66.6666666666% - 0.5rem); }
+  .legacy-range { @apply pointer-events-none absolute left-0 top-0 h-screen w-screen; z-index: var(--range-z); }
+  .legacy-range-focus {
+    @apply absolute top-0 h-screen opacity-0 transition-all duration-300;
+    left: var(--focus-edge);
+    right: var(--focus-edge);
+    z-index: var(--focus-z);
+    background-color: var(--range-focus-bg);
+  }
+  .legacy-range-focus.is-visible,
+  .legacy-range-blur.is-visible { @apply opacity-100; }
+  .legacy-range-blur {
+    @apply absolute top-0 h-screen opacity-0 transition-all duration-300;
+    z-index: var(--blur-z);
+    backdrop-filter: blur(12px);
+  }
+  .legacy-range-blur-left { left: 0; width: var(--blur-edge); }
+  .legacy-range-blur-right { right: 0; width: var(--blur-edge); }
+}
