@@ -39,10 +39,14 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
             nextNoteTime.current = nextNoteTime.current + beatsPerMeasure / ticksPerBeat * secondsPerBeat;
 
-            // Leave one extra beat after the final exercise note so the last
-            // tablature position remains visible before the next loop begins.
+            // Anchor the loop pause to the end of the final note, not just
+            // to the scheduler's next tick. This prevents the next loop from
+            // starting while the final note is still sounding.
             if (loopCompleted)
-                nextNoteTime.current += secondsPerBeat * 2;
+                nextNoteTime.current = Math.max(
+                    nextNoteTime.current,
+                    time + 0.42 + secondsPerBeat * 2
+                );
 
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
