@@ -65,24 +65,24 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
         }
         if (state.subdivision === 3 && isTripletBeat) {
             playTick = true;
-            osc.frequency.setTargetAtTime(subdivisionFrequency.current, audioContext.current.currentTime, 0.001);
-            gainNode.gain.setTargetAtTime(subdivisionVolume, audioContext.current.currentTime, 0.001);
+            osc.frequency.setValueAtTime(900, time);
+            gainNode.gain.setValueAtTime(subdivisionVolume, time);
         }
         if (state.subdivision === 2 && isEighthBeat) {
             playTick = true;
-            osc.frequency.setTargetAtTime(subdivisionFrequency.current, audioContext.current.currentTime, 0.001);
-            gainNode.gain.setTargetAtTime(subdivisionVolume, audioContext.current.currentTime, 0.001);
+            osc.frequency.setValueAtTime(900, time);
+            gainNode.gain.setValueAtTime(subdivisionVolume, time);
         }
       
         if (isQuarterBeat) {
             playTick = true;
-            osc.frequency.setTargetAtTime(subdivisionFrequency.current, audioContext.current.currentTime, 0.001);
+            osc.frequency.setValueAtTime(900, time);
             gainNode.gain.setValueAtTime(beatVolume, time);
         }
         if (isFirstBeat) {
             playTick = true;
             osc.frequency.setValueAtTime(1400, time);
-            gainNode.gain.setTargetAtTime(beatVolume, audioContext.current.currentTime, 0.001);
+            gainNode.gain.setValueAtTime(beatVolume, time);
         }
 
         if (isFirstBeat || isQuarterBeat) {
