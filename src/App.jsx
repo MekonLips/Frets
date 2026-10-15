@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
-import { EXERCISES, FRETS, NOTES, SESSION_MS, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
+import { EXERCISES, NOTES, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
 
 const formatTime = (ms) => {
@@ -162,11 +162,11 @@ function PracticeTimer({ exercise }) {
   const setBeat = useFretsStore((state) => state.setBeat);
   useEffect(() => {
     if (!running) return undefined;
-    const started = Date.now();
+    const startedAt = Date.now();
+    const initialRemaining = useFretsStore.getState().sessionRemaining;
     const id = window.setInterval(() => {
-      const elapsed = Date.now() - started;
-      setRemaining((value) => Math.max(0, value - 1000));
-    }, 1000);
+      setRemaining(Math.max(0, initialRemaining - (Date.now() - startedAt)));
+    }, 200);
     return () => window.clearInterval(id);
   }, [running, setRemaining]);
   useEffect(() => {
@@ -205,9 +205,11 @@ function PracticeTimer({ exercise }) {
         }
         nextBeatAt += 60000 / tempo;
         const patternLength = useFretsStore.getState().pattern.length || 1;
-        if (useFretsStore.getState().beat % patternLength === 0) {
-          const count = useFretsStore.getState().sequence.length || 1;
-          useFretsStore.getState().setStage((Math.floor(useFretsStore.getState().beat / Math.max(1, patternLength / count)) % count) + 1);
+        const count = useFretsStore.getState().sequence.length || 1;
+        const beatsPerNote = Math.max(1, patternLength / count);
+        const currentBeat = useFretsStore.getState().beat;
+        if (currentBeat > 0 && currentBeat % beatsPerNote === 0) {
+          useFretsStore.getState().setStage(Math.min(count, Math.floor(currentBeat / beatsPerNote) + 1));
         }
       }
     };
@@ -224,7 +226,9 @@ function PracticeTimer({ exercise }) {
 }
 
 function FretboardHome() {
-  return <div className="space-y-5"><section className="panel"><p className="eyebrow">Fretboard</p><h1 className="mt-1 text-2xl font-semibold">Learn the notes. Build the habit.</h1><p className="mt-2 text-sm leading-6 text-neutral-300">Choose an instrument and fret range, then explore note positions or start one of the six guided exercises.</p></section><div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]"><section className="panel space-y-4"><h2 className="eyebrow">Note map</h2><Fretboard /><div className="flex flex-wrap gap-2">{NOTES.map((note, index) => <button key={note} className={`button min-w-10 ${useFretsStore.getState().selectedNoteIdx === index ? 'button-primary' : ''}`} onClick={() => useFretsStore.getState().setSelectedNote(useFretsStore.getState().selectedNoteIdx === index ? null : index)}>{note}</button>)}</div></section><Preferences /></div></div>;
+  const selectedNoteIdx = useFretsStore((state) => state.selectedNoteIdx);
+  const setSelectedNote = useFretsStore((state) => state.setSelectedNote);
+  return <div className="space-y-5"><section className="panel"><p className="eyebrow">Fretboard</p><h1 className="mt-1 text-2xl font-semibold">Learn the notes. Build the habit.</h1><p className="mt-2 text-sm leading-6 text-neutral-300">Choose an instrument and fret range, then explore note positions or start one of the six guided exercises.</p></section><div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]"><section className="panel space-y-4"><h2 className="eyebrow">Note map</h2><Fretboard /><div className="flex flex-wrap gap-2">{NOTES.map((note, index) => <button key={note} className={`button min-w-10 ${selectedNoteIdx === index ? 'button-primary' : ''}`} onClick={() => setSelectedNote(selectedNoteIdx === index ? null : index)}>{note}</button>)}</div></section><Preferences /></div></div>;
 }
 
 function ExercisePage({ exercise }) {
