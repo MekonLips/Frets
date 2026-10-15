@@ -5,12 +5,12 @@ export const FRETS = 24;
 export const START_FRET = 1;
 export const SESSION_MS = 5 * 60 * 1000;
 
-// MIDI note numbers are ordered to match each instrument's existing string indices.
-// Guitar: low to high E2 A2 D3 G3 B3 E4; bass: G2 D2 A1 E1 (display order).
+// Open-string MIDI pitches follow the fretboard's displayed row order (top to bottom).
+// Guitar rows are high-to-low E4 B3 G3 D3 A2 E2; bass rows are G2 D2 A1 E1.
 export const INSTRUMENTS = [
-  { id: 1, name: '6 String Guitar Standard', strings: [7, 2, 10, 5, 0, 7], openStringMidi: [40, 45, 50, 55, 59, 64] },
-  { id: 2, name: '6 String Guitar Eb', strings: [6, 1, 9, 4, 11, 6], openStringMidi: [39, 44, 49, 54, 58, 63] },
-  { id: 3, name: '6 String Guitar Open D', strings: [5, 0, 9, 5, 0, 5], openStringMidi: [38, 45, 50, 54, 57, 62] },
+  { id: 1, name: '6 String Guitar Standard', strings: [7, 2, 10, 5, 0, 7], openStringMidi: [64, 59, 55, 50, 45, 40] },
+  { id: 2, name: '6 String Guitar Eb', strings: [6, 1, 9, 4, 11, 6], openStringMidi: [63, 58, 54, 49, 44, 39] },
+  { id: 3, name: '6 String Guitar Open D', strings: [5, 0, 9, 5, 0, 5], openStringMidi: [62, 57, 54, 50, 45, 38] },
   { id: 4, name: '4 String Bass Standard', strings: [10, 5, 0, 7], openStringMidi: [43, 38, 33, 28] },
   { id: 5, name: '4 String Bass Eb', strings: [9, 4, 11, 6], openStringMidi: [42, 37, 32, 27] },
 ];
@@ -33,7 +33,7 @@ export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => 
 };
 export const shuffle = (items) => {
   const result = [...items];
-  for (let i = result.length - 1; i > 0; i -= 1) {
+  for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
