@@ -13,8 +13,8 @@ export const useExercise = () => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
     const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_ARRAY);
-    const notes = useFretsStore(state => state.exercises[String(exercise ?? '')]?.notes ?? []);
-    const pattern = useFretsStore(state => state.exercises[String(exercise ?? '')]?.pattern ?? []);
+    const notes = useFretsStore(state => state.exercises[String(exercise ?? '')]?.notes ?? EMPTY_ARRAY);
+    const pattern = useFretsStore(state => state.exercises[String(exercise ?? '')]?.pattern ?? EMPTY_ARRAY);
     const setSequence = useFretsStore(state => state.setExerciseSequence);
     const setNotes = useFretsStore(state => state.setExerciseNotes);
     const setPattern = useFretsStore(state => state.setExercisePattern);
