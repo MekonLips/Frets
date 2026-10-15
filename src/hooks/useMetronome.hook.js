@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { exerciseSubdivisionFrequencySelector, exerciseStageAtom, exerciseSequenceAtom, exerciseBeatAtom, timerRunningAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../recoil/frets.recoil';
+import { exerciseStageAtom, exerciseSequenceAtom, exerciseBeatAtom, timerRunningAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../recoil/frets.recoil';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
 import { getNoteFrequency } from '../utils/note.utils';
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
