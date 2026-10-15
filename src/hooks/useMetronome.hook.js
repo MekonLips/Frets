@@ -42,7 +42,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             // Leave one extra beat after the final exercise note so the last
             // tablature position remains visible before the next loop begins.
             if (loopCompleted)
-                nextNoteTime.current += secondsPerBeat;
+                nextNoteTime.current += secondsPerBeat * 2;
 
             currentBeat.current = currentBeat.current + 1;
             if (currentBeat.current === ticksPerBeat)
@@ -57,8 +57,10 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {
             let loopCompleted = false;
+            let scheduledExerciseIndex = null;
             if (exercise && pattern.length) {
-                const position = pattern[exerciseStep.current % pattern.length];
+                scheduledExerciseIndex = exerciseStep.current % pattern.length;
+                const position = pattern[scheduledExerciseIndex];
                 if (position) {
                     try {
                         playPluckedNote(getMidiPitch(instrument, position.string, position.fret), {
@@ -84,7 +86,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                     ...prevState,
                     beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
                 }));
-                setBeat(prevBeat => prevBeat + 1);
+                setBeat(prevBeat => scheduledExerciseIndex === null
+                    ? prevBeat + 1
+                    : scheduledExerciseIndex + 1);
             }, delay);
             return loopCompleted;
         }
