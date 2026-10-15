@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { useRecoilValue } from 'recoil';
 
 import { exerciseStageAtom, exercisePatternAtom, startFretAtom, endFretAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../../recoil/frets.recoil';
-import { Container, Content, Tab, Header, Break, Strings } from './Tab.styled';
+
 import { getNoteByIdx } from '../../utils/note.utils';
 import { pad } from '../../utils/string.utils';
 import { EXERCISES_NUM } from '../../config/frets.config';
@@ -35,8 +35,8 @@ const TabComponent = () => {
             for (let j = i; j < i + instrument.strings.length; j++) {
                 strings.push(createLine(j, pattern[j].string, pattern[j].fret));
             }
-            sections.push(<Break key={`Tab/Breaks/${i}`}>{createBreak(getNoteByIdx(pattern[i].noteIdx), instrument)}</Break>);
-            sections.push(<Strings key={`Tab/Strings/${i}`}>{strings}</Strings>);
+            sections.push(<div className="legacy-tab-break" key={`Tab/Breaks/${i}`}>{createBreak(getNoteByIdx(pattern[i].noteIdx), instrument)}</div>);
+            sections.push(<div className="legacy-tab-strings" key={`Tab/Strings/${i}`}>{strings}</div>);
         }
         return sections;
     };
