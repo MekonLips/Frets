@@ -107,6 +107,7 @@ export const getExercisePattern = ({ exercise, noteIdxs, strings, start = 1 }) =
             }, []));
             break;
         case 5:
+        case 6:
             // play all notes
             // alternate playing up and down
             // pattern.push(...noteIdxs.reduce((arr, noteIdx, idx) => {
