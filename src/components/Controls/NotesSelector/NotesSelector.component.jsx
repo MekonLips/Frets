@@ -1,12 +1,12 @@
 import React from 'react';
-import { useRecoilState } from 'recoil';
-import { selectedNotesAtom } from '../../../recoil/frets.recoil';
+import { useFretsStore } from '../../../store/useFretsStore';
 import { ACTIONS } from '../../../config/frets.config';
 
 const { NOTE, NATURALS, ACCIDENTALS } = ACTIONS.NOTES;
 
 const NotesSelector = () => {
-    const [ selected, setSelected ] = useRecoilState(selectedNotesAtom);
+    const selected = useFretsStore(state => state.selectedNotesModeIndex ?? 0);
+    const setSelected = useFretsStore(state => state.setSelectedNotesMode);
     const changeHandler = e => setSelected(parseInt(e.target.value));
     return <label>
         <select className="legacy-form-select" onChange={changeHandler} value={selected}>
