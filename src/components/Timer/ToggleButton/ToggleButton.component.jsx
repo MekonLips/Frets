@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { Play, Pause } from 'lucide-react';
 
 import { useFretsStore } from '../../../store/useFretsStore';
 
@@ -12,7 +11,7 @@ const ToggleButton = ({ children, show = true }) => {
     const setTimerRunning = useFretsStore(state => state.setTimerRunning);
     const clickHandler = () => setTimerRunning(!timerRunning);
     if (isExercise && show)
-        return <button onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={timerRunning ? faPause : faPlay} />}</button>;
+        return <button onClick={clickHandler}>{children ? children : timerRunning ? <Pause size={16} /> : <Play size={16} />}</button>;
     return null;
 };
 
