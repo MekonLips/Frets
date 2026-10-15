@@ -168,7 +168,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivis
 
     useEffect(() => {
         worker.onerror = onerror;
-        return () => worker.terminate();
+        // Keep the module-level worker alive across React StrictMode's development
+        // effect cleanup/re-run cycle. It is shared for the lifetime of this app.
     }, [worker]);
 
     useEffect(() => {
