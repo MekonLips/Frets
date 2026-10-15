@@ -208,6 +208,11 @@ function PracticeTimer({ exercise }) {
         const count = useFretsStore.getState().sequence.length || 1;
         const beatsPerNote = Math.max(1, patternLength / count);
         const currentBeat = useFretsStore.getState().beat;
+        if (currentBeat >= patternLength) {
+          useFretsStore.getState().setBeat(0);
+          useFretsStore.getState().setTimerRunning(false);
+          return;
+        }
         if (currentBeat > 0 && currentBeat % beatsPerNote === 0) {
           useFretsStore.getState().setStage(Math.min(count, Math.floor(currentBeat / beatsPerNote) + 1));
         }
@@ -216,6 +221,9 @@ function PracticeTimer({ exercise }) {
     const id = window.setInterval(playBeat, 20);
     return () => { cancelled = true; window.clearInterval(id); };
   }, [running, exercise, tempo, setBeat]);
+  useEffect(() => () => {
+    if (audioContext.current && audioContext.current.state !== 'closed') audioContext.current.close();
+  }, []);
   return <section className="panel space-y-4">
     <div className="flex items-center justify-between"><h2 className="eyebrow">Practice session</h2><span className="rounded-full bg-white/5 px-3 py-1 text-xs text-neutral-300">5 minutes</span></div>
     <div className="text-center"><p className="font-mono text-4xl font-semibold tabular-nums">{formatTime(remaining)}</p><p className="mt-1 text-xs text-neutral-400">{remaining === 0 ? 'Session complete' : running ? 'Session in progress' : 'Ready when you are'}</p></div>
