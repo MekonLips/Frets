@@ -14,7 +14,7 @@ const ControlsComponent = () => {
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const setTempoBpm = useFretsStore(state => state.setTempoBpm);
 
-    if (isExercise && exerciseNumber === EXERCISES_NUM) return null;
+    if (!isExercise || exerciseNumber === EXERCISES_NUM) return null;
 
     return <>
         <div className="legacy-practice-controls">
@@ -32,10 +32,8 @@ const ControlsComponent = () => {
                 <strong>{tempoBpm} BPM</strong>
             </label>
         </div>
-        {isExercise && <>
-            <TimerToggleButton>{!timerRunning ? 'Start timer' : 'Pause timer'}</TimerToggleButton>
-            <ExerciseRefreshButton>Shuffle notes</ExerciseRefreshButton>
-        </>}
+        <TimerToggleButton>{!timerRunning ? 'Start timer' : 'Pause timer'}</TimerToggleButton>
+        <ExerciseRefreshButton>Shuffle notes</ExerciseRefreshButton>
     </>;
 };
 

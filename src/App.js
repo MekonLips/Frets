@@ -1,6 +1,7 @@
-import React from 'react';
-import { Route } from 'react-router';
+import React, { useEffect } from 'react';
+import { Route, useLocation } from 'react-router';
 
+import { useFretsStore } from './store/useFretsStore';
 import Overlay from './components/Overlay/Overlay.component';
 import Nav from './components/Nav/Nav.component';
 import NavOpenButton from './components/Nav/NavOpenButton/NavOpenButton.component';
@@ -21,152 +22,17 @@ import Controls from './components/Exercises/Controls/Controls.component';
 import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
 
-// change pitch of metronome to match note in sequence
-
-/*
-    // Components
-        // CurrentNote - display the current note
-        // NoteSequence - display note sequence pagination style
-        // BeginButton - begin exercise
-        // NextStageButton - proceed to next stage of exercise
-        // NextExerciseButton - proceed to next exercise
-        // ConfigButton - access selectors i.e. instrument, range, include accidentals
-        // IntroductionMessage - Play the note up and down 3x, then move onto the next.
-        //                       Play slowly with no mistakes.
-        //                       When you have completed all notes, repeat 1x.
-        // TimerExpiredMessage - You have completed your 5 minutes of practice for today.
-        // ExerciseCompletedMessage - You completed the exercise and can proceed to the next.
-        // Metronome
-
-    // exercise 1
-        // exerciseSequenceAtom - random natural notes
-        // exerciseNotesAtom - positions for all notes in sequence
-        // exercisePatternAtom - up then down for each note
-        // Instructions
-            // Timer
-            // ConfigButton
-            // introduction
-                // BeginButton - "Go"
-                // NextStageButton - "Next note"
-            // message if all exercises completed
-                // NextExerciseButton - "Proceed to next exercise"
-            // message if timer runs out
-        // Tab
-            // output pattern
-            // show pattern[currentStage] and pattern[currentStage + 1]
-            // slide left on progressing to next
-*/
-/*
-Controls
-  Nav
-    NavOpenButton
-    NavCloseButton
-  Timer
-    Timer
-    TimerToggleButton
-    TimerResetButton
-  Instrument
-    InstrumentSelector
-  Range    
-    RangeSelector
-  Exercise
-    Instructions
-    ToggleAccidentalsButton
-    ProceedButton
-    ResetButton
-    RefreshButton
-*/
-/*
-state persistence
-highlight current note on fretboard, mute other notes
-play sequence of notes in time with metronome - allow looping
-create tab for any note going up or down and allow any combination to be displayed
-update tab for metronome note sequences so next section is always visible - slide sections left
-modal for all notes completed / timer expiry notification / etcetera
-*/
-/*
-Modal
-
-Nav
-  Exercises
-    menu leading to each exercise
-  Controls
-    InstrumentControls
-      InstrumentSelector
-      RangeSelecctor
-    ExerciseControls
-      ToggleAccidentalsButton
-        toggle inclusion of accidentals in note selection
-        fixed in some exercises, optional in others
-      ExerciseResetButton
-        start over with same sequence
-      ExerciseRefreshButton
-        start over with new sequence
-      ExerciseProceedButton
-        displayed on completing an exercise
-    Timer
-      show time remaining on hover
-      trigger start on beginning an exercise
-      can be paused or cancelled
-      run in web worker
-    TimerToggleButton
-    TimerCancelButton
-NavOpenButton
-NavCloseButton
-
-TabSection
-TabPrefix
-
-Sequence
-  display a list of notes as pagination
-  SequenceNote
-    individual notes - highlight current note
-
-Metronome
-  play one note per beat
-  start at 40 bpm
-  run in web worker
-MetronomeIncreaseButton
-MetronomeDecreaseButton
-*/
-/*
-Exercise 1
-  play slowly, no mistakes
-  const sequence = getRandomNoteSequence(false);
-  const pattern = getExercisePattern(1, sequence);
-  continue until pattern completed or until timer runs out
-Exercise 2
-  metronome
-  const sequence = getRandomNoteSequence(false);
-  const pattern = getExercisePattern(2, sequence);
-  continue until pattern completed or until timer runs out
-Exercise 3
-  metronome
-  const sequence = getRandomNoteSequence(true, 2);
-  const pattern = getExercisePattern(3, sequence);
-  continue until pattern completed or until timer runs out
-Exercise 4
-  metronome
-  optional accidentals
-  const sequence = getRandomNoteSequence(accidentals, 2);
-  const pattern = getExercisePattern(4, sequence);
-  continue until feels easy or until timer runs out
-Exercise 5
-  metronome
-  const sequence = getRandomNoteSequence(false);
-  const pattern = getExercisePattern(5, sequence);
-  continue until pattern completed or until timer runs out
-Exercise 6
-  metronome
-  increase / decrease speed buttons
-  repeat exercises 2 - 5
-  repeat until able to complete at 80bpm or until timer runs out
-*/
-
 const App = () => {
-  return <Route 
-      path={['/exercises/:exercise', '/']} 
-      render={({ match }) => 
+  const location = useLocation();
+  const setTimerRunning = useFretsStore(state => state.setTimerRunning);
+
+  useEffect(() => {
+    setTimerRunning(false);
+  }, [location.pathname, setTimerRunning]);
+
+  return <Route
+      path={['/exercises/:exercise', '/']}
+      render={({ match }) =>
         <>
           {match.params.exercise && <Exercises />}
           <Overlay />
@@ -178,7 +44,7 @@ const App = () => {
               <NavHomeButton />
             </div>
             <div>
-            <div>
+              <div>
                 <Instructions />
                 <Controls />
               </div>
@@ -202,10 +68,10 @@ const App = () => {
               <Tab />
               <NoteSequence />
             </div>
-            <div>
-            </div>
+            <div></div>
           </Grid>
-        </>} />
+        </>}
+    />;
 };
 
 export default App;
