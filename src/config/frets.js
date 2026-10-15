@@ -5,17 +5,19 @@ export const FRETS = 24;
 export const START_FRET = 1;
 export const SESSION_MS = 5 * 60 * 1000;
 
+// MIDI note numbers are ordered to match each instrument's existing string indices.
+// Guitar: low to high E2 A2 D3 G3 B3 E4; bass: G2 D2 A1 E1 (display order).
 export const INSTRUMENTS = [
-  { id: 1, name: '6 String Guitar Standard', strings: [7, 2, 10, 5, 0, 7] },
-  { id: 2, name: '6 String Guitar Eb', strings: [6, 1, 9, 4, 11, 6] },
-  { id: 3, name: '6 String Guitar Open D', strings: [5, 0, 9, 5, 0, 5] },
-  { id: 4, name: '4 String Bass Standard', strings: [10, 5, 0, 7] },
-  { id: 5, name: '4 String Bass Eb', strings: [9, 4, 11, 6] },
+  { id: 1, name: '6 String Guitar Standard', strings: [7, 2, 10, 5, 0, 7], openStringMidi: [40, 45, 50, 55, 59, 64] },
+  { id: 2, name: '6 String Guitar Eb', strings: [6, 1, 9, 4, 11, 6], openStringMidi: [39, 44, 49, 54, 58, 63] },
+  { id: 3, name: '6 String Guitar Open D', strings: [5, 0, 9, 5, 0, 5], openStringMidi: [38, 45, 50, 54, 57, 62] },
+  { id: 4, name: '4 String Bass Standard', strings: [10, 5, 0, 7], openStringMidi: [43, 38, 33, 28] },
+  { id: 5, name: '4 String Bass Eb', strings: [9, 4, 11, 6], openStringMidi: [42, 37, 32, 27] },
 ];
 
 export const EXERCISES = [
   { id: 1, title: 'Natural notes', description: 'Play each natural note up and down the strings, slowly and without mistakes.', accidentals: false },
-  { id: 2, title: 'Natural notes + metronome', description: 'Play natural notes up and down in time with the metronome.', accidentals: false },
+  { id: 2, title: 'Natural notes + metronome', description: 'Practise natural notes in time with the metronome.', accidentals: false },
   { id: 3, title: 'Accidentals', description: 'Focus on the accidental notes (sharps and flats) across the fretboard.', accidentals: true },
   { id: 4, title: 'Mixed notes', description: 'Practise a short sequence of notes, ascending and descending.', accidentals: null },
   { id: 5, title: 'Randomised notes', description: 'Work through a shuffled sequence of notes in both directions.', accidentals: null },
@@ -49,4 +51,3 @@ export const getPattern = (sequence, strings, start = START_FRET) => sequence.fl
   ...[...strings].reverse().map((open, i) => ({ noteIdx, string: strings.length - i, fret: getFretInRange(noteIdx, open, start), direction: 'up' })),
   ...strings.map((open, i) => ({ noteIdx, string: i + 1, fret: getFretInRange(noteIdx, open, start), direction: 'down' })),
 ]);
-export const getNoteFrequency = (index) => 440 * Math.pow(2, index / 12);
