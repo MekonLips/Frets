@@ -17,8 +17,17 @@ const TabComponent = () => {
     const activeIndex = running && beat > 0 && pattern.length
         ? (beat - 1) % pattern.length
         : -1;
+    const activePosition = activeIndex >= 0 ? pattern[activeIndex] : null;
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const instrument = getSelectedInstrument(selectedId);
+    // Tab rows are visually ordered opposite to the ascending playback pass.
+    // Map the active beat to the corresponding visual row for exercises 4/5.
+    const tabActiveIndex = activeIndex >= 0
+        && [4, 5].includes(Number(exercise))
+        && activePosition?.dir === 'up'
+        ? Math.floor(activeIndex / instrument.strings.length) * instrument.strings.length
+            + (instrument.strings.length - 1 - (activeIndex % instrument.strings.length))
+        : activeIndex;
     const hasOnePassPerNote = [4, 5].includes(Number(exercise));
     const notesPerStage = instrument.strings.length * (hasOnePassPerNote ? 1 : 2);
     // Exercises 4/5 show the current and following note. Other exercises
@@ -69,7 +78,7 @@ const TabComponent = () => {
                 index,
                 note.string,
                 note.fret,
-                patternOffset + index === activeIndex
+                patternOffset + index === tabActiveIndex
             ));
 
             if (valuePattern[i]) {
