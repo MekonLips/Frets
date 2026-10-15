@@ -66,25 +66,37 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 }
                 exerciseStep.current = (exerciseStep.current + 1) % pattern.length;
             }
-            setState(prevState => ({
-                ...prevState,
-                beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
-            }));
-            setBeat(prevBeat => prevBeat + 1);
+
+            // Audio is scheduled ahead; update the visible beat when that note
+            // reaches the audio timeline, not when it is merely queued.
+            const context = audioContext.current;
+            const delay = context ? Math.max(0, (time - context.currentTime) * 1000) : 0;
+            setTimeout(() => {
+                setState(prevState => ({
+                    ...prevState,
+                    beat: prevState.beat === beatsPerMeasure ? 1 : prevState.beat + 1 || 1,
+                }));
+                setBeat(prevBeat => prevBeat + 1);
+            }, delay);
         }
     };
 
     const start = () => {
-        // Preserve the current pattern position when resuming. Initial starts
-        // and explicit resets already leave exerciseStep at the right position.
-        currentBeat.current = 0;
         if (!audioContext.current) {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             if (AudioContextClass) audioContext.current = new AudioContextClass();
         }
         if (!audioContext.current) return;
         if (audioContext.current.state === 'suspended') audioContext.current.resume();
-        nextNoteTime.current = audioContext.current.currentTime;
+
+        // Do not restart the audio timeline at "now" if a note has already
+        // been queued just ahead of it. Otherwise a resumed note can overtake
+        // that queued note and the displayed string no longer matches audio.
+        if (nextNoteTime.current <= audioContext.current.currentTime) {
+            currentBeat.current = 0;
+            nextNoteTime.current = audioContext.current.currentTime;
+        }
+
         worker.postMessage({ type: START, interval: 25, ...state });
         setState({
             ...state,
@@ -93,8 +105,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     };
 
     const stop = () => {
-        // Pausing must not snap the displayed position away from the note that
-        // was just played; start() resumes from the matching pattern step.
+        // Keep the scheduled audio and exercise cursor intact for a clean resume.
         worker.postMessage({ type: STOP });
     };
 
@@ -103,6 +114,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         setBeat(0);
         currentBeat.current = 0;
         exerciseStep.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
 
@@ -110,6 +122,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         setBeat(num);
         exerciseStep.current = num;
         currentBeat.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setState(prevState => ({ ...prevState, beat: 0 }));
     }, []);
 
@@ -119,7 +132,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 runScheduler();
                 break;
             default:
-                console.log(`%ctype ${e.data} not recognised`, 'color: red;');
+                console.log(`%ctype ${e.data} not recognised`, 'color: red;',);
         }
     };
 
@@ -152,6 +165,9 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
         stop();
         setRunning(false);
         setBeat(beat => 0);
+        currentBeat.current = 0;
+        exerciseStep.current = 0;
+        nextNoteTime.current = audioContext.current?.currentTime ?? 0;
         setBeatsPerMeasure(instrument.strings.length);
     }, [instrument.strings.length]);
 
