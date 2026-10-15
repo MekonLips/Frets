@@ -6,7 +6,6 @@ import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
 import { exerciseStageAtom, exerciseSequenceAtom } from '../../recoil/frets.recoil';
 import { getNoteByIdx } from '../../utils/note.utils';
-import { Container, Sequence, Note, Button } from './NoteSequence.styled.js';
 
 const NoteSequenceComponent = () => {
     const { exercise } = useParams();
@@ -29,11 +28,11 @@ const NoteSequenceComponent = () => {
 
     if (isExercise && sequence && parseInt(exercise) !== 6)
         return <>
-            <Container>
-                <Button onClick={prevClickHandler} disabled={isFirstStage(stage)}><FontAwesomeIcon icon={faCaretLeft} /></Button>
-                <Sequence>{sequence.map((noteIdx, idx) => <Note key={`NoteSequence/Note/${idx}`} to='#' onClick={e => clickNoteHandler(e, idx)} current={idx === stage - 1 ? true : false}>{getNoteByIdx(noteIdx)}</Note>)}</Sequence>
-                <Button onClick={nextClickHandler} disabled={isLastStage(stage)}><FontAwesomeIcon icon={faCaretRight} /></Button>
-            </Container>
+            <div className="legacy-sequence-container">
+                <button className="legacy-sequence-button" onClick={prevClickHandler} disabled={isFirstStage(stage)}><FontAwesomeIcon icon={faCaretLeft} /></button>
+                <h1 className="legacy-sequence">{sequence.map((noteIdx, idx) => <a className={`legacy-sequence-note ${idx === stage - 1 ? 'is-current' : ''}`} key={`NoteSequence/Note/${idx}`} href='#' onClick={e => clickNoteHandler(e, idx)}>{getNoteByIdx(noteIdx)}</a>)}</h1>
+                <button className="legacy-sequence-button" onClick={nextClickHandler} disabled={isLastStage(stage)}><FontAwesomeIcon icon={faCaretRight} /></Button>
+            </div>
         </>
     else
         return null;
