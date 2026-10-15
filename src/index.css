@@ -57,3 +57,10 @@
     background-color: rgb(8 8 8);
   }
   .legacy-nav-icon-button-wrapper > button:active { outline: 0; }
+
+@layer components {
+  .legacy-tab-container { @apply h-full w-full; }
+  .legacy-tab-content { @apply flex items-center justify-center; }
+  .legacy-tab { @apply flex items-end; z-index: 0; }
+  .legacy-tab pre { @apply m-0 p-0; }
+}
