@@ -52,17 +52,19 @@ export const useExercise = () => {
     useEffect(() => {
         worker.onmessage = e => {
             const { type, payload } = e.data;
+            // Worker responses can arrive after navigation; route each result to its originating exercise.
+            const targetExercise = payload?.exercise ?? exercise;
             switch (type) {
                 case SEQUENCE:
-                    if (payload.sequence) setSequence(exercise, payload.sequence);
-                    if (payload.notes) setNotes(exercise, payload.notes);
-                    if (payload.pattern) setPattern(exercise, payload.pattern);
+                    if (payload.sequence) setSequence(targetExercise, payload.sequence);
+                    if (payload.notes) setNotes(targetExercise, payload.notes);
+                    if (payload.pattern) setPattern(targetExercise, payload.pattern);
                     break;
                 case NOTES:
-                    if (payload.notes) setNotes(exercise, payload.notes);
+                    if (payload.notes) setNotes(targetExercise, payload.notes);
                     break;
                 case PATTERN:
-                    if (payload.pattern) setPattern(exercise, payload.pattern);
+                    if (payload.pattern) setPattern(targetExercise, payload.pattern);
                     break;
                 default:
                     console.log(`%ctype ${type} not recognised`, 'color: red;');
