@@ -3,11 +3,9 @@ import { useRecoilState } from 'recoil';
 
 import { timerRemainingAtom, timerRunningAtom } from '../recoil/frets.recoil';
 import { TIME_LIMIT, ACTIONS } from '../config/frets.config';
-import Worker from '../workers/timer.worker';
-
 const { START, STOP, TICK } = ACTIONS.TIMER;
 
-const worker = new Worker();
+const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
 
 const useTimer = () => {
     const [ remaining, setRemaining ] = useRecoilState(timerRemainingAtom);

@@ -3,12 +3,11 @@ import { useParams } from 'react-router';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { selectedInstrumentIdAtom, getInstrumentSelector, startFretAtom, exerciseSequenceAtom, exerciseNotesAtom, exercisePatternAtom } from '../recoil/frets.recoil';
-import Worker from '../workers/exercise.worker';
 import { ACTIONS } from '../config/frets.config';
 
 const { SEQUENCE, NOTES, PATTERN } = ACTIONS.PATTERNS;
 
-const worker = new Worker();
+const worker = new Worker(new URL('../workers/exercise.worker.js', import.meta.url), { type: 'module' });
 
 export const useExercise = () => {
     const { exercise } = useParams();
