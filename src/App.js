@@ -20,7 +20,6 @@ import Instructions from './components/Exercises/Instructions/Instructions.compo
 import Controls from './components/Exercises/Controls/Controls.component';
 import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
-import './App.scss';
 
 // change pitch of metronome to match note in sequence
 
