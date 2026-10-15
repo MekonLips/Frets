@@ -4,11 +4,11 @@ const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
 
 let timer = null;
 
-onmessage = async e => {
+self.onmessage = async e => {
     const type = e.data.type;
     switch (type) {
         case START:
-            timer = setInterval(() => postMessage(TICK), e.data.interval);
+            timer = setInterval(() => self.postMessage(TICK), e.data.interval);
             break;
         case STOP:
             clearInterval(timer);
@@ -17,10 +17,10 @@ onmessage = async e => {
         case UPDATE:
             if (timer) {
                 clearInterval(timer);
-                timer = setInterval(() => postMessage(TICK), e.data.interval);
+                timer = setInterval(() => self.postMessage(TICK), e.data.interval);
             }
             break;
         default:
-            postMessage({ error: true, message: `type ${type} not recognised` });
+            self.postMessage({ error: true, message: `type ${type} not recognised` });
     }
 };

@@ -5,11 +5,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { exerciseSubdivisionFrequencySelector, exerciseStageAtom, exerciseSequenceAtom, exerciseBeatAtom, timerRunningAtom, selectedInstrumentIdAtom, getInstrumentSelector } from '../recoil/frets.recoil';
 import { ACTIONS, TICKS_PER_BEAT_BINARY, TICKS_PER_BEAT_TERNARY, SECONDS_IN_MINUTE, SCHEDULE_AHEAD_TIME, NOTE_LENGTH } from '../config/frets.config';
 import { getNoteFrequency } from '../utils/note.utils';
-import Worker from '../workers/timer.worker';
-
 const { START, STOP, UPDATE, TICK } = ACTIONS.TIMER;
 
-const worker = new Worker();
+const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
 
 const useMetronome = ({ tempo = 120, subdivision = 1, beatVolume = 0.5, subdivisionVolume = 0.25 } = {}) => {
     const { exercise } = useParams();

@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // The app is deployed at the domain root; absolute asset URLs also work on deep SPA routes.
   base: '/',
+  // Legacy source files contain JSX in .js files.
+  esbuild: { loader: 'jsx', include: /src\/.*\.js$/, exclude: [] },
+  optimizeDeps: { esbuildOptions: { loader: { '.js': 'jsx' } } },
   build: { outDir: 'dist', sourcemap: true },
 });
