@@ -338,10 +338,21 @@
   }
   .legacy-sequence-container {
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
   }
   .legacy-sequence {
     min-width: 0;
-    overflow-x: auto;
+    overflow: visible;
+    flex: 1 1 auto;
+  }
+  .legacy-sequence-note {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .legacy-sequence-note::before {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
