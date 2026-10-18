@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES } from './frets.config.js';
 import {
-  ACCIDENTAL_NOTE_INDICES,
-  INSTRUMENTS,
-  NATURAL_NOTE_INDICES,
-  NOTES,
   getFretInRange,
   getPattern,
   getSequence,
@@ -31,28 +28,32 @@ describe('fretboard note helpers', () => {
     expect(pattern).toHaveLength(2 * INSTRUMENTS[0].strings.length * 2);
     expect(pattern[0].string).toBe(6);
     expect(pattern[INSTRUMENTS[0].strings.length].direction).toBe('down');
-    expect(pattern.every((position) => position.fret >= 1 && position.fret <= 24)).toBe(true);
+    expect(pattern.every((position) => position.fret >= 1 && position.fret <= FRETS_NUM)).toBe(true);
   });
 
   it('shuffles only notes belonging to the selected exercise family', () => {
     const naturals = getSequence(1);
     const accidentals = getSequence(3);
-    expect(naturals).toHaveLength(NATURAL_NOTE_INDICES.length);
-    expect(naturals.every((note) => NATURAL_NOTE_INDICES.includes(note))).toBe(true);
-    expect(accidentals).toHaveLength(ACCIDENTAL_NOTE_INDICES.length);
-    expect(accidentals.every((note) => ACCIDENTAL_NOTE_INDICES.includes(note))).toBe(true);
+    expect(naturals).toHaveLength(NATURALS.length);
+    expect(naturals.every((note) => NATURALS.includes(note))).toBe(true);
+    expect(accidentals).toHaveLength(ACCIDENTALS.length);
+    expect(accidentals.every((note) => ACCIDENTALS.includes(note))).toBe(true);
     expect(NOTES).toHaveLength(12);
   });
 
   it('lets exercises 4 and 5 include or exclude accidentals', () => {
     for (const exercise of [4, 5]) {
       const naturalsOnly = getSequence(exercise, false);
-      expect(naturalsOnly).toHaveLength(NATURAL_NOTE_INDICES.length);
-      expect(naturalsOnly.every((note) => NATURAL_NOTE_INDICES.includes(note))).toBe(true);
+      expect(naturalsOnly).toHaveLength(NATURALS.length);
+      expect(naturalsOnly.every((note) => NATURALS.includes(note))).toBe(true);
 
       const allNotes = getSequence(exercise, true);
       expect(allNotes).toHaveLength(NOTES.length);
-      expect(allNotes).toEqual(expect.arrayContaining([...NATURAL_NOTE_INDICES, ...ACCIDENTAL_NOTE_INDICES]));
+      expect(allNotes).toEqual(expect.arrayContaining([...NATURALS, ...ACCIDENTALS]));
     }
+  });
+
+  it('keeps MIDI pitch data alongside each instrument tuning', () => {
+    expect(INSTRUMENTS.every((instrument) => instrument.openStringMidi.length === instrument.strings.length)).toBe(true);
   });
 });
