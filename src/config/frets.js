@@ -17,7 +17,7 @@ export const getSequence = (exercise, useAccidentals = false) => {
     : exercise === 1 || exercise === 2 || ((exercise === 4 || exercise === 5) && !useAccidentals)
       ? NATURALS
       : NOTES.map((_, index) => index);
-  return arrayShuffle(notes);
+  return arrayShuffle([...notes]);
 };
 
 export const getPattern = (sequence, strings, start = START_FRET) => sequence.flatMap((noteIdx) => [
