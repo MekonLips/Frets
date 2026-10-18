@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFretsStore } from '../../../store/useFretsStore';
-import { INSTRUMENTS } from '../../../config/frets.js';
+import { INSTRUMENTS } from '../../../config/frets.config.js';
 
 const InstrumentSelector = () => {
     const instruments = useFretsStore(state => state.instruments) || INSTRUMENTS;
