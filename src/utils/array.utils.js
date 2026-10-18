@@ -1,13 +1,10 @@
-export const arrayShuffle = arr => {
-    let idx = arr.length;
-    let temp;
-    let random;
-    while (idx !== 0) {
-        random = Math.floor(Math.random() * idx);
-        idx -= 1;
-        temp = arr[idx];
-        arr[idx] = arr[random];
-        arr[random] = temp;
-    }
-    return arr;
+export const arrayShuffle = (items) => {
+  const result = [...items];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [result[i], result[randomIndex]] = [result[randomIndex], result[i]];
+  }
+
+  return result;
 };
