@@ -1,14 +1,14 @@
 import { arrayShuffle } from '../utils/array.utils.js';
-import { NOTES, NATURALS, ACCIDENTALS, START_FRET } from './frets.config.js';
+import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from './frets.config.js';
 
-export const noteName = (index) => NOTES[((index % NOTES.length) + NOTES.length) % NOTES.length];
+export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
 
-export const noteIndexAtFret = (openNoteIndex, fret) => (openNoteIndex + fret) % NOTES.length;
+export const noteIndexAtFret = (openNoteIndex, fret) => (openNoteIndex + fret) % NOTES_NUM;
 
 export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => {
-  const difference = (noteIndex - openNoteIndex + NOTES.length) % NOTES.length;
-  const fret = difference || NOTES.length;
-  return fret < start ? fret + NOTES.length : fret;
+  const difference = (noteIndex - openNoteIndex + NOTES_NUM) % NOTES_NUM;
+  const fret = difference || NOTES_NUM;
+  return fret < start ? fret + NOTES_NUM : fret;
 };
 
 export const getSequence = (exercise, useAccidentals = false) => {

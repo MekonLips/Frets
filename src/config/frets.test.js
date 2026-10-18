@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
-import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES } from './frets.config.js';
+import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
 import {
   getFretInRange,
   getPattern,
@@ -89,7 +89,7 @@ describe('fretboard note helpers', () => {
       expect(naturalsOnly.every((note) => NATURALS.includes(note))).toBe(true);
 
       const allNotes = getSequence(exercise, true);
-      expect(allNotes).toHaveLength(NOTES.length);
+      expect(allNotes).toHaveLength(NOTES_NUM);
       expect(allNotes).toEqual(expect.arrayContaining([...NATURALS, ...ACCIDENTALS]));
     }
   });
