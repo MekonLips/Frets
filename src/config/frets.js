@@ -1,3 +1,4 @@
+import { arrayShuffle } from '../utils/array.utils.js';
 import { NOTES, NATURALS, ACCIDENTALS, START_FRET } from './frets.config.js';
 
 export const noteName = (index) => NOTES[((index % NOTES.length) + NOTES.length) % NOTES.length];
@@ -10,22 +11,13 @@ export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => 
   return fret < start ? fret + NOTES.length : fret;
 };
 
-export const shuffle = (items) => {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-};
-
 export const getSequence = (exercise, useAccidentals = false) => {
   const notes = exercise === 3
     ? ACCIDENTALS
     : exercise === 1 || exercise === 2 || ((exercise === 4 || exercise === 5) && !useAccidentals)
       ? NATURALS
       : NOTES.map((_, index) => index);
-  return shuffle(notes);
+  return arrayShuffle(notes);
 };
 
 export const getPattern = (sequence, strings, start = START_FRET) => sequence.flatMap((noteIdx) => [
