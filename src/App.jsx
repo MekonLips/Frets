@@ -103,7 +103,7 @@ function Preferences() {
   const setSelectedNotesMode = useFretsStore((state) => state.setSelectedNotesMode);
   return <section className="panel space-y-4">
     <h2 className="eyebrow">Fretboard settings</h2>
-    <label className="block space-y-1"><span className="text-sm text-neutral-300">Instrument</span><select className="field" value={instrumentId} onChange={(e) => setInstrument(Number(e.target.value))}>{awaitableInstruments().map((instrument) => <option key={instrument.id} value={instrument.id}>{instrument.name}</option>)}</select></label>
+    <label className="block space-y-1"><span className="text-sm text-neutral-300">Instrument</span><select className="field" value={instrumentId} onChange={(e) => setInstrument(Number(e.target.value))}>{(awaitableInstruments()).map((instrument) => <option key={instrument.id} value={instrument.id}>{instrument.name}</option>)}</select></label>
     <label className="block space-y-1"><span className="text-sm text-neutral-300">Start fret</span><select className="field" value={startFret} onChange={(e) => setStartFret(Number(e.target.value))}>{Array.from({ length: 13 }, (_, i) => i + 1).map((fret) => <option key={fret} value={fret}>{fret}</option>)}</select></label>
     <label className="block space-y-1"><span className="text-sm text-neutral-300">Notes shown</span><select className="field" value={mode} onChange={(e) => setSelectedNotesMode(e.target.value)}><option value="single">All notes</option><option value="naturals">Natural notes</option><option value="accidentals">Accidentals</option></select></label>
     <label className="flex items-center gap-2 text-sm text-neutral-300"><input type="checkbox" checked={showRange} onChange={(e) => setShowRange(e.target.checked)} /> Highlight fret range</label>
@@ -291,7 +291,7 @@ export default function App() {
   useEffect(() => {
     const match = location.pathname.match(/^\/exercises\/(\d+)\/?$/);
     if (location.pathname !== '/' && !match) history.replace('/');
-    if (match && (Number(match[1]) < 1 || Number(match[1]) > 6)) history.replace('/');
+    if (match && (Number(match[1]) < 1 || Number(match[1]) > 6)) navigate('/', { replace: true });
   }, [location.pathname, history]);
   return <main className="app-shell">
     <Header exercise={exercise} showNav={showNav} onMenu={() => setShowNav(!showNav)} />
