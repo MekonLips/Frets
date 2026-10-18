@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { arrayShuffle } from '../utils/array.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES } from './frets.config.js';
 import {
   getFretInRange,
@@ -7,6 +8,32 @@ import {
   noteIndexAtFret,
   noteName,
 } from './frets.js';
+
+describe('arrayShuffle', () => {
+  it('returns a shuffled copy without mutating the input', () => {
+    const items = [1, 2, 3, 4, 5];
+    const original = [...items];
+
+    const result = arrayShuffle(items);
+
+    expect(result).not.toBe(items);
+    expect(items).toEqual(original);
+    expect(result).toHaveLength(original.length);
+    expect([...result].sort()).toEqual(original);
+  });
+
+  it('handles empty and single-item arrays without mutating them', () => {
+    const empty = [];
+    const single = [42];
+
+    expect(arrayShuffle(empty)).toEqual([]);
+    expect(arrayShuffle(empty)).not.toBe(empty);
+    expect(arrayShuffle(single)).toEqual([42]);
+    expect(arrayShuffle(single)).not.toBe(single);
+    expect(empty).toEqual([]);
+    expect(single).toEqual([42]);
+  });
+});
 
 describe('fretboard note helpers', () => {
   it('wraps note names through the twelve-note chromatic set', () => {
@@ -31,13 +58,19 @@ describe('fretboard note helpers', () => {
     expect(pattern.every((position) => position.fret >= 1 && position.fret <= FRETS_NUM)).toBe(true);
   });
 
-  it('shuffles only notes belonging to the selected exercise family', () => {
+  it('shuffles only notes belonging to the selected exercise family without mutating constants', () => {
+    const originalNaturals = [...NATURALS];
+    const originalAccidentals = [...ACCIDENTALS];
+
     const naturals = getSequence(1);
     const accidentals = getSequence(3);
+
     expect(naturals).toHaveLength(NATURALS.length);
     expect(naturals.every((note) => NATURALS.includes(note))).toBe(true);
     expect(accidentals).toHaveLength(ACCIDENTALS.length);
     expect(accidentals.every((note) => ACCIDENTALS.includes(note))).toBe(true);
+    expect(NATURALS).toEqual(originalNaturals);
+    expect(ACCIDENTALS).toEqual(originalAccidentals);
     expect(NOTES).toHaveLength(12);
   });
 
