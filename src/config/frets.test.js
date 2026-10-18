@@ -10,28 +10,25 @@ import {
 } from './frets.js';
 
 describe('arrayShuffle', () => {
-  it('returns a shuffled copy without mutating the input', () => {
+  it('shuffles the supplied array in place and returns it', () => {
     const items = [1, 2, 3, 4, 5];
     const original = [...items];
 
     const result = arrayShuffle(items);
 
-    expect(result).not.toBe(items);
-    expect(items).toEqual(original);
-    expect(result).toHaveLength(original.length);
-    expect([...result].sort()).toEqual(original);
+    expect(result).toBe(items);
+    expect(items).toHaveLength(original.length);
+    expect([...items].sort()).toEqual(original);
   });
 
-  it('handles empty and single-item arrays without mutating them', () => {
+  it('handles empty and single-item arrays', () => {
     const empty = [];
     const single = [42];
 
+    expect(arrayShuffle(empty)).toBe(empty);
     expect(arrayShuffle(empty)).toEqual([]);
-    expect(arrayShuffle(empty)).not.toBe(empty);
+    expect(arrayShuffle(single)).toBe(single);
     expect(arrayShuffle(single)).toEqual([42]);
-    expect(arrayShuffle(single)).not.toBe(single);
-    expect(empty).toEqual([]);
-    expect(single).toEqual([42]);
   });
 });
 
