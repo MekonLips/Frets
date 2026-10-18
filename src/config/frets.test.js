@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES } from './frets.config.js';
 import {
@@ -69,6 +69,17 @@ describe('fretboard note helpers', () => {
     expect(NATURALS).toEqual(originalNaturals);
     expect(ACCIDENTALS).toEqual(originalAccidentals);
     expect(NOTES).toHaveLength(12);
+  });
+
+  it('shuffles exercise 5 notes deterministically without accidentals', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    try {
+      expect(getSequence(5, false)).toEqual([2, 3, 5, 7, 8, 10, 0]);
+      expect(getSequence(5, true)).not.toEqual([...Array(12).keys()]);
+    } finally {
+      random.mockRestore();
+    }
   });
 
   it('lets exercises 4 and 5 include or exclude accidentals', () => {
