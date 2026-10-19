@@ -72,6 +72,44 @@ describe('fretboard note helpers', () => {
     expect(pattern[strings.length * 2].dir).toBe('up');
   });
 
+  it('supports ascending and descending patterns across different string counts', () => {
+    for (const stringCount of [4, 6, 7, 8]) {
+      const strings = Array.from({ length: stringCount }, (_, index) => index % NOTES_NUM);
+      const pattern = getPattern({ exercise: 1, noteIdxs: [0], strings, start: 1 });
+
+      expect(pattern).toHaveLength(stringCount * 2);
+      expect(pattern.slice(0, stringCount).map(({ string }) => string))
+        .toEqual(Array.from({ length: stringCount }, (_, index) => stringCount - index));
+      expect(pattern.slice(stringCount).map(({ string }) => string))
+        .toEqual(Array.from({ length: stringCount }, (_, index) => index + 1));
+      expect(pattern.every(({ fret }) => fret >= 1 && fret <= FRETS_NUM)).toBe(true);
+    }
+  });
+
+  it('keeps generated frets at or above the requested start fret and wraps by octaves', () => {
+    const strings = [0, 0, 0, 0, 0, 0];
+    const atFirstFret = getPattern({ exercise: 1, noteIdxs: [1], strings, start: 1 });
+    const atTwelfthFret = getPattern({ exercise: 1, noteIdxs: [0], strings, start: 13 });
+    const aboveFirstOctave = getPattern({ exercise: 1, noteIdxs: [1], strings, start: 13 });
+
+    expect(atFirstFret.every(({ fret }) => fret === 1)).toBe(true);
+    expect(atTwelfthFret.every(({ fret }) => fret === 24)).toBe(true);
+    expect(aboveFirstOctave.every(({ fret }) => fret === 13)).toBe(true);
+  });
+
+  it('returns an empty pattern for empty note or string lists', () => {
+    expect(getPattern({ exercise: 1, noteIdxs: [], strings: [0, 2, 4] })).toEqual([]);
+    expect(getPattern({ exercise: 1, noteIdxs: [0, 2, 4], strings: [] })).toEqual([]);
+    expect(getPattern({ exercise: 1, noteIdxs: [], strings: [] })).toEqual([]);
+  });
+
+  it('handles a single note and one-string pattern without adding extra positions', () => {
+    expect(getPattern({ exercise: 1, noteIdxs: [3], strings: [3], start: 1 })).toEqual([
+      { noteIdx: 3, string: 1, fret: 12, dir: 'up' },
+      { noteIdx: 3, string: 1, fret: 12, dir: 'down' },
+    ]);
+  });
+
   it('repeats a supplied value sequence the requested number of times', () => {
     expect(repeat(3, 'A', 'B')).toEqual(['A', 'B', 'A', 'B', 'A', 'B']);
     expect(repeat(0, 'A', 'B')).toEqual([]);
