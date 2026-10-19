@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INSTRUMENTS } from '../config/frets.js';
+import { INSTRUMENTS } from '../config/frets.config.js';
 import { getMidiPitch, getOpenStringMidi, midiToFrequency } from './pitch.utils.js';
 
 describe('instrument string pitch', () => {
