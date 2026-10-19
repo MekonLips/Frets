@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
+import { getRandomNoteSequence } from '../utils/note.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
 import { getFretInRange, getNoteFrequency, noteName, noteIndexAtFret } from '../utils/note.utils.js';
 import {
   getPattern,
-  getSequence,
 } from './frets.js';
 
 describe('arrayShuffle', () => {
@@ -63,8 +63,8 @@ describe('fretboard note helpers', () => {
     const originalNaturals = [...NATURALS];
     const originalAccidentals = [...ACCIDENTALS];
 
-    const naturals = getSequence(1);
-    const accidentals = getSequence(3);
+    const naturals = getRandomNoteSequence({ exercise: 1, accidentals: false, shuffle: true });
+    const accidentals = getRandomNoteSequence({ exercise: 3 });
 
     expect(naturals).toHaveLength(NATURALS.length);
     expect(naturals.every((note) => NATURALS.includes(note))).toBe(true);
@@ -79,8 +79,8 @@ describe('fretboard note helpers', () => {
     const random = vi.spyOn(Math, 'random').mockReturnValue(0);
 
     try {
-      expect(getSequence(5, false)).toEqual([2, 3, 5, 7, 8, 10, 0]);
-      expect(getSequence(5, true)).not.toEqual([...Array(12).keys()]);
+      expect(getRandomNoteSequence({ exercise: 5, accidentals: false })).toEqual([2, 3, 5, 7, 8, 10, 0]);
+      expect(getRandomNoteSequence({ exercise: 5, accidentals: true })).not.toEqual([...Array(12).keys()]);
     } finally {
       random.mockRestore();
     }
@@ -88,11 +88,11 @@ describe('fretboard note helpers', () => {
 
   it('lets exercises 4 and 5 include or exclude accidentals', () => {
     for (const exercise of [4, 5]) {
-      const naturalsOnly = getSequence(exercise, false);
+      const naturalsOnly = getRandomNoteSequence({ exercise, accidentals: false });
       expect(naturalsOnly).toHaveLength(NATURALS.length);
       expect(naturalsOnly.every((note) => NATURALS.includes(note))).toBe(true);
 
-      const allNotes = getSequence(exercise, true);
+      const allNotes = getRandomNoteSequence({ exercise, accidentals: true });
       expect(allNotes).toHaveLength(NOTES_NUM);
       expect(allNotes).toEqual(expect.arrayContaining([...NATURALS, ...ACCIDENTALS]));
     }
