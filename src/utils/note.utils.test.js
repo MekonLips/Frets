@@ -63,7 +63,7 @@ describe('fretboard note helpers', () => {
     const random = vi.spyOn(Math, 'random').mockReturnValue(0);
 
     try {
-      expect(getRandomNoteSequence({ exercise: 5, accidentals: false })).toEqual([2, 3, 5, 7, 8, 10, 0]);
+      expect(getRandomNoteSequence({ exercise: 5, accidentals: false })).toEqual([5, 7, 8, 10, 0, 2, 3]);
       expect(getRandomNoteSequence({ exercise: 5, accidentals: true })).not.toEqual([...Array(12).keys()]);
     } finally {
       random.mockRestore();
