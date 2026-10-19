@@ -115,20 +115,35 @@ describe('Frets store state transitions', () => {
     expect(store.getState().tempoBpm).toBe(40);
   });
 
-  it('supports functional updates to the global stage, beat, and session timer', () => {
+  it('keeps exercise progress scoped to each exercise instead of global legacy fields', () => {
     const state = store.getState();
-    state.setStage(2);
-    state.setStage((stage) => stage + 1);
-    state.setBeat(4);
-    state.setBeat((beat) => beat + 1);
+
+    expect(state).not.toHaveProperty('sequence');
+    expect(state).not.toHaveProperty('pattern');
+    expect(state).not.toHaveProperty('stage');
+    expect(state).not.toHaveProperty('beat');
+    expect(state).not.toHaveProperty('setSequence');
+    expect(state).not.toHaveProperty('setPattern');
+    expect(state).not.toHaveProperty('setStage');
+    expect(state).not.toHaveProperty('setBeat');
+
+    state.setExerciseSequence(1, [0, 2, 4]);
+    state.setExerciseSequence(2, [5, 7, 9]);
+    state.setExerciseStage(1, 2);
+    state.setExerciseBeat(2, 3);
+
+    expect(store.getState().exercises).toMatchObject({
+      1: { sequence: [0, 2, 4], stage: 2, beat: 0 },
+      2: { sequence: [5, 7, 9], stage: 1, beat: 3 },
+    });
+  });
+
+  it('supports functional updates to the session timer', () => {
+    const state = store.getState();
     state.setSessionRemaining(90000);
     state.setSessionRemaining((remaining) => remaining - 1000);
 
-    expect(store.getState()).toMatchObject({
-      stage: 3,
-      beat: 5,
-      sessionRemaining: 89000,
-    });
+    expect(store.getState().sessionRemaining).toBe(89000);
   });
 
   it('resets the session timer and stops a running timer', () => {

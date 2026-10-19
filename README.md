@@ -24,6 +24,8 @@ The production build is written to `dist/`. The app is deployed at [frets.joltro
 
 There are no user accounts or application backend. Preferences are stored locally in the browser; exercise progress is session state.
 
+The Zustand store keeps progress under `exercises`, keyed by exercise number, so each exercise has its own sequence, notes, pattern, stage, and playback beat. Only preferences are persisted; exercise progress and timer state remain transient.
+
 ## Future ideas
 
 - Improve the fretboard wood appearance, with optional dark rosewood and light maple styles.
