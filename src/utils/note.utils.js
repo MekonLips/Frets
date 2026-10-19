@@ -9,6 +9,10 @@ export const getNoteByIdx = idx => NOTES[idx];
 
 export const getNoteIdxs = () => NOTES.map((note, idx) => idx);
 
+export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
+
+export const noteIndexAtFret = (openNoteIndex, fret) => (openNoteIndex + fret) % NOTES_NUM;
+
 export const getNaturalIdxs = () => getNoteIdxs().reduce((arr, note, idx) => {
     if (!isAccidental(idx))
         arr.push(note);

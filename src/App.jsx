@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Guitar, Menu, X, Home, Play, Pause, RotateCcw, Shuffle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { EXERCISES, NOTES } from './config/frets.config.js';
-import { getNoteFrequency, getPattern, getSequence, noteIndexAtFret, noteName } from './config/frets.js';
+import { noteName, noteIndexAtFret } from './utils/note.utils.js';
+import { getNoteFrequency, getPattern, getSequence } from './config/frets.js';
 import { getSelectedInstrument, useFretsStore } from './store/useFretsStore.js';
 
 const formatTime = (ms) => {

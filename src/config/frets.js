@@ -1,10 +1,6 @@
 import { arrayShuffle } from '../utils/array.utils.js';
 import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from './frets.config.js';
 
-export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
-
-export const noteIndexAtFret = (openNoteIndex, fret) => (openNoteIndex + fret) % NOTES_NUM;
-
 export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => {
   const difference = (noteIndex - openNoteIndex + NOTES_NUM) % NOTES_NUM;
   const fret = difference || NOTES_NUM;
