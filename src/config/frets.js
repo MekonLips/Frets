@@ -16,4 +16,3 @@ export const getPattern = (sequence, strings, start = START_FRET) => sequence.fl
   ...strings.map((open, i) => ({ noteIdx, string: i + 1, fret: getFretInRange(noteIdx, open, start), direction: 'down' })),
 ]);
 
-export const getNoteFrequency = (index) => 440 * Math.pow(2, index / 12);
