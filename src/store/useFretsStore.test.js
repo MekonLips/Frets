@@ -1,0 +1,170 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TIME_LIMIT, START_FRET } from '../config/frets.config.js';
+
+describe('Frets store state transitions', () => {
+  let store;
+  let storage;
+
+  beforeEach(async () => {
+    storage = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    };
+    vi.stubGlobal('localStorage', storage);
+    vi.resetModules();
+    ({ useFretsStore: store } = await import('./useFretsStore.js'));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('initializes the main preferences and session state from configuration defaults', () => {
+    const state = store.getState();
+
+    expect(state.selectedInstrumentId).toBe(1);
+    expect(state.startFret).toBe(START_FRET);
+    expect(state.tempoBpm).toBe(40);
+    expect(state.sessionRemaining).toBe(TIME_LIMIT);
+    expect(state.timerRunning).toBe(false);
+    expect(state.exercises).toEqual({});
+  });
+
+  it('stops the timer when the selected instrument changes', () => {
+    store.getState().setTimerRunning(true);
+    store.getState().setInstrument(4);
+
+    expect(store.getState().selectedInstrumentId).toBe(4);
+    expect(store.getState().timerRunning).toBe(false);
+  });
+
+  it('updates start fret and view preferences independently', () => {
+    const state = store.getState();
+    state.setStartFret(7);
+    state.setShowRange(true);
+    state.setShowNav(true);
+
+    expect(store.getState()).toMatchObject({
+      startFret: 7,
+      showRange: true,
+      showNav: true,
+    });
+  });
+
+  it('clears the selected note when the selected-note mode changes', () => {
+    const state = store.getState();
+    state.setSelectedNote(5);
+    state.setSelectedNotesMode(3);
+
+    expect(store.getState()).toMatchObject({
+      selectedNotesMode: 3,
+      selectedNotesModeIndex: 3,
+      selectedNoteIdx: null,
+    });
+  });
+
+  it('updates individual exercise fields without overwriting other exercises or fields', () => {
+    const state = store.getState();
+    state.setExerciseField(1, 'stage', 3);
+    state.setExerciseField(1, 'beat', 2);
+    state.setExerciseField(2, 'stage', 4);
+
+    expect(store.getState().exercises).toMatchObject({
+      1: { sequence: [], notes: [], pattern: [], stage: 3, beat: 2 },
+      2: { sequence: [], notes: [], pattern: [], stage: 4, beat: 0 },
+    });
+  });
+
+  it('supports functional updates to exercise stage and beat', () => {
+    const state = store.getState();
+    state.setExerciseStage(1, 2);
+    state.setExerciseStage(1, (stage) => stage + 1);
+    state.setExerciseBeat(1, 3);
+    state.setExerciseBeat(1, (beat) => beat + 1);
+
+    expect(store.getState().exercises['1']).toMatchObject({ stage: 3, beat: 4 });
+  });
+
+  it('resets stage and beat when a new exercise sequence is set', () => {
+    const state = store.getState();
+    state.setExerciseStage(2, 4);
+    state.setExerciseBeat(2, 7);
+    state.setExerciseSequence(2, [0, 3, 5]);
+
+    expect(store.getState().exercises['2']).toMatchObject({
+      sequence: [0, 3, 5],
+      stage: 1,
+      beat: 0,
+    });
+  });
+
+  it('clamps tempo to the supported 40–200 BPM range', () => {
+    const setTempo = store.getState().setTempoBpm;
+
+    setTempo(120);
+    expect(store.getState().tempoBpm).toBe(120);
+
+    setTempo(20);
+    expect(store.getState().tempoBpm).toBe(40);
+
+    setTempo(240);
+    expect(store.getState().tempoBpm).toBe(200);
+
+    setTempo('not a number');
+    expect(store.getState().tempoBpm).toBe(40);
+  });
+
+  it('supports functional updates to the global stage, beat, and session timer', () => {
+    const state = store.getState();
+    state.setStage(2);
+    state.setStage((stage) => stage + 1);
+    state.setBeat(4);
+    state.setBeat((beat) => beat + 1);
+    state.setSessionRemaining(90000);
+    state.setSessionRemaining((remaining) => remaining - 1000);
+
+    expect(store.getState()).toMatchObject({
+      stage: 3,
+      beat: 5,
+      sessionRemaining: 89000,
+    });
+  });
+
+  it('resets the session timer and stops a running timer', () => {
+    const state = store.getState();
+    state.setSessionRemaining(1000);
+    state.setTimerRunning(true);
+    state.resetSession();
+
+    expect(store.getState().sessionRemaining).toBe(TIME_LIMIT);
+    expect(store.getState().timerRunning).toBe(false);
+  });
+
+  it('persists preferences but excludes transient exercise and session state', () => {
+    const state = store.getState();
+    state.setInstrument(4);
+    state.setStartFret(5);
+    state.setShowRange(true);
+    state.setTempoBpm(90);
+    state.setExerciseAccidentals(4, true);
+    state.setExerciseSequence(4, [0, 2, 4]);
+    state.setSessionRemaining(1234);
+    state.setTimerRunning(true);
+
+    const [key, serialized] = storage.setItem.mock.calls.at(-1);
+    const persisted = JSON.parse(serialized);
+
+    expect(key).toBe('frets-preferences');
+    expect(persisted.state).toEqual({
+      selectedInstrumentId: 4,
+      startFret: 5,
+      showRange: true,
+      tempoBpm: 90,
+      exerciseAccidentals: { 4: true },
+    });
+    expect(persisted.state).not.toHaveProperty('exercises');
+    expect(persisted.state).not.toHaveProperty('sessionRemaining');
+    expect(persisted.state).not.toHaveProperty('timerRunning');
+  });
+});
