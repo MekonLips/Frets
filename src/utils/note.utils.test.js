@@ -132,6 +132,57 @@ describe('fretboard note helpers', () => {
     expect(NOTES).toHaveLength(12);
   });
 
+  it('generates the expected ordered sequence for each exercise type', () => {
+    const naturals = [3, 5, 7, 8, 10, 0, 2];
+    const accidentals = [4, 6, 9, 11, 1];
+    const chromatic = [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2];
+
+    expect(getRandomNoteSequence({ exercise: 1, accidentals: false })).toEqual(naturals);
+    expect(getRandomNoteSequence({ exercise: 2, accidentals: false })).toEqual(naturals);
+    expect(getRandomNoteSequence({ exercise: 3 })).toEqual(accidentals);
+    expect(getRandomNoteSequence({ exercise: 4 })).toEqual(chromatic);
+    expect(getRandomNoteSequence({ exercise: 6 })).toEqual(chromatic);
+  });
+
+  it('uses all chromatic notes when accidentals are enabled outside exercise 3', () => {
+    for (const exercise of [1, 2, 4, 5, 6]) {
+      const sequence = getRandomNoteSequence({ exercise, accidentals: true, shuffle: false });
+
+      expect(sequence).toHaveLength(NOTES_NUM);
+      expect([...sequence].sort((a, b) => a - b)).toEqual([...Array(NOTES_NUM).keys()]);
+
+      if (exercise !== 5) {
+        expect(sequence).toEqual([3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
+      }
+    }
+  });
+
+  it('keeps exercise 3 restricted to accidentals even when accidentals are explicitly disabled', () => {
+    expect(getRandomNoteSequence({ exercise: 3, accidentals: false })).toEqual([4, 6, 9, 11, 1]);
+  });
+
+  it('shuffles only when requested or when exercise 5 starts, preserving every note exactly once', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.25);
+
+    try {
+      const ordered = getRandomNoteSequence({ exercise: 4, accidentals: true });
+      const explicitlyShuffled = getRandomNoteSequence({ exercise: 4, accidentals: true, shuffle: true });
+      const exerciseFive = getRandomNoteSequence({ exercise: 5, accidentals: true });
+
+      expect(ordered).toEqual([3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
+      expect(explicitlyShuffled).not.toEqual(ordered);
+      expect([...explicitlyShuffled].sort((a, b) => a - b)).toEqual([...ordered].sort((a, b) => a - b));
+      expect([...exerciseFive].sort((a, b) => a - b)).toEqual([...ordered].sort((a, b) => a - b));
+    } finally {
+      random.mockRestore();
+    }
+  });
+
+  it('handles zero and oversized requested lengths without truncating the source sequence', () => {
+    expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 0 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
+    expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 20 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
+  });
+
   it('limits a note sequence to the requested number of trailing notes', () => {
     expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 3 })).toEqual([10, 0, 2]);
     expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 7 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
