@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
-import { getFretInRange, noteName, noteIndexAtFret } from '../utils/note.utils.js';
+import { getFretInRange, getNoteFrequency, noteName, noteIndexAtFret } from '../utils/note.utils.js';
 import {
   getPattern,
   getSequence,
@@ -43,6 +43,12 @@ describe('fretboard note helpers', () => {
     expect(getFretInRange(7, 7, 1)).toBe(12);
     expect(getFretInRange(0, 7, 6)).toBe(17);
     expect(getFretInRange(0, 7, 13)).toBe(17);
+  });
+
+  it('converts semitone offsets from A4 to note frequencies', () => {
+    expect(getNoteFrequency()).toBeCloseTo(440, 8);
+    expect(getNoteFrequency(-12)).toBeCloseTo(220, 8);
+    expect(getNoteFrequency(12)).toBeCloseTo(880, 8);
   });
 
   it('creates a full ascending and descending string pattern per note', () => {
