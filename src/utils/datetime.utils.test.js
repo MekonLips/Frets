@@ -11,6 +11,6 @@ describe('formatTime', () => {
   });
 
   it('does not round fractional seconds up', () => {
-    expect(formatTime(1599)).toBe('0:01.5999999999999999');
+    expect(formatTime(1599)).toBe('0:01.599');
   });
 });
