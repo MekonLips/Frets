@@ -1,4 +1,4 @@
-import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS } from '../config/frets.config';
+import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from '../config/frets.config';
 import { arrayShuffle } from './array.utils';
 
 export const isNatural = idx => NATURALS.find(_ => _ === idx) ? true : false;
@@ -55,10 +55,10 @@ export const getRandomNoteSequence = ({ exercise, accidentals = null, length = n
     return sequence;
 };
 
-export const getFretInRange = (noteIdx, stringNoteIdx, start = 1) => {
-    return noteIdx <= stringNoteIdx ? 
-        NOTES_NUM - stringNoteIdx + noteIdx + (NOTES_NUM - stringNoteIdx + noteIdx < start ? NOTES_NUM : 0) : 
-        noteIdx - stringNoteIdx + (noteIdx - stringNoteIdx < start ? NOTES_NUM : 0);
+export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => {
+    const difference = (noteIndex - openNoteIndex + NOTES_NUM) % NOTES_NUM;
+    const fret = difference || NOTES_NUM;
+    return fret < start ? fret + NOTES_NUM : fret;
 };
 
 export const getAscendingNotes = (noteIdx, strings, start = 1) => {
