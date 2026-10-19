@@ -25,6 +25,19 @@ describe('instrument string pitch', () => {
     expect(getMidiPitch(INSTRUMENTS[3], 4, 0)).toBe(28);
   });
 
+  it('supports arbitrary string counts and repeated pitches in custom tunings', () => {
+    const sevenStringAllG = {
+      id: 'custom-seven-string-all-G',
+      strings: [10, 10, 10, 10, 10, 10, 10],
+      openStringMidi: [55, 55, 55, 55, 55, 55, 55],
+    };
+
+    expect(getOpenStringMidi(sevenStringAllG, 1)).toBe(55);
+    expect(getOpenStringMidi(sevenStringAllG, 7)).toBe(55);
+    expect(getMidiPitch(sevenStringAllG, 4, 3)).toBe(58);
+    expect(() => getOpenStringMidi(sevenStringAllG, 8)).toThrow(RangeError);
+  });
+
   it('converts MIDI pitches to equal-tempered frequencies', () => {
     expect(midiToFrequency(69)).toBeCloseTo(440, 8);
     expect(midiToFrequency(57)).toBeCloseTo(220, 8);
