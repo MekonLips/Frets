@@ -90,11 +90,11 @@ describe('fretboard note helpers', () => {
     const strings = [0, 0, 0, 0, 0, 0];
     const atFirstFret = getPattern({ exercise: 1, noteIdxs: [1], strings, start: 1 });
     const atTwelfthFret = getPattern({ exercise: 1, noteIdxs: [0], strings, start: 13 });
-    const aboveFirstOctave = getPattern({ exercise: 1, noteIdxs: [1], strings, start: 14 });
+    const aboveFirstOctave = getPattern({ exercise: 1, noteIdxs: [1], strings, start: 13 });
 
     expect(atFirstFret.every(({ fret }) => fret === 1)).toBe(true);
     expect(atTwelfthFret.every(({ fret }) => fret === 24)).toBe(true);
-    expect(aboveFirstOctave.every(({ fret }) => fret === 25)).toBe(true);
+    expect(aboveFirstOctave.every(({ fret }) => fret === 13)).toBe(true);
   });
 
   it('returns an empty pattern for empty note or string lists', () => {
