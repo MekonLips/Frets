@@ -1,9 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
-import { noteName, noteIndexAtFret } from '../utils/note.utils.js';
+import { getFretInRange, noteName, noteIndexAtFret } from '../utils/note.utils.js';
 import {
-  getFretInRange,
   getPattern,
   getSequence,
 } from './frets.js';
