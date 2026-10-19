@@ -6,7 +6,6 @@ Frets is a React application for fretboard note practice and exercises. It uses 
 
 - The Vite entry point is `src/main.jsx`.
 - `src/main.jsx` imports the active application component from `src/App.jsx`.
-- `src/index.js` is a legacy entry point; do not treat it as the active application entry.
 - The current test command is `npm test` (runs `vitest run`); the production build command is `npm run build`.
 
 ## Working agreement
