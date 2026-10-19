@@ -2,12 +2,11 @@
 
 ## Project overview
 
-Frets is a React application for fretboard note practice and exercises. It uses Vite, React Router, Zustand, and Vitest.
+Frets is a React application for fretboard note practice and exercises. It uses Vite, React, React Router, Zustand, and Vitest.
 
 - The Vite entry point is `src/main.jsx`.
-- `src/main.jsx` currently imports `src/App.js`.
-- `src/index.js` is marked as a legacy entry point.
-- `src/App.jsx` is a separate alternative implementation whose status is unresolved. Do not assume it is active or delete it without investigating its history and discussing the decision.
+- `src/main.jsx` imports the active application component from `src/App.jsx`.
+- `src/index.js` is a legacy entry point; do not treat it as the active application entry.
 - The current test command is `npm test` (runs `vitest run`); the production build command is `npm run build`.
 
 ## Working agreement
