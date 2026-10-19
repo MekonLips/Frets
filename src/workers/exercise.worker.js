@@ -1,5 +1,5 @@
 import { NOTES_NUM, FRETS_NUM, ACTIONS } from '../config/frets.config';
-import { getRandomNoteSequence, getExercisePattern, getNoteByIdx } from '../utils/note.utils';
+import { getRandomNoteSequence, getPattern, getNoteByIdx } from '../utils/note.utils';
 
 const { SEQUENCE, NOTES, PATTERN } = ACTIONS.PATTERNS;
 
@@ -19,8 +19,8 @@ const createNotes = ({ sequence, strings }) => {
     return notes;
 };
 
-const createPattern = ({ exercise, sequence, strings, start }) => 
-    getExercisePattern({ exercise: parseInt(exercise), noteIdxs: sequence, strings, start });
+const createPattern = ({ exercise, sequence, strings, start }) =>
+    getPattern({ exercise: parseInt(exercise), noteIdxs: sequence, strings, start });
 
 self.onmessage = async e => {
     const type = e.data.type;

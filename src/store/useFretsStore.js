@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { INSTRUMENTS, SESSION_MS, START_FRET } from '../config/frets.js';
+import { INSTRUMENTS, TIME_LIMIT, START_FRET } from '../config/frets.config.js';
 
 const initialExerciseState = () => ({ sequence: [], notes: [], pattern: [], stage: 1, beat: 0 });
 
@@ -12,7 +12,7 @@ export const useFretsStore = create(persist((set) => ({
   selectedNoteIdx: null,
   selectedNotesMode: 1,
   selectedNotesModeIndex: 1,
-  sessionRemaining: SESSION_MS,
+  sessionRemaining: TIME_LIMIT,
   timerRunning: false,
   tempoBpm: 40,
   exerciseAccidentals: {},
@@ -68,7 +68,7 @@ export const useFretsStore = create(persist((set) => ({
   setStage: (stage) => set((state) => ({ stage: typeof stage === 'function' ? stage(state.stage) : stage })),
   setBeat: (beat) => set((state) => ({ beat: typeof beat === 'function' ? beat(state.beat) : beat })),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
-  resetSession: () => set({ sessionRemaining: SESSION_MS, timerRunning: false }),
+  resetSession: () => set({ sessionRemaining: TIME_LIMIT, timerRunning: false }),
 }), {
   name: 'frets-preferences',
   storage: createJSONStorage(() => localStorage),

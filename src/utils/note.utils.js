@@ -1,5 +1,6 @@
-import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS } from '../config/frets.config';
+import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from '../config/frets.config';
 import { arrayShuffle } from './array.utils';
+import { midiToFrequency } from './pitch.utils';
 
 export const isNatural = idx => NATURALS.find(_ => _ === idx) ? true : false;
 
@@ -8,6 +9,10 @@ export const isAccidental = idx => ACCIDENTALS.find(_ => _ === idx) ? true : fal
 export const getNoteByIdx = idx => NOTES[idx];
 
 export const getNoteIdxs = () => NOTES.map((note, idx) => idx);
+
+export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
+
+export const noteIndexAtFret = (openNoteIndex, fret) => (openNoteIndex + fret) % NOTES_NUM;
 
 export const getNaturalIdxs = () => getNoteIdxs().reduce((arr, note, idx) => {
     if (!isAccidental(idx))
@@ -51,87 +56,44 @@ export const getRandomNoteSequence = ({ exercise, accidentals = null, length = n
     return sequence;
 };
 
-export const getFretInRange = (noteIdx, stringNoteIdx, start = 1) => {
-    return noteIdx <= stringNoteIdx ? 
-        NOTES_NUM - stringNoteIdx + noteIdx + (NOTES_NUM - stringNoteIdx + noteIdx < start ? NOTES_NUM : 0) : 
-        noteIdx - stringNoteIdx + (noteIdx - stringNoteIdx < start ? NOTES_NUM : 0);
+export const getFretInRange = (noteIndex, openNoteIndex, start = START_FRET) => {
+    const difference = (noteIndex - openNoteIndex + NOTES_NUM) % NOTES_NUM;
+    const fret = difference || NOTES_NUM;
+    return fret < start ? fret + NOTES_NUM : fret;
 };
 
-export const getAscendingNotes = (noteIdx, strings, start = 1) => {
+const getAscendingNotes = (noteIdx, strings, start) => {
     const pattern = [];
     for (let string = strings.length; string >= 1; string--)
         pattern.push({ noteIdx, string, fret: getFretInRange(noteIdx, strings[string - 1], start), dir: 'up' });
     return pattern;
 };
 
-export const getDescendingNotes = (noteIdx, strings, start = 1) => {
+const getDescendingNotes = (noteIdx, strings, start) => {
     const pattern = [];
     for (let string = 1; string <= strings.length; string++)
         pattern.push({ noteIdx, string, fret: getFretInRange(noteIdx, strings[string - 1], start), dir: 'down' });
     return pattern;
 };
 
+// Build every exercise pattern from one place. Exercises 4 and 5 alternate
+// direction per note; the other exercises play each note ascending and descending.
+export const getPattern = ({ exercise, noteIdxs = [], strings = [], start = START_FRET }) => {
+    const exerciseNumber = Number(exercise);
+    return noteIdxs.flatMap((noteIdx, index) => {
+        if (exerciseNumber === 4 || exerciseNumber === 5) {
+            return index % 2 === 0
+                ? getAscendingNotes(noteIdx, strings, start)
+                : getDescendingNotes(noteIdx, strings, start);
+        }
+
+        return [
+            ...getAscendingNotes(noteIdx, strings, start),
+            ...getDescendingNotes(noteIdx, strings, start),
+        ];
+    });
+};
+
 export const repeat = (repeats, ...rest) => new Array(repeats).fill(rest).flat();
 
-export const getExercisePattern = ({ exercise, noteIdxs, strings, start = 1 }) => {
-    const pattern = [];
-    switch (exercise) {
-        case 1:
-            // play each note up and down 3x
-            // repeat 2x
-            // const upSeq = getAscendingNotes(noteIdxs[0], strings, start);
-            // const downSeq = getDescendingNotes(noteIdxs[0], strings, start);
-            // pattern.push(...repeat(2, ...repeat(3, ...upSeq, ...downSeq)));
-            pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
-                arr.push(
-                    ...getAscendingNotes(noteIdx, strings, start), 
-                    ...getDescendingNotes(noteIdx, strings, start)
-                );
-                return arr;
-            }, []));
-            break;
-        case 2:
-        case 3:
-            // play note up and down
-            pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
-                arr.push(
-                    ...getAscendingNotes(noteIdx, strings, start), 
-                    ...getDescendingNotes(noteIdx, strings, start)
-                );
-                return arr;
-            }, []));
-            break;
-        case 4:
-        case 5:
-            // Alternate direction by note: first note ascends, second descends.
-            pattern.push(...noteIdxs.reduce((arr, noteIdx, idx) => {
-                arr.push(...(idx % 2 === 0
-                    ? getAscendingNotes(noteIdx, strings, start)
-                    : getDescendingNotes(noteIdx, strings, start)));
-                return arr;
-            }, []));
-            break;
-        case 6:
-            // Exercise 6 retains the previous up-and-down pattern.
-            pattern.push(...noteIdxs.reduce((arr, noteIdx) => {
-                arr.push(
-                    ...getAscendingNotes(noteIdx, strings, start),
-                    ...getDescendingNotes(noteIdx, strings, start)
-                );
-                return arr;
-            }, []));
-            break;
-        default:
-            break;
-    }
-    return pattern;
-};
-
-const BASE_FREQ = 440;
-
-const TWELTH_ROOT_OF_TWO = Math.pow(2, 1/12);
-
-export const getNoteFrequency = idx => {
-    const halfSteps = idx ? idx : 0; // number of half steps from A4 to target note;
-    return BASE_FREQ * Math.pow(TWELTH_ROOT_OF_TWO, halfSteps);
-};
+export const getNoteFrequency = (halfSteps = 0) => midiToFrequency(69 + halfSteps);

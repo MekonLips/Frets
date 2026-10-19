@@ -1,4 +1,4 @@
-import { INSTRUMENTS } from '../config/frets.js';
+import { INSTRUMENTS } from '../config/frets.config.js';
 
 export const getOpenStringMidi = (instrument, stringNumber) => {
   const openStringMidi = instrument?.openStringMidi
