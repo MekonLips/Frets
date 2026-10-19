@@ -32,7 +32,6 @@ describe('fretboard note helpers', () => {
     expect(getNotesFromIdxs([0, 3, 7])).toEqual(['A', 'C', 'E']);
     expect(getNaturalIdxs()).toEqual(NATURALS);
     expect(getAccidentalIdxs()).toEqual(ACCIDENTALS);
-    expect(getAccidentalIndices()).toEqual(ACCIDENTALS);
 
     for (let index = 0; index < NOTES_NUM; index++) {
       expect(isNatural(index)).toBe(NATURALS.includes(index));
