@@ -1,10 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
-import { getFretInRange, getNoteFrequency, getRandomNoteSequence, noteName, noteIndexAtFret } from '../utils/note.utils.js';
-import {
-  getPattern,
-} from './frets.js';
+import { getFretInRange, getNoteFrequency, getPattern, getRandomNoteSequence, noteName, noteIndexAtFret } from '../utils/note.utils.js';
 
 describe('arrayShuffle', () => {
   it('shuffles the supplied array in place and returns it', () => {
@@ -50,12 +47,24 @@ describe('fretboard note helpers', () => {
     expect(getNoteFrequency(12)).toBeCloseTo(880, 8);
   });
 
-  it('creates a full ascending and descending string pattern per note', () => {
-    const pattern = getPattern([0, 2], INSTRUMENTS[0].strings, 1);
-    expect(pattern).toHaveLength(2 * INSTRUMENTS[0].strings.length * 2);
-    expect(pattern[0].string).toBe(6);
-    expect(pattern[INSTRUMENTS[0].strings.length].direction).toBe('down');
+  it('creates ascending and descending positions for each note', () => {
+    const strings = INSTRUMENTS[0].strings;
+    const pattern = getPattern({ exercise: 1, noteIdxs: [0, 2], strings, start: 1 });
+
+    expect(pattern).toHaveLength(2 * strings.length * 2);
+    expect(pattern[0]).toMatchObject({ noteIdx: 0, string: 6, dir: 'up' });
+    expect(pattern[strings.length]).toMatchObject({ noteIdx: 0, string: 1, dir: 'down' });
     expect(pattern.every((position) => position.fret >= 1 && position.fret <= FRETS_NUM)).toBe(true);
+  });
+
+  it('alternates direction by note for exercises 4 and 5', () => {
+    const strings = INSTRUMENTS[0].strings;
+    const pattern = getPattern({ exercise: 4, noteIdxs: [0, 2, 4], strings, start: 1 });
+
+    expect(pattern).toHaveLength(3 * strings.length);
+    expect(pattern[0].dir).toBe('up');
+    expect(pattern[strings.length].dir).toBe('down');
+    expect(pattern[strings.length * 2].dir).toBe('up');
   });
 
   it('selects notes from the correct exercise family without mutating constants', () => {
