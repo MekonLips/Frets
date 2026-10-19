@@ -174,7 +174,7 @@ describe('fretboard note helpers', () => {
     }
   });
 
-  it('returns an empty sequence for a requested length of zero and handles lengths larger than the source', () => {
+  it('handles zero and oversized requested lengths without truncating the source sequence', () => {
     expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 0 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
     expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 20 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
   });
