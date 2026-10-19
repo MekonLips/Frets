@@ -2,6 +2,9 @@
 
 Frets is a browser-based guitar and bass fretboard practice app.
 
+**Repository:** [github.com/MekonLips/Frets](https://github.com/MekonLips/Frets)  
+**Live app:** [frets.joltrouter.net](https://frets.joltrouter.net/)
+
 ## Features
 
 - Explore note positions on the fretboard and filter natural notes or accidentals.
@@ -20,7 +23,7 @@ npm test
 npm run build
 ```
 
-The production build is written to `dist/`. The app is deployed at [frets.joltrouter.net](https://frets.joltrouter.net/). The static host must serve `index.html` for direct visits to exercise routes. For S3 website hosting, configure `index.html` as the error document and verify the response behavior for your domain/CDN.
+The production build is written to `dist/`. The static host must serve `index.html` for direct visits to exercise routes. For S3 website hosting, configure `index.html` as the error document and verify the response behavior for your domain/CDN.
 
 ## State and privacy
 
