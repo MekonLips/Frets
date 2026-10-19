@@ -1,4 +1,5 @@
 import { arrayShuffle } from '../utils/array.utils.js';
+import { getFretInRange } from '../utils/note.utils.js';
 import { NOTES, NATURALS, ACCIDENTALS, START_FRET } from './frets.config.js';
 
 export const getSequence = (exercise, useAccidentals = false) => {
