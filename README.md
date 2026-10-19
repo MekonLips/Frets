@@ -11,6 +11,8 @@ Frets is a browser-based guitar and bass fretboard practice app.
 
 ## Development
 
+The Vite entry point is `src/main.jsx`, which loads the active app component from `src/App.jsx`.
+
 ```sh
 npm install
 npm run dev
