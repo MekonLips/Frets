@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { arrayShuffle } from '../utils/array.utils.js';
-import { getRandomNoteSequence } from '../utils/note.utils.js';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from './frets.config.js';
-import { getFretInRange, getNoteFrequency, noteName, noteIndexAtFret } from '../utils/note.utils.js';
+import { getFretInRange, getNoteFrequency, getRandomNoteSequence, noteName, noteIndexAtFret } from '../utils/note.utils.js';
 import {
   getPattern,
 } from './frets.js';
@@ -59,7 +58,7 @@ describe('fretboard note helpers', () => {
     expect(pattern.every((position) => position.fret >= 1 && position.fret <= FRETS_NUM)).toBe(true);
   });
 
-  it('shuffles only notes belonging to the selected exercise family without mutating constants', () => {
+  it('selects notes from the correct exercise family without mutating constants', () => {
     const originalNaturals = [...NATURALS];
     const originalAccidentals = [...ACCIDENTALS];
 
