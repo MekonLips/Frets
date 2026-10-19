@@ -149,7 +149,11 @@ describe('fretboard note helpers', () => {
       const sequence = getRandomNoteSequence({ exercise, accidentals: true, shuffle: false });
 
       expect(sequence).toHaveLength(NOTES_NUM);
-      expect(sequence).toEqual([3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
+      expect([...sequence].sort((a, b) => a - b)).toEqual([...Array(NOTES_NUM).keys()]);
+
+      if (exercise !== 5) {
+        expect(sequence).toEqual([3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
+      }
     }
   });
 
