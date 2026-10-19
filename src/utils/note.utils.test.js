@@ -1,6 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ACCIDENTALS, FRETS_NUM, INSTRUMENTS, NATURALS, NOTES, NOTES_NUM } from '../config/frets.config.js';
-import { getFretInRange, getNoteFrequency, getPattern, getRandomNoteSequence, noteName, noteIndexAtFret } from './note.utils.js';
+import {
+  getAccidentalIdxs,
+  getFretInRange,
+  getNaturalIdxs,
+  getNoteByIdx,
+  getNoteFrequency,
+  getNotesFromIdxs,
+  getNoteIdxs,
+  getPattern,
+  getRandomNoteSequence,
+  isAccidental,
+  isNatural,
+  noteName,
+  noteIndexAtFret,
+  repeat,
+} from './note.utils.js';
 
 describe('fretboard note helpers', () => {
   it('wraps note names through the twelve-note chromatic set', () => {
@@ -8,6 +23,21 @@ describe('fretboard note helpers', () => {
     expect(noteName(12)).toBe('A');
     expect(noteName(-1)).toBe('G#');
     expect(noteIndexAtFret(7, 5)).toBe(0);
+  });
+
+  it('looks up note indices, names, and natural/accidental classifications', () => {
+    expect(getNoteIdxs()).toEqual(Array.from({ length: NOTES_NUM }, (_, index) => index));
+    expect(getNoteByIdx(0)).toBe('A');
+    expect(getNoteByIdx(11)).toBe('G#');
+    expect(getNotesFromIdxs([0, 3, 7])).toEqual(['A', 'C', 'E']);
+    expect(getNaturalIdxs()).toEqual(NATURALS);
+    expect(getAccidentalIdxs()).toEqual(ACCIDENTALS);
+    expect(getAccidentalIndices()).toEqual(ACCIDENTALS);
+
+    for (let index = 0; index < NOTES_NUM; index++) {
+      expect(isNatural(index)).toBe(NATURALS.includes(index));
+      expect(isAccidental(index)).toBe(ACCIDENTALS.includes(index));
+    }
   });
 
   it('finds the next matching fret at or above the requested start fret', () => {
@@ -43,6 +73,12 @@ describe('fretboard note helpers', () => {
     expect(pattern[strings.length * 2].dir).toBe('up');
   });
 
+  it('repeats a supplied value sequence the requested number of times', () => {
+    expect(repeat(3, 'A', 'B')).toEqual(['A', 'B', 'A', 'B', 'A', 'B']);
+    expect(repeat(0, 'A', 'B')).toEqual([]);
+    expect(repeat(2)).toEqual([]);
+  });
+
   it('selects notes from the correct exercise family without mutating constants', () => {
     const originalNaturals = [...NATURALS];
     const originalAccidentals = [...ACCIDENTALS];
@@ -57,6 +93,11 @@ describe('fretboard note helpers', () => {
     expect(NATURALS).toEqual(originalNaturals);
     expect(ACCIDENTALS).toEqual(originalAccidentals);
     expect(NOTES).toHaveLength(12);
+  });
+
+  it('limits a note sequence to the requested number of trailing notes', () => {
+    expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 3 })).toEqual([10, 0, 2]);
+    expect(getRandomNoteSequence({ exercise: 1, accidentals: false, length: 7 })).toEqual([3, 5, 7, 8, 10, 0, 2]);
   });
 
   it('shuffles exercise 5 notes deterministically without accidentals', () => {
