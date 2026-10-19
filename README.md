@@ -29,7 +29,7 @@ The production build is written to `dist/`. The static host must serve `index.ht
 
 There are no user accounts or application backend. Preferences are stored locally in the browser; exercise progress is session state.
 
-The Zustand store keeps progress under `exercises`, keyed by exercise number, so each exercise has its own sequence, notes, pattern, stage, and playback beat. Only preferences are persisted; exercise progress and timer state remain transient.
+The Zustand store keeps progress under `exercises`, keyed by exercise number, so each exercise has its own sequence, notes, pattern, stage, and playback beat. The shared exercise Worker has one message handler, which routes responses to the originating exercise; sequence, notes, and pattern results are committed together in one store update. Only preferences are persisted; exercise progress and timer state remain transient.
 
 ## Future ideas
 
