@@ -15,6 +15,7 @@ Frets is a React application for fretboard note practice and exercises. It uses 
 - Inspect the existing code and relevant Git history before proposing changes.
 - **Discuss planned code or repository changes first and wait for explicit agreement before implementing them.** This includes refactors, file removals, dependency changes, and changes to application behaviour.
 - Work incrementally and keep each change focused on the agreed scope. Do not bundle unrelated cleanup into a task.
+- When adding or extending features avoid duplicating code and creating special case functions. Identify where existing functions should be extended instead of creating new ones.
 - Do not merge branches or pull requests unless explicitly asked.
 - Never claim a change, test, build, or browser check succeeded unless it was actually performed.
 
@@ -25,6 +26,7 @@ Frets is a React application for fretboard note practice and exercises. It uses 
 - Add or update regression tests when fixing a bug or changing behaviour.
 - If tests or the build cannot be run, report that clearly and explain what remains unverified.
 - Preserve existing user-visible behaviour unless a change has been agreed.
+- When switching branches or merging back into main display the terminal commands to switch branches so they can be copied and pasted into the terminal.
 
 ## Code and test practices
 
