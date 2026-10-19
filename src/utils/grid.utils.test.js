@@ -12,7 +12,7 @@ describe('fretboard grid utilities', () => {
   it('calculates positive fret column widths', () => {
     expect(columnWidth(0)).toBeGreaterThan(0);
     expect(columnWidth(1)).toBeGreaterThan(0);
-    expect(columnWidth(0)).toBeCloseTo((100 - fretPosition(1)) / 100 * GRID_BASE_WIDTH, 4);
+    expect(columnWidth(0)).toBeCloseTo((fretPosition(-1) - fretPosition(0)) * GRID_BASE_WIDTH, 4);
   });
 
   it('sums column widths and returns a CSS grid column list', () => {
