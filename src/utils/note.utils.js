@@ -2,7 +2,7 @@ import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from '../config/f
 import { arrayShuffle } from './array.utils';
 import { midiToFrequency } from './pitch.utils';
 
-export const isNatural = idx => NATURALS.find(_ => _ === idx) ? true : false;
+export const isNatural = idx => NATURALS.includes(idx);
 
 export const isAccidental = idx => ACCIDENTALS.find(_ => _ === idx) ? true : false;
 
