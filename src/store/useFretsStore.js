@@ -29,6 +29,20 @@ export const useFretsStore = create(persist((set) => ({
     const nextValue = typeof value === 'function' ? value(current[field]) : value;
     return { exercises: { ...state.exercises, [key]: { ...current, [field]: nextValue } } };
   }),
+  setExerciseResults: (exercise, results) => set((state) => {
+    const key = String(exercise ?? '');
+    const current = state.exercises[key] ?? initialExerciseState();
+    return {
+      exercises: {
+        ...state.exercises,
+        [key]: {
+          ...current,
+          ...results,
+          ...(Object.hasOwn(results, 'sequence') ? { stage: 1, beat: 0 } : {}),
+        },
+      },
+    };
+  }),
   setExerciseSequence: (exercise, sequence) => set((state) => {
     const key = String(exercise ?? '');
     const current = state.exercises[key] ?? initialExerciseState();
