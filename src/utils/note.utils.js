@@ -1,5 +1,6 @@
 import { NOTES, NOTES_NUM, NATURALS, ACCIDENTALS, START_FRET } from '../config/frets.config';
 import { arrayShuffle } from './array.utils';
+import { midiToFrequency } from './pitch.utils';
 
 export const isNatural = idx => NATURALS.find(_ => _ === idx) ? true : false;
 
@@ -131,11 +132,4 @@ export const getExercisePattern = ({ exercise, noteIdxs, strings, start = 1 }) =
     return pattern;
 };
 
-const BASE_FREQ = 440;
-
-const TWELTH_ROOT_OF_TWO = Math.pow(2, 1/12);
-
-export const getNoteFrequency = idx => {
-    const halfSteps = idx ? idx : 0; // number of half steps from A4 to target note;
-    return BASE_FREQ * Math.pow(TWELTH_ROOT_OF_TWO, halfSteps);
-};
+export const getNoteFrequency = (halfSteps = 0) => midiToFrequency(69 + halfSteps);
