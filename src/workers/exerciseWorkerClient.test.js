@@ -8,6 +8,7 @@ describe('exercise worker client', () => {
     let handleExerciseWorkerMessage;
     let worker;
     let store;
+    let state;
 
     beforeEach(async () => {
         createdWorkers = [];
@@ -23,13 +24,12 @@ describe('exercise worker client', () => {
         });
         vi.resetModules();
         ({ handleExerciseWorkerMessage, worker } = await import('./exerciseWorkerClient.js'));
-        store = {
-            getState: () => ({
-                setExerciseResults: vi.fn(),
-                setExerciseNotes: vi.fn(),
-                setExercisePattern: vi.fn(),
-            }),
+        state = {
+            setExerciseResults: vi.fn(),
+            setExerciseNotes: vi.fn(),
+            setExercisePattern: vi.fn(),
         };
+        store = { getState: () => state };
     });
 
     afterEach(() => {
@@ -44,7 +44,6 @@ describe('exercise worker client', () => {
     });
 
     it('commits sequence, notes and pattern together to the originating exercise', () => {
-        const state = store.getState();
         const sequence = [1, 2];
         const notes = [[{ string: 1, fret: 1 }], [{ string: 2, fret: 3 }]];
         const pattern = [{ noteIdx: 1 }, { noteIdx: 2 }];
@@ -60,7 +59,6 @@ describe('exercise worker client', () => {
     });
 
     it('routes notes and patterns to their originating exercise', () => {
-        const state = store.getState();
         const notes = [[{ string: 1, fret: 4 }]];
         const pattern = [{ noteIdx: 3 }];
 
@@ -76,8 +74,7 @@ describe('exercise worker client', () => {
         expect(state.setExerciseResults).not.toHaveBeenCalled();
     });
 
-    it('ignores missing result fields and unknown message types', () => {
-        const state = store.getState();
+    it('ignores missing result fields and logs unknown message types', () => {
         const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
         handleExerciseWorkerMessage({
