@@ -5,7 +5,7 @@ import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useFretsStore } from '../../store/useFretsStore';
 import Portal from '../Portal/Portal.component';
 import Panel from '../Panel/Panel.component';
-import InstrumentSelector from '../Controls/InstrumentSelector/InstrumentSelector.component';
+import InstrumentBuilder from './InstrumentBuilder.component';
 
 const InstrumentsOverlay = () => {
     const show = useFretsStore(state => state.showInstruments);
@@ -15,7 +15,7 @@ const InstrumentsOverlay = () => {
         <Panel show={show} className="legacy-instruments-panel">
             <div className="legacy-instruments-content">
                 <h1>Instruments</h1>
-                <InstrumentSelector />
+                <InstrumentBuilder />
             </div>
             <button
                 type="button"
