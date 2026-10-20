@@ -356,3 +356,29 @@
     height: 2.5rem;
   }
 }
+
+/* The instrument controls panel mirrors the exercise navigation panel from the opposite side. */
+@layer components {
+  .legacy-instruments-panel { left: 25%; right: 0; }
+  .legacy-instruments-panel.legacy-nav-panel-closed { transform: translateX(100%); }
+  .legacy-instruments-panel.legacy-nav-panel-open { transform: translateX(0); }
+  .legacy-instruments-content { @apply flex h-full flex-col gap-6 p-8; }
+  .legacy-instruments-content h1 { @apply mb-2 text-xl; }
+  .legacy-instruments-close-button {
+    @apply absolute left-[calc(-3rem+1px)] top-0 flex h-full w-12 cursor-pointer items-center justify-center border-0 p-0 text-xl text-gray-400 transition-colors duration-200;
+    background-color: rgb(0 0 0);
+    box-shadow: -3px 0 6px 0 rgb(0 0 0 / 40%), 6px 0 12px 0 rgb(0 0 0 / 40%);
+    display: none;
+  }
+  .legacy-instruments-close-button.is-visible { display: flex; }
+  .legacy-instruments-close-button:hover,
+  .legacy-instruments-close-button:focus,
+  .legacy-instruments-close-button:active { color: white; background-color: rgb(8 8 8); }
+  .legacy-instrument-menu-trigger { @apply flex-col items-end justify-start gap-1; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper { @apply flex flex-col items-center; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button { @apply h-[3.4rem] w-[3.4rem] rounded-full; }
+  .legacy-instrument-label { @apply max-w-full text-right text-xs text-gray-300; }
+  .legacy-range-selector-container { @apply col-start-1 col-end-4 row-start-3 row-end-4 items-center justify-center; }
+  .legacy-range-selector-container label { @apply flex w-full justify-center; }
+  .legacy-range-selector-container .legacy-form-select { @apply max-w-full text-center; }
+}
