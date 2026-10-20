@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { INSTRUMENTS, TIME_LIMIT, START_FRET } from '../config/frets.config.js';
+import { INSTRUMENTS, TIME_LIMIT, START_FRET, SELECTED_INSTRUMENT, SELECTED_NOTES, SELECTED_NOTE, SHOW_RANGE, SHOW_NAV } from '../config/frets.config.js';
 
 const initialExerciseState = () => ({ sequence: [], notes: [], pattern: [], stage: 1, beat: 0 });
 
 export const useFretsStore = create(persist((set) => ({
-  selectedInstrumentId: 1,
+  selectedInstrumentId: SELECTED_INSTRUMENT,
   startFret: START_FRET,
-  showRange: false,
-  showNav: false,
-  selectedNoteIdx: null,
-  selectedNotesMode: 1,
-  selectedNotesModeIndex: 1,
+  showRange: SHOW_RANGE,
+  showNav: SHOW_NAV,
+  selectedNoteIdx: SELECTED_NOTE,
+  selectedNotesMode: SELECTED_NOTES,
+  selectedNotesModeIndex: SELECTED_NOTES,
   sessionRemaining: TIME_LIMIT,
   timerRunning: false,
   tempoBpm: 40,
