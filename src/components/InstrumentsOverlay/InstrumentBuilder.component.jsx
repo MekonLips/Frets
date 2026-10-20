@@ -48,7 +48,10 @@ const InstrumentBuilder = () => {
 
   useEffect(() => {
     const preset = presets.find(({ id }) => id === selectedPresetId);
-    if (preset) setDraft(createInstrumentDraft(preset));
+    if (preset) {
+      const nextDraft = createInstrumentDraft(preset);
+      setDraft({ ...nextDraft, name: preset.isBuiltIn ? "" : preset.name });
+    }
   }, [selectedPresetId, presets]);
 
   const updateDraft = (nextDraft) => {
@@ -118,7 +121,15 @@ const InstrumentBuilder = () => {
   const defaultPreset = getDefaultPresetForType(draft.type);
   const differsFromDefault = Boolean(defaultPreset) && (
     draft.strings.length !== defaultPreset.strings.length ||
-    draft.strings.some((string, index) => string.midi !== defaultPreset.strings[index]?.midi)
+    draft.strings.some((string, index) => {
+      const defaultString = defaultPreset.strings[index];
+      return !defaultString ||
+        string.midi !== defaultString.midi ||
+        string.winding.mode !== (defaultString.winding?.mode === "manual" ? "manual" : "auto") ||
+        string.winding.value !== (defaultString.winding?.mode === "manual"
+          ? Boolean(defaultString.winding.value)
+          : defaultString.winding?.value);
+    })
   );
 
   return (
