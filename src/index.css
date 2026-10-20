@@ -378,7 +378,9 @@
   .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper { @apply flex w-full flex-col items-end; }
   .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button { @apply h-[3.4rem] w-[3.4rem] shrink-0 self-end rounded-full; }
   .legacy-instrument-label { @apply max-w-full text-right text-xs text-gray-300; }
-  .legacy-grid > div.legacy-tab-sequence-cell { @apply col-start-1 col-end-4 row-start-3 row-end-4 flex-col items-stretch justify-center gap-4; }
+  .legacy-grid > div.legacy-tab-sequence-cell { @apply col-start-1 col-end-4 row-start-3 row-end-4 flex-col items-center justify-center gap-4; }
+  .legacy-tab-sequence-cell > .legacy-tab-range-container,
+  .legacy-tab-sequence-cell > .legacy-sequence-container { @apply w-1/2; }
   .legacy-tab-range-container { @apply flex w-full flex-col items-center justify-center gap-3; }
   .legacy-tab-range-container .legacy-tab-container { @apply h-auto w-full; }
   .legacy-tab-range-container .legacy-range-selector-container { @apply flex w-full items-center justify-center p-0; }
