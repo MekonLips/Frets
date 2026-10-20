@@ -453,3 +453,35 @@
   .instrument-builder-name-row { @apply items-end gap-1; }
   .instrument-builder-save { padding-left: 0.6rem; padding-right: 0.6rem; }
 }
+
+
+/* Compact, consistent instrument-builder form controls. */
+@layer components {
+  .instrument-builder-name-row { @apply flex items-end gap-2; }
+  .instrument-builder-name-row .instrument-builder-field { @apply min-w-0 flex-1; }
+  .instrument-builder-name-row .instrument-builder-input { @apply w-full; }
+  .instrument-builder-name-row .legacy-form-button {
+    @apply m-0 inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap border-white/25 px-3 py-2 text-sm;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .instrument-builder-save { @apply border-white/25 text-white; }
+  .instrument-builder-delete { @apply border-red-400/60 text-red-200; }
+  .instrument-builder-delete.is-enabled { @apply border-red-400/60 bg-red-500/10 text-red-200; }
+  .instrument-builder-delete.is-enabled:hover,
+  .instrument-builder-delete.is-enabled:focus-visible { @apply bg-red-500/20; }
+  .instrument-builder-delete.is-disabled,
+  .instrument-builder-delete:disabled { @apply cursor-not-allowed border-white/10 bg-white/5 text-neutral-500 opacity-60; }
+  .instrument-builder-name-row .legacy-form-button svg { @apply h-3.5 w-3.5; }
+  .instrument-builder select,
+  .instrument-builder .legacy-form-select {
+    padding-right: 2rem;
+    background-position: right 0.65rem center;
+  }
+}
+@media (max-width: 640px) {
+  .instrument-builder-name-row { @apply gap-1; }
+  .instrument-builder-name-row .legacy-form-button { @apply gap-1 px-2; }
+}
