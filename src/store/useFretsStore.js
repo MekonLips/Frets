@@ -94,11 +94,7 @@ export const useFretsStore = create(persist((set) => ({
 
 export const getSelectedInstrument = (selection) => {
   if (selection && typeof selection === 'object' && Array.isArray(selection.stringDefinitions)) {
-    return {
-      ...selection,
-      strings: selection.stringDefinitions.map(({ midi }) => ((midi % 12) + 3) % 12),
-      openStringMidi: selection.stringDefinitions.map(({ midi }) => midi),
-    };
+    return selection;
   }
   return INSTRUMENTS.find((item) => item.id === selection) ?? INSTRUMENTS[0];
 };
