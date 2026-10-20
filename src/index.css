@@ -283,7 +283,19 @@
   .legacy-sequence-button:first-child > svg { transform: translateX(-0.2rem); }
   .legacy-sequence-button:last-child { margin-left: 2vw; }
   .legacy-sequence-button:last-child > svg { transform: translateX(0.2rem); }
-  .legacy-form-select { @apply cursor-pointer border-0 text-white; margin: 0 0.2vw; padding: 1vh 1vw; background-color: rgb(255 255 255 / 10%); font-size: 1.2rem; }
+  .legacy-form-select {
+    @apply cursor-pointer border-0 text-white;
+    margin: 0 0.2vw;
+    padding: 1vh 2.75rem 1vh 1vw;
+    background-color: rgb(255 255 255 / 10%);
+    font-size: 1.2rem;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 0.75rem 0.5rem;
+  }
   .legacy-form-select option { color: white; background-color: rgb(0 0 0 / 50%); }
   .legacy-form-button { @apply cursor-pointer border border-white text-white; margin: 0 0.5vw; padding: 1vh 1vw; background-color: transparent; font-size: 1.2rem; }
 }
@@ -477,8 +489,8 @@
   .instrument-builder-name-row .legacy-form-button svg { @apply h-3.5 w-3.5; }
   .instrument-builder select,
   .instrument-builder .legacy-form-select {
-    padding-right: 2rem;
-    background-position: right 0.65rem center;
+    padding-right: 2.75rem;
+    background-position: right 0.9rem center;
   }
 }
 @media (max-width: 640px) {
@@ -487,17 +499,3 @@
 }
 
 
-/* Native select arrows are rendered by the browser; reserve space inside the control. */
-@layer components {
-  .instrument-builder select,
-  .instrument-builder .legacy-form-select {
-    -webkit-appearance: none;
-    appearance: none;
-    box-sizing: border-box;
-    padding-right: 2.75rem;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.9rem center;
-    background-size: 0.75rem 0.5rem;
-  }
-}
