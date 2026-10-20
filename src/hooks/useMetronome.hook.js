@@ -14,7 +14,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     const [ state, setState ] = useState({
         beat: 0,
         subBeat: 0,
