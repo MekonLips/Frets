@@ -60,7 +60,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
 
     const tick = (beat, time) => {
         const isFirstBeat = beat === 0;
-        const isQuarterBeat = beat % (ticksPerBeat / beatsPerMeasure) === 0;
+        const isQuarterBeat = beat % ticksPerBeat === 0;
 
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {
