@@ -303,7 +303,7 @@
   }
   .legacy-practice-controls input[type="range"] {
     width: 9rem;
-    accent-color: orange;
+    accent-color: white;
   }
   .legacy-practice-controls input[type="checkbox"] {
     accent-color: orange;
