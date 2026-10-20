@@ -221,6 +221,7 @@ const InstrumentBuilder = () => {
                 className="instrument-builder-input"
                 value={draft.name}
                 maxLength={80}
+                placeholder={generatePresetName(draft.type, draft.strings)}
                 onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
               />
             </label>
