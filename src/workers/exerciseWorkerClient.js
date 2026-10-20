@@ -1,4 +1,4 @@
-import { useFretsStore } from '../store/useFretsStore';
+import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS } from '../config/frets.config';
 
 const { SEQUENCE, NOTES, PATTERN } = ACTIONS.PATTERNS;
@@ -9,14 +9,9 @@ export const handleExerciseWorkerMessage = (event, store = useFretsStore) => {
     const { type, payload = {} } = event.data;
     const targetExercise = payload.exercise;
     const state = store.getState();
-    const selectedInstrument = state.activeInstrumentDefinition || state.selectedInstrumentId;
-    const currentInstrument = typeof selectedInstrument === 'object'
-        ? selectedInstrument
-        : null;
-    const currentInstrumentKey = currentInstrument
-        ? `${currentInstrument.id}:${currentInstrument.openStringMidi.join(',')}`
-        : null;
-    if (payload.instrumentKey && currentInstrumentKey && payload.instrumentKey !== currentInstrumentKey) return;
+    const selectedInstrument = getSelectedInstrument(state.activeInstrumentDefinition || state.selectedInstrumentId);
+    const currentInstrumentKey = `${selectedInstrument.id}:${selectedInstrument.openStringMidi.join(',')}`;
+    if (payload.instrumentKey && payload.instrumentKey !== currentInstrumentKey) return;
 
     switch (type) {
         case SEQUENCE:
