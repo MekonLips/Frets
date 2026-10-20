@@ -84,7 +84,7 @@ export const useFretsStore = create(persist((set) => ({
   storage: createJSONStorage(() => localStorage),
   partialize: (state) => ({
     selectedInstrumentId: state.selectedInstrumentId,
-    activeInstrumentDefinition: state.activeInstrumentDefinition,
+    ...(state.activeInstrumentDefinition ? { activeInstrumentDefinition: state.activeInstrumentDefinition } : {}),
     startFret: state.startFret,
     showRange: state.showRange,
     tempoBpm: state.tempoBpm,
