@@ -6,6 +6,7 @@ const initialExerciseState = () => ({ sequence: [], notes: [], pattern: [], stag
 
 export const useFretsStore = create(persist((set) => ({
   selectedInstrumentId: SELECTED_INSTRUMENT,
+  activeInstrumentDefinition: null,
   startFret: START_FRET,
   showRange: SHOW_RANGE,
   showNav: SHOW_NAV,
@@ -18,7 +19,8 @@ export const useFretsStore = create(persist((set) => ({
   tempoBpm: 40,
   exerciseAccidentals: {},
   exercises: {},
-  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, timerRunning: false }),
+  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false }),
+  setInstrumentDefinition: (activeInstrumentDefinition) => set({ activeInstrumentDefinition, timerRunning: false }),
   setStartFret: (startFret) => set({ startFret }),
   setShowRange: (showRange) => set({ showRange }),
   setShowNav: (showNav) => set(state => ({ showNav, ...(showNav ? { showInstruments: false } : {}) })),
@@ -82,6 +84,7 @@ export const useFretsStore = create(persist((set) => ({
   storage: createJSONStorage(() => localStorage),
   partialize: (state) => ({
     selectedInstrumentId: state.selectedInstrumentId,
+    activeInstrumentDefinition: state.activeInstrumentDefinition,
     startFret: state.startFret,
     showRange: state.showRange,
     tempoBpm: state.tempoBpm,
@@ -89,4 +92,13 @@ export const useFretsStore = create(persist((set) => ({
   }),
 }));
 
-export const getSelectedInstrument = (id) => INSTRUMENTS.find((item) => item.id === id) ?? INSTRUMENTS[0];
+export const getSelectedInstrument = (selection) => {
+  if (selection && typeof selection === 'object' && Array.isArray(selection.stringDefinitions)) {
+    return {
+      ...selection,
+      strings: selection.stringDefinitions.map(({ midi }) => ((midi % 12) + 3) % 12),
+      openStringMidi: selection.stringDefinitions.map(({ midi }) => midi),
+    };
+  }
+  return INSTRUMENTS.find((item) => item.id === selection) ?? INSTRUMENTS[0];
+};
