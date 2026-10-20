@@ -44,6 +44,34 @@ describe('Frets store state transitions', () => {
     expect(store.getState().timerRunning).toBe(false);
   });
 
+  it('uses an active builder instrument definition and returns to legacy selection when cleared', async () => {
+    const { getSelectedInstrument } = await import('./useFretsStore.js');
+    const definition = {
+      id: 'user-seven-string',
+      name: 'Seven String Guitar',
+      type: 'guitar',
+      strings: [7, 7, 7, 7, 7, 7, 7],
+      openStringMidi: [64, 59, 55, 50, 45, 40, 35],
+      stringDefinitions: [
+        { id: 's1', midi: 64, winding: { mode: 'manual', value: false } },
+        { id: 's2', midi: 59, winding: { mode: 'auto', value: false } },
+        { id: 's3', midi: 55, winding: { mode: 'auto', value: false } },
+        { id: 's4', midi: 50, winding: { mode: 'auto', value: false } },
+        { id: 's5', midi: 45, winding: { mode: 'auto', value: true } },
+        { id: 's6', midi: 40, winding: { mode: 'auto', value: true } },
+        { id: 's7', midi: 35, winding: { mode: 'auto', value: true } },
+      ],
+    };
+
+    store.getState().setInstrumentDefinition(definition);
+    expect(getSelectedInstrument(store.getState().activeInstrumentDefinition)).toBe(definition);
+    expect(getSelectedInstrument(store.getState().activeInstrumentDefinition).strings).toHaveLength(7);
+
+    store.getState().setInstrument(4);
+    expect(store.getState().activeInstrumentDefinition).toBeNull();
+    expect(getSelectedInstrument(store.getState().selectedInstrumentId).id).toBe(4);
+  });
+
   it('updates start fret and view preferences independently', () => {
     const state = store.getState();
     state.setStartFret(7);
