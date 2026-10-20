@@ -6,10 +6,11 @@ import Overlay from './components/Overlay/Overlay.component';
 import Nav from './components/Nav/Nav.component';
 import NavOpenButton from './components/Nav/NavOpenButton/NavOpenButton.component';
 import NavHomeButton from './components/Nav/NavHomeButton/NavHomeButton.component';
+import InstrumentsOverlay from './components/InstrumentsOverlay/InstrumentsOverlay.component';
+import InstrumentOpenButton from './components/InstrumentOpenButton/InstrumentOpenButton.component';
 import Tab from './components/Tab/Tab.component';
 import Instrument from './components/Instrument/Instrument.component';
 import Notes from './components/Instrument/Notes/Notes.component';
-import InstrumentSelector from './components/Controls/InstrumentSelector/InstrumentSelector.component';
 import RangeSelector from './components/Controls/RangeSelector/RangeSelector.component';
 import Range from './components/Range/Range.component';
 import Timer from './components/Timer/Timer.component';
@@ -37,6 +38,7 @@ const App = () => {
           {match.params.exercise && <Exercises />}
           <Overlay />
           <Nav />
+          <InstrumentsOverlay />
           <Range />
           <Grid>
             <div>
@@ -55,9 +57,8 @@ const App = () => {
                 <Metronome />
               </div>
             </div>
-            <div>
-              <InstrumentSelector />
-              <RangeSelector />
+            <div className="legacy-instrument-menu-trigger">
+              <InstrumentOpenButton />
             </div>
             <div>
               <Instrument />
@@ -68,7 +69,9 @@ const App = () => {
               <Tab />
               <NoteSequence />
             </div>
-            <div></div>
+            <div className="legacy-range-selector-container">
+              <RangeSelector />
+            </div>
           </Grid>
         </>}
     />;
