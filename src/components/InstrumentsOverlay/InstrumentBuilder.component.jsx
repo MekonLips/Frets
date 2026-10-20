@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTrash, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import guitarIcon from "../../assets/instruments/guitar.png";
 import bassIcon from "../../assets/instruments/bass.png";
 import mandolinIcon from "../../assets/instruments/mandolin.png";
@@ -138,7 +138,7 @@ const InstrumentBuilder = () => {
 
       <div className="instrument-builder-name-row">
         <label className="instrument-builder-field">
-          <span>Preset name (optional)</span>
+          <span>Enter a preset name to save this configuration</span>
           <input
             className="instrument-builder-input"
             value={draft.name}
@@ -147,7 +147,8 @@ const InstrumentBuilder = () => {
             onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
           />
         </label>
-        <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}>Save preset</button>
+        <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}><FontAwesomeIcon icon={faFloppyDisk} /> Save preset</button>
+        <button type="button" className={`legacy-form-button instrument-builder-delete ${selectedIsSaved ? "is-enabled" : "is-disabled"}`} onClick={deletePreset} disabled={!selectedIsSaved} aria-disabled={!selectedIsSaved}><FontAwesomeIcon icon={faTrash} /> Delete</button>
       </div>
 
       <div className="instrument-builder-string-heading">
@@ -198,13 +199,6 @@ const InstrumentBuilder = () => {
         ))}
       </div>
 
-      <div className="instrument-builder-actions">
-        {selectedIsSaved && (
-          <button type="button" className="legacy-form-button instrument-builder-delete" onClick={deletePreset}>
-            <FontAwesomeIcon icon={faTrash} /> Delete
-          </button>
-        )}
-      </div>
       {error && <p className="instrument-builder-error" role="alert">{error}</p>}
       <p className="instrument-builder-hint">Presets are saved in this browser. These settings do not change the fretboard or sound yet.</p>
     </div>
