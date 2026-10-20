@@ -12,6 +12,10 @@ import {
   NOTES,
   NOTES_NUM,
   SELECTED_INSTRUMENT,
+  SELECTED_NOTES,
+  SELECTED_NOTE,
+  SHOW_RANGE,
+  SHOW_NAV,
   START_FRET,
 } from './frets.config.js';
 
@@ -55,6 +59,14 @@ describe('fretboard configuration', () => {
     for (const actionGroup of Object.values(ACTIONS)) {
       expect(new Set(Object.values(actionGroup)).size).toBe(Object.values(actionGroup).length);
     }
+  });
+
+  it('defines valid GUI state defaults', () => {
+    expect(INSTRUMENTS.some(({ id }) => id === SELECTED_INSTRUMENT)).toBe(true);
+    expect(Object.values(ACTIONS.NOTES)).toContain(SELECTED_NOTES);
+    expect(SELECTED_NOTE === null || (Number.isInteger(SELECTED_NOTE) && SELECTED_NOTE >= 0 && SELECTED_NOTE < NOTES_NUM)).toBe(true);
+    expect(typeof SHOW_RANGE).toBe('boolean');
+    expect(typeof SHOW_NAV).toBe('boolean');
   });
 
   it('uses a configured default instrument and a valid starting fret', () => {
