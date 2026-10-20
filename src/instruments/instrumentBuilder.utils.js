@@ -175,3 +175,25 @@ export function normalizeSavedPreset(preset) {
   normalized.isBuiltIn = false;
   return normalized;
 }
+
+export function toFretboardInstrument(preset) {
+  if (!preset || !Array.isArray(preset.strings)) return null;
+  const stringDefinitions = preset.strings.map((string, index) => ({
+    id: string.id || `string-${index + 1}`,
+    midi: string.midi,
+    winding: {
+      mode: string.winding?.mode === "manual" ? "manual" : "auto",
+      value: string.winding?.mode === "manual"
+        ? Boolean(string.winding.value)
+        : suggestWinding(preset.type, string.midi),
+    },
+  }));
+  return {
+    id: preset.id,
+    name: preset.name,
+    type: preset.type,
+    strings: stringDefinitions.map(({ midi }) => ((midi % 12) + 3) % 12),
+    openStringMidi: stringDefinitions.map(({ midi }) => midi),
+    stringDefinitions,
+  };
+}
