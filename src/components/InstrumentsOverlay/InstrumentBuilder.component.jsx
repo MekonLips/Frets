@@ -16,7 +16,6 @@ import {
   MIN_INSTRUMENT_STRINGS,
   MAX_MIDI_PITCH,
   MIN_MIDI_PITCH,
-  changeInstrumentType,
   changeStringPitch,
   createInstrumentDraft,
   midiToNoteName,
