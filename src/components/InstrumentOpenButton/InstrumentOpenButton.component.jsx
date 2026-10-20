@@ -27,17 +27,19 @@ const InstrumentOpenButton = () => {
     return <div className="legacy-nav-icon-button-wrapper">
         <button
             type="button"
+            className="legacy-instrument-open-button"
             aria-label="Open instrument settings"
             title="Instrument settings"
             onClick={() => setShow(true)}
         >
             <FontAwesomeIcon icon={faGear} />
+            <img
+                className="legacy-instrument-icon"
+                src={INSTRUMENT_TYPE_ICONS[instrument.type]}
+                alt=""
+                aria-hidden="true"
+            />
         </button>
-        <img
-            className="legacy-instrument-icon"
-            src={INSTRUMENT_TYPE_ICONS[instrument.type]}
-            alt={instrument.name}
-        />
     </div>;
 };
 
