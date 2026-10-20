@@ -65,13 +65,14 @@ const App = () => {
               <Notes />
             </div>
             <div></div>
-            <div>
-              <Tab />
+            <div className="legacy-tab-sequence-cell">
+              <div className="legacy-tab-range-container">
+                <Tab />
+                <div className="legacy-range-selector-container"><RangeSelector /></div>
+              </div>
               <NoteSequence />
             </div>
-            <div className="legacy-range-selector-container">
-              <RangeSelector />
-            </div>
+            <div></div>
           </Grid>
         </>}
     />;
