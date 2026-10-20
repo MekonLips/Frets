@@ -302,8 +302,32 @@
     @apply flex items-center gap-2 text-sm;
   }
   .legacy-practice-controls input[type="range"] {
+    appearance: none;
     width: 9rem;
-    accent-color: white;
+    height: 1rem;
+    background: linear-gradient(
+      to right,
+      white 0%,
+      white var(--tempo-progress),
+      #737373 var(--tempo-progress),
+      #737373 100%
+    ) center / 100% 4px no-repeat;
+  }
+  .legacy-practice-controls input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: orange;
+    cursor: pointer;
+  }
+  .legacy-practice-controls input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: 0;
+    border-radius: 50%;
+    background: orange;
+    cursor: pointer;
   }
   .legacy-practice-controls input[type="checkbox"] {
     accent-color: orange;
