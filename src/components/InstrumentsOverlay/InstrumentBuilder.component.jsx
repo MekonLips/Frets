@@ -211,7 +211,7 @@ const InstrumentBuilder = () => {
       </div>
 
       {error && <p className="instrument-builder-error" role="alert">{error}</p>}
-      <p className="instrument-builder-hint">Presets are saved in this browser. These settings do not change the fretboard or sound yet.</p>
+      <p className="instrument-builder-hint">Presets are saved in this browser. Tuning and winding changes apply to the fretboard immediately.</p>
     </div>
   );
 };
