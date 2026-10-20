@@ -5,14 +5,16 @@ import useExercise from '../../hooks/useExercise.hook';
 const ExercisesComponent = () => {
     const { exercise, sequence, instrument, start, createSequence, createNotes, createPattern } = useExercise();
     const lastRequestedExercise = useRef(null);
+    const instrumentKey = `${instrument.id}:${instrument.openStringMidi.join(',')}`;
+    const requestKey = `${exercise}:${instrumentKey}`;
     
     useEffect(() => {
         // React StrictMode replays effects in development. Avoid racing duplicate worker requests.
-        if (!sequence.length && lastRequestedExercise.current !== exercise) {
-            lastRequestedExercise.current = exercise;
+        if (!sequence.length && lastRequestedExercise.current !== requestKey) {
+            lastRequestedExercise.current = requestKey;
             createSequence();
         }
-    }, [exercise, sequence.length, createSequence]);
+    }, [exercise, instrumentKey, sequence.length, createSequence, requestKey]);
 
     useEffect(() => {
         if (sequence.length) {
