@@ -154,11 +154,11 @@ const InstrumentBuilder = () => {
       <div className="instrument-builder-string-heading">
         <h2>Strings</h2>
         <div className="instrument-builder-count">
-          <button type="button" aria-label="Remove string" disabled={draft.strings.length <= MIN_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length - 1))}>
+          <button type="button" className="control-button control-button-icon" aria-label="Remove string" disabled={draft.strings.length <= MIN_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length - 1))}>
             <FontAwesomeIcon icon={faMinus} />
           </button>
           <span>{draft.strings.length}</span>
-          <button type="button" aria-label="Add string" disabled={draft.strings.length >= MAX_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length + 1))}>
+          <button type="button" className="control-button control-button-icon" aria-label="Add string" disabled={draft.strings.length >= MAX_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length + 1))}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
