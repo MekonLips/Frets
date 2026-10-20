@@ -1,8 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="m29 29 18-18 5 5-18 18"/>
-  <path d="m45 12 5-5 7 7-5 5"/>
-  <path d="M28 30c-4-2-8 0-10 4-1 2-1 4 0 6l-5 5c-3 3-3 8 0 11s8 3 11 0l5-5c3 1 6 1 8-1 4-3 4-8 1-11"/>
-  <path d="M31 32 50 13M33 34 52 15M35 36 54 17M37 38 56 19"/>
-  <path d="M25 37 36 48M23 40l10 10"/>
-  <path d="M27 36 39 48"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M29 34c-4-2-8 0-10 4-2 3-1 7 1 9l2 2c0 5 4 8 9 8 3 0 5-1 7-3 4 1 7-1 9-4 2-4 1-8-2-11-2-3-6-4-10-2"/>
+  <path d="M29 12h7v29c0 2-1.5 3-3.5 3S29 43 29 41z"/>
+  <path d="M28 12c-1-2-1-4 0-6l2-3h5l2 3c1 2 1 4 0 6z"/>
+  <path d="M29 7h7M29 10h7"/>
+  <path d="M28 16h9M28 20h9M28 24h9M28 28h9M28 32h9M28 36h9"/>
+  <path d="M30 12v36M31.5 12v36M33 12v36M34.5 12v36"/>
+  <path d="M25 44c2-2 4-2 6 0M34 44c2-2 4-2 6 0"/>
+  <path d="M27 50h11M28 48v4M37 48v4"/>
+  <path d="M28 7h-4v2h4M37 7h4v2h-4"/>
 </svg>
