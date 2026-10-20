@@ -129,7 +129,7 @@ export function resizeInstrumentStrings(instrument, count) {
     const index = strings.length;
     const midi = strings.length ? instrument.strings[strings.length - 1].midi : 60;
     strings = [...strings, {
-      id: `string-${Date.now()}-${index}`,
+      id: `string-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${index}`,
       midi,
       winding: { mode: "auto", value: suggestWinding(instrument.type, midi) },
     }];
