@@ -441,3 +441,15 @@
   .instrument-builder-current h2 { @apply m-0 text-sm font-semibold text-neutral-300; }
   .instrument-builder-current .legacy-form-select { @apply max-w-full; }
 }
+
+
+@layer components {
+  .instrument-builder-name-row { @apply flex items-end gap-2; }
+  .instrument-builder-name-row .instrument-builder-field { @apply min-w-0 flex-1; }
+  .instrument-builder-name-row .instrument-builder-input { @apply w-full; }
+  .instrument-builder-save { @apply shrink-0 whitespace-nowrap; }
+}
+@media (max-width: 420px) {
+  .instrument-builder-name-row { @apply items-end gap-1; }
+  .instrument-builder-save { padding-left: 0.6rem; padding-right: 0.6rem; }
+}
