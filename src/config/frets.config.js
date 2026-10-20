@@ -31,15 +31,6 @@ export const GRID_ROW_HEIGHT = 4;
 export const GRID_ROW_HEIGHT_MIN = 30;
 
 // exercises
-export const EXERCISES = [
-    { id: 1, title: 'Natural notes', description: 'Play each natural note up and down the strings, slowly and without mistakes.', accidentals: false },
-    { id: 2, title: 'Natural notes + metronome', description: 'Practise natural notes in time with the metronome.', accidentals: false },
-    { id: 3, title: 'Accidentals', description: 'Focus on the accidental notes (sharps and flats) across the fretboard.', accidentals: true },
-    { id: 4, title: 'Mixed notes', description: 'Practise a short sequence of notes, ascending and descending.', accidentals: null },
-    { id: 5, title: 'Randomised notes', description: 'Work through a shuffled sequence of notes in both directions.', accidentals: null },
-    { id: 6, title: 'Review', description: 'Review the note patterns from the previous exercises.', accidentals: null },
-];
-
 export const EXERCISE_INSTRUCTIONS = [
     [
         'Play each note up and down 3 times.',
@@ -78,7 +69,6 @@ export const EXERCISES_NUM = EXERCISE_INSTRUCTIONS.length;
 export const ACTIONS = {
     NOTES: {
         NOTE:        1,
-        ALL:         2,
         NATURALS:    3,
         ACCIDENTALS: 4,
     },
@@ -121,8 +111,6 @@ export const SECONDS_IN_MINUTE = 60;
 
 export const SCHEDULE_AHEAD_TIME = 0.1;
 
-export const NOTE_LENGTH = 0.05;
-
 // layout
 export const Z_INDEX = {
     Overlay:      998,
@@ -152,14 +140,12 @@ export const PORTALS = {
 
 export const COLORS = {
     Range: {
-        borderColor: `rgba(255,255,255,0.4)`,
         backgroundColor: `rgba(255,255,255,0.05)`,
     },
     Neck: {
         backgroundColor: `rgba(0,0,0,1)`,
     },
     Nut: {
-        borderColor: `rgba(255,255,255,1)`,
         backgroundColor: `rgba(0,0,0,1)`,
     },
     Fretboard: {
@@ -172,11 +158,6 @@ export const COLORS = {
     },
     Dot: {
         backgroundColor: `rgb(255,255,255)`,
-    },
-    String: {
-        gradientColor1: `rgb(119,119,119)`,
-        gradientColor2: `rgb(102,102,102)`,
-        gradientColor3: `rgb(255,255,255)`,
     },
     Note: {
         color: `rgba(255,255,255,1)`,

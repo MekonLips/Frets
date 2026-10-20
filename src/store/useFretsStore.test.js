@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TIME_LIMIT, START_FRET } from '../config/frets.config.js';
+import { TIME_LIMIT, START_FRET, SELECTED_INSTRUMENT, SELECTED_NOTES, SELECTED_NOTE, SHOW_RANGE, SHOW_NAV } from '../config/frets.config.js';
 
 describe('Frets store state transitions', () => {
   let store;
@@ -23,11 +23,16 @@ describe('Frets store state transitions', () => {
   it('initializes the main preferences and session state from configuration defaults', () => {
     const state = store.getState();
 
-    expect(state.selectedInstrumentId).toBe(1);
+    expect(state.selectedInstrumentId).toBe(SELECTED_INSTRUMENT);
     expect(state.startFret).toBe(START_FRET);
     expect(state.tempoBpm).toBe(40);
     expect(state.sessionRemaining).toBe(TIME_LIMIT);
     expect(state.timerRunning).toBe(false);
+    expect(state.selectedNotesMode).toBe(SELECTED_NOTES);
+    expect(state.selectedNotesModeIndex).toBe(SELECTED_NOTES);
+    expect(state.selectedNoteIdx).toBe(SELECTED_NOTE);
+    expect(state.showRange).toBe(SHOW_RANGE);
+    expect(state.showNav).toBe(SHOW_NAV);
     expect(state.exercises).toEqual({});
   });
 

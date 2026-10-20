@@ -23,7 +23,7 @@ npm test
 npm run build
 ```
 
-Vitest covers configuration, store transitions, pitch utilities, and exercise/timer Worker message handling.
+Vitest covers configuration (including shared fret markers and configured store defaults), store transitions, pitch utilities, and exercise/timer Worker message handling.
 
 The production build is written to `dist/`. The static host must serve `index.html` for direct visits to exercise routes. For S3 website hosting, configure `index.html` as the error document and verify the response behavior for your domain/CDN.
 
