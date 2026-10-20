@@ -485,3 +485,19 @@
   .instrument-builder-name-row { @apply gap-1; }
   .instrument-builder-name-row .legacy-form-button { @apply gap-1 px-2; }
 }
+
+
+/* Native select arrows are rendered by the browser; reserve space inside the control. */
+@layer components {
+  .instrument-builder select,
+  .instrument-builder .legacy-form-select {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 0.75rem 0.5rem;
+  }
+}
