@@ -67,7 +67,7 @@ const InstrumentBuilder = () => {
     const existing = savedPresets.find((preset) => preset.id === selectedPresetId);
     const next = existing
       ? savedPresets.map((preset) => preset.id === existing.id ? { ...candidate, id: existing.id, isBuiltIn: false } : preset)
-      : [...savedPresets, { ...candidate, id: `user-${Date.now()}`, isBuiltIn: false }];
+      : [...savedPresets, { ...candidate, id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, isBuiltIn: false }];
     if (!saveInstrumentPresets(next)) {
       setError("Could not save presets in this browser.");
       return;
@@ -82,6 +82,7 @@ const InstrumentBuilder = () => {
   const deletePreset = () => {
     const selected = savedPresets.find(({ id }) => id === selectedPresetId);
     if (!selected) return;
+    if (typeof window !== "undefined" && !window.confirm(`Delete the preset "${selected.name}"?`)) return;
     const next = savedPresets.filter(({ id }) => id !== selected.id);
     if (!saveInstrumentPresets(next)) {
       setError("Could not update presets in this browser.");
