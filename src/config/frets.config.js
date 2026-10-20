@@ -31,15 +31,6 @@ export const GRID_ROW_HEIGHT = 4;
 export const GRID_ROW_HEIGHT_MIN = 30;
 
 // exercises
-export const EXERCISES = [
-    { id: 1, title: 'Natural notes', description: 'Play each natural note up and down the strings, slowly and without mistakes.', accidentals: false },
-    { id: 2, title: 'Natural notes + metronome', description: 'Practise natural notes in time with the metronome.', accidentals: false },
-    { id: 3, title: 'Accidentals', description: 'Focus on the accidental notes (sharps and flats) across the fretboard.', accidentals: true },
-    { id: 4, title: 'Mixed notes', description: 'Practise a short sequence of notes, ascending and descending.', accidentals: null },
-    { id: 5, title: 'Randomised notes', description: 'Work through a shuffled sequence of notes in both directions.', accidentals: null },
-    { id: 6, title: 'Review', description: 'Review the note patterns from the previous exercises.', accidentals: null },
-];
-
 export const EXERCISE_INSTRUCTIONS = [
     [
         'Play each note up and down 3 times.',
