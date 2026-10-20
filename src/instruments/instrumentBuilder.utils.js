@@ -44,6 +44,16 @@ export const BUILT_IN_INSTRUMENT_PRESETS = [
 ];
 
 export const DEFAULT_BUILDER_PRESET_ID = "builtin-guitar-standard";
+
+export function getDefaultPresetForType(type) {
+  return BUILT_IN_INSTRUMENT_PRESETS.find((preset) => preset.type === type);
+}
+
+export function generatePresetName(type, strings) {
+  const instrument = BUILDER_INSTRUMENT_TYPES.find(({ id }) => id === type)?.label || "Instrument";
+  const tuning = strings.map(({ midi }) => midiToNoteName(midi)).join(" ");
+  return `${strings.length}-String ${instrument} (${tuning})`;
+}
 export const MIN_MIDI_PITCH = 24;
 export const MAX_MIDI_PITCH = 96;
 
