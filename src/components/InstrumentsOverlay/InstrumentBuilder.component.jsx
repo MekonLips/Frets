@@ -41,7 +41,7 @@ const TYPE_IMAGES = {
 const InstrumentBuilder = () => {
   const [savedPresets, setSavedPresets] = useState(() => loadSavedInstrumentPresets());
   const [selectedPresetId, setSelectedPresetId] = useState(DEFAULT_BUILDER_PRESET_ID);
-  const [draft, setDraft] = useState(() => createInstrumentDraft(BUILT_IN_INSTRUMENT_PRESETS[0]));
+  const [draft, setDraft] = useState(() => ({ ...createInstrumentDraft(BUILT_IN_INSTRUMENT_PRESETS[0]), name: "" }));
   const [error, setError] = useState("");
   const setInstrumentDefinition = useFretsStore(state => state.setInstrumentDefinition);
   const presets = useMemo(() => [...BUILT_IN_INSTRUMENT_PRESETS, ...savedPresets], [savedPresets]);
@@ -61,7 +61,7 @@ const InstrumentBuilder = () => {
     const preset = presets.find(({ id: presetId }) => presetId === id);
     if (!preset) return;
     setSelectedPresetId(id);
-    setDraft(createInstrumentDraft(preset));
+    setDraft({ ...createInstrumentDraft(preset), name: preset.isBuiltIn ? "" : preset.name });
     setInstrumentDefinition(toFretboardInstrument(preset));
     setError("");
   };
@@ -70,7 +70,7 @@ const InstrumentBuilder = () => {
     const preset = getDefaultPresetForType(type);
     if (!preset) return;
     setSelectedPresetId(preset.id);
-    setDraft(createInstrumentDraft(preset));
+    setDraft({ ...createInstrumentDraft(preset), name: "" });
     setInstrumentDefinition(toFretboardInstrument(preset));
     setError("");
   };
@@ -115,6 +115,11 @@ const InstrumentBuilder = () => {
   };
 
   const selectedIsSaved = savedPresets.some(({ id }) => id === selectedPresetId);
+  const defaultPreset = getDefaultPresetForType(draft.type);
+  const differsFromDefault = Boolean(defaultPreset) && (
+    draft.strings.length !== defaultPreset.strings.length ||
+    draft.strings.some((string, index) => string.midi !== defaultPreset.strings[index]?.midi)
+  );
 
   return (
     <div className="instrument-builder">
@@ -147,21 +152,6 @@ const InstrumentBuilder = () => {
           )}
         </select>
       </label>
-
-      <div className="instrument-builder-name-row">
-        <label className="instrument-builder-field">
-          <span>Enter a preset name to save this configuration</span>
-          <input
-            className="instrument-builder-input"
-            value={draft.name}
-            maxLength={80}
-            placeholder={generatePresetName(draft.type, draft.strings)}
-            onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
-          />
-        </label>
-        <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}><FontAwesomeIcon icon={faFloppyDisk} /> Save preset</button>
-        <button type="button" className={`legacy-form-button instrument-builder-delete ${selectedIsSaved ? "is-enabled" : "is-disabled"}`} onClick={deletePreset} disabled={!selectedIsSaved} aria-disabled={!selectedIsSaved}><FontAwesomeIcon icon={faTrash} /> Delete</button>
-      </div>
 
       <div className="instrument-builder-string-heading">
         <h2>Strings</h2>
@@ -211,7 +201,25 @@ const InstrumentBuilder = () => {
         ))}
       </div>
 
-      {error && <p className="instrument-builder-error" role="alert">{error}</p>}
+      {differsFromDefault && (
+        <div className="instrument-builder-preset-section">
+          <div className="instrument-builder-name-row">
+            <label className="instrument-builder-field">
+              <span>Enter a preset name to save this configuration</span>
+              <input
+                className="instrument-builder-input"
+                value={draft.name}
+                maxLength={80}
+                placeholder={generatePresetName(draft.type, draft.strings)}
+                onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
+              />
+            </label>
+            <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}><FontAwesomeIcon icon={faFloppyDisk} /> Save preset</button>
+            <button type="button" className={`legacy-form-button instrument-builder-delete ${selectedIsSaved ? "is-enabled" : "is-disabled"}`} onClick={deletePreset} disabled={!selectedIsSaved} aria-disabled={!selectedIsSaved}><FontAwesomeIcon icon={faTrash} /> Delete</button>
+          </div>
+          {error && <p className="instrument-builder-error" role="alert">{error}</p>}
+        </div>
+      )}
       <p className="instrument-builder-hint">Presets are saved in this browser. Tuning and winding changes apply to the fretboard immediately.</p>
     </div>
   );
