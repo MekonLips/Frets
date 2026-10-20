@@ -58,6 +58,50 @@ describe('exercise worker client', () => {
         expect(state.setExercisePattern).not.toHaveBeenCalled();
     });
 
+    it('ignores results generated for a previous instrument tuning', () => {
+        state.selectedInstrumentId = 4;
+        state.activeInstrumentDefinition = null;
+
+        handleExerciseWorkerMessage({
+            data: {
+                type: SEQUENCE,
+                payload: {
+                    exercise: 2,
+                    instrumentKey: '1:64,59,55,50,45,40',
+                    sequence: [1, 2],
+                    notes: [],
+                    pattern: [],
+                },
+            },
+        }, store);
+
+        expect(state.setExerciseResults).not.toHaveBeenCalled();
+    });
+
+    it('accepts results generated for the currently selected legacy instrument', () => {
+        state.selectedInstrumentId = 4;
+        state.activeInstrumentDefinition = null;
+
+        handleExerciseWorkerMessage({
+            data: {
+                type: SEQUENCE,
+                payload: {
+                    exercise: 2,
+                    instrumentKey: '4:43,38,33,28',
+                    sequence: [1, 2],
+                    notes: [],
+                    pattern: [],
+                },
+            },
+        }, store);
+
+        expect(state.setExerciseResults).toHaveBeenCalledWith(2, {
+            sequence: [1, 2],
+            notes: [],
+            pattern: [],
+        });
+    });
+
     it('routes notes and patterns to their originating exercise', () => {
         const notes = [[{ string: 1, fret: 4 }]];
         const pattern = [{ noteIdx: 3 }];
