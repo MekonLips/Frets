@@ -27,6 +27,7 @@ const ControlsComponent = () => {
                     max="200"
                     step="1"
                     value={tempoBpm}
+                    style={{ '--tempo-progress': ((tempoBpm - 40) / 160) * 100 + '%' }}
                     onChange={event => setTempoBpm(Number(event.target.value))}
                 />
                 <strong>{tempoBpm} BPM</strong>
