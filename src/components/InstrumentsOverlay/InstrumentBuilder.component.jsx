@@ -123,7 +123,7 @@ const InstrumentBuilder = () => {
       </div>
 
       <label className="instrument-builder-field">
-        <span>Preset</span>
+        <span>Choose an instrument preset</span>
         <select className="legacy-form-select" value={selectedPresetId} onChange={(event) => selectPreset(event.target.value)}>
           <optgroup label="Built-in presets">
             {BUILT_IN_INSTRUMENT_PRESETS.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
