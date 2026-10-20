@@ -304,26 +304,26 @@
   .legacy-practice-controls input[type="range"] {
     appearance: none;
     width: 9rem;
-    height: 1rem;
+    height: 1.25rem;
     background: linear-gradient(
       to right,
       white 0%,
       white var(--tempo-progress),
       #737373 var(--tempo-progress),
       #737373 100%
-    ) center / 100% 4px no-repeat;
+    ) center / 100% 6px no-repeat;
   }
   .legacy-practice-controls input[type="range"]::-webkit-slider-thumb {
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: orange;
     cursor: pointer;
   }
   .legacy-practice-controls input[type="range"]::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border: 0;
     border-radius: 50%;
     background: orange;
