@@ -19,7 +19,7 @@ export function suggestWinding(type, midi) {
   if (!Number.isInteger(midi)) return false;
   switch (type) {
     case "bass":
-      return midi <= 43;
+      return midi <= 40;
     case "guitar":
       return midi <= 50;
     case "mandolin":
