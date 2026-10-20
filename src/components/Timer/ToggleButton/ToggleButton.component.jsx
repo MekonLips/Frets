@@ -12,7 +12,7 @@ const ToggleButton = ({ children, show = true }) => {
     const setTimerRunning = useFretsStore(state => state.setTimerRunning);
     const clickHandler = () => setTimerRunning(!timerRunning);
     if (isExercise && show)
-        return <button className="control-button" onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={timerRunning ? faPause : faPlay} />}</button>;
+        return <button className={`control-button ${children ? "" : "control-button-icon"}`} onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={timerRunning ? faPause : faPlay} />}</button>;
     return null;
 };
 
