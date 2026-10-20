@@ -51,7 +51,7 @@ export function getDefaultPresetForType(type) {
 
 export function generatePresetName(type, strings) {
   const instrument = BUILDER_INSTRUMENT_TYPES.find(({ id }) => id === type)?.label || "Instrument";
-  const tuning = strings.map(({ midi }) => midiToNoteName(midi)).join(" ");
+  const tuning = [...strings].reverse().map(({ midi }) => midiToNoteName(midi)).join(" ");
   return `${strings.length}-String ${instrument} (${tuning})`;
 }
 export const MIN_MIDI_PITCH = 24;
