@@ -441,9 +441,6 @@
 
 
 @layer components {
-  .instrument-builder-current { @apply flex flex-col gap-2 border-b border-white/10 pb-4; }
-  .instrument-builder-current h2 { @apply m-0 text-sm font-semibold text-neutral-300; }
-  .instrument-builder-current .legacy-form-select { @apply max-w-full; }
 }
 
 
