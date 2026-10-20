@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useFretsStore } from "../../store/useFretsStore.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faTrash, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import guitarIcon from "../../assets/instruments/guitar.png";
@@ -22,6 +23,7 @@ import {
   resizeInstrumentStrings,
   setStringWinding,
   validateInstrumentPreset,
+  toFretboardInstrument,
 } from "../../instruments/instrumentBuilder.utils.js";
 import {
   loadSavedInstrumentPresets,
@@ -41,6 +43,7 @@ const InstrumentBuilder = () => {
   const [selectedPresetId, setSelectedPresetId] = useState(DEFAULT_BUILDER_PRESET_ID);
   const [draft, setDraft] = useState(() => createInstrumentDraft(BUILT_IN_INSTRUMENT_PRESETS[0]));
   const [error, setError] = useState("");
+  const setInstrumentDefinition = useFretsStore(state => state.setInstrumentDefinition);
   const presets = useMemo(() => [...BUILT_IN_INSTRUMENT_PRESETS, ...savedPresets], [savedPresets]);
 
   useEffect(() => {
@@ -50,11 +53,16 @@ const InstrumentBuilder = () => {
 
   const updateDraft = (nextDraft) => {
     setDraft(nextDraft);
+    setInstrumentDefinition(toFretboardInstrument(nextDraft));
     setError("");
   };
 
   const selectPreset = (id) => {
+    const preset = presets.find(({ id: presetId }) => presetId === id);
+    if (!preset) return;
     setSelectedPresetId(id);
+    setDraft(createInstrumentDraft(preset));
+    setInstrumentDefinition(toFretboardInstrument(preset));
     setError("");
   };
 
@@ -63,6 +71,7 @@ const InstrumentBuilder = () => {
     if (!preset) return;
     setSelectedPresetId(preset.id);
     setDraft(createInstrumentDraft(preset));
+    setInstrumentDefinition(toFretboardInstrument(preset));
     setError("");
   };
 
@@ -99,6 +108,8 @@ const InstrumentBuilder = () => {
     }
     setSavedPresets(next);
     setSelectedPresetId(DEFAULT_BUILDER_PRESET_ID);
+    const defaultPreset = BUILT_IN_INSTRUMENT_PRESETS.find(({ id }) => id === DEFAULT_BUILDER_PRESET_ID);
+    if (defaultPreset) setInstrumentDefinition(toFretboardInstrument(defaultPreset));
     setError("");
   };
 
