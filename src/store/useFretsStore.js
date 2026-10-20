@@ -9,6 +9,7 @@ export const useFretsStore = create(persist((set) => ({
   startFret: START_FRET,
   showRange: SHOW_RANGE,
   showNav: SHOW_NAV,
+  showInstruments: false,
   selectedNoteIdx: SELECTED_NOTE,
   selectedNotesMode: SELECTED_NOTES,
   selectedNotesModeIndex: SELECTED_NOTES,
@@ -20,7 +21,8 @@ export const useFretsStore = create(persist((set) => ({
   setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, timerRunning: false }),
   setStartFret: (startFret) => set({ startFret }),
   setShowRange: (showRange) => set({ showRange }),
-  setShowNav: (showNav) => set({ showNav }),
+  setShowNav: (showNav) => set(state => ({ showNav, ...(showNav ? { showInstruments: false } : {}) })),
+  setShowInstruments: (showInstruments) => set(state => ({ showInstruments, ...(showInstruments ? { showNav: false } : {}) })),
   setSelectedNote: (selectedNoteIdx) => set({ selectedNoteIdx }),
   setSelectedNotesMode: (selectedNotesMode) => set({ selectedNotesMode, selectedNotesModeIndex: selectedNotesMode, selectedNoteIdx: null }),
   setExerciseField: (exercise, field, value) => set((state) => {
