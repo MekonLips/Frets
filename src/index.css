@@ -377,8 +377,11 @@
   .legacy-grid > div.legacy-instrument-menu-trigger { @apply flex w-full flex-col items-end justify-start gap-1; }
   .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper { @apply flex w-full flex-col items-end; }
   .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button { @apply h-auto w-[3.4rem] shrink-0 self-end rounded-full; }
-  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button.legacy-instrument-open-button { @apply flex flex-col items-center gap-1; }
-  .legacy-instrument-icon { @apply block h-auto w-[2.1rem] max-w-full object-contain; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button.legacy-instrument-open-button { @apply flex flex-col items-center gap-2; }
+  .legacy-instrument-open-button .legacy-instrument-icon { @apply block h-auto w-[2.1rem] max-w-full object-contain; filter: brightness(0) saturate(100%) invert(57%) sepia(5%) saturate(480%) hue-rotate(176deg) brightness(91%) contrast(86%); }
+  .legacy-instrument-open-button:hover .legacy-instrument-icon,
+  .legacy-instrument-open-button:focus .legacy-instrument-icon,
+  .legacy-instrument-open-button:active .legacy-instrument-icon { filter: brightness(0) invert(1); }
   .legacy-grid > div.legacy-tab-sequence-cell { @apply col-start-1 col-end-4 row-start-3 row-end-4 flex-col items-center justify-center gap-4; }
   .legacy-tab-sequence-cell > .legacy-tab-range-container,
   .legacy-tab-sequence-cell > .legacy-sequence-container { @apply w-1/2; }
