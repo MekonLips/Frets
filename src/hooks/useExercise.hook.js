@@ -17,6 +17,7 @@ export const useExercise = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
+    const instrumentKey = `${instrument.id}:${instrument.openStringMidi.join(',')}`;
     const start = useFretsStore(state => state.startFret);
     const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
 
@@ -29,15 +30,15 @@ export const useExercise = () => {
                 : false;
         postExerciseWorkerMessage({
             type: SEQUENCE,
-            payload: { exercise, strings: instrument.strings, start, accidentals, shuffle },
+            payload: { exercise, strings: instrument.strings, start, accidentals, shuffle, instrumentKey },
         });
-    }, [exercise, instrument.strings, start, useAccidentals]);
+    }, [exercise, instrument.strings, instrumentKey, start, useAccidentals]);
 
     const createNotes = useCallback(() =>
         postExerciseWorkerMessage({
             type: NOTES,
-            payload: { exercise, strings: instrument.strings, start, sequence },
-        }), [exercise, instrument.strings, start, sequence]);
+            payload: { exercise, strings: instrument.strings, start, sequence, instrumentKey },
+        }), [exercise, instrument.strings, instrumentKey, start, sequence]);
 
     const createPattern = useCallback(() =>
         postExerciseWorkerMessage({
