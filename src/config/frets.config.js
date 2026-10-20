@@ -78,7 +78,6 @@ export const EXERCISES_NUM = EXERCISE_INSTRUCTIONS.length;
 export const ACTIONS = {
     NOTES: {
         NOTE:        1,
-        ALL:         2,
         NATURALS:    3,
         ACCIDENTALS: 4,
     },
@@ -121,8 +120,6 @@ export const SECONDS_IN_MINUTE = 60;
 
 export const SCHEDULE_AHEAD_TIME = 0.1;
 
-export const NOTE_LENGTH = 0.05;
-
 // layout
 export const Z_INDEX = {
     Overlay:      998,
@@ -152,14 +149,12 @@ export const PORTALS = {
 
 export const COLORS = {
     Range: {
-        borderColor: `rgba(255,255,255,0.4)`,
         backgroundColor: `rgba(255,255,255,0.05)`,
     },
     Neck: {
         backgroundColor: `rgba(0,0,0,1)`,
     },
     Nut: {
-        borderColor: `rgba(255,255,255,1)`,
         backgroundColor: `rgba(0,0,0,1)`,
     },
     Fretboard: {
@@ -172,11 +167,6 @@ export const COLORS = {
     },
     Dot: {
         backgroundColor: `rgb(255,255,255)`,
-    },
-    String: {
-        gradientColor1: `rgb(119,119,119)`,
-        gradientColor2: `rgb(102,102,102)`,
-        gradientColor3: `rgb(255,255,255)`,
     },
     Note: {
         color: `rgba(255,255,255,1)`,
