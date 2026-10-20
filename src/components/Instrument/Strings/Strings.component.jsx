@@ -5,7 +5,8 @@ import { minmax } from '../../../utils/math.utils';
 
 const StringsComponent = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     const stringCount = instrument.strings.length;
     return <div className="legacy-strings" style={{ '--string-count': stringCount, '--strings-height': `${GRID_ROW_HEIGHT * stringCount}vh`, '--strings-min-height': `${GRID_ROW_HEIGHT_MIN * stringCount}px` }}>
         {Array.from({ length: stringCount }, (_, i) => {
