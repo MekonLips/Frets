@@ -147,18 +147,18 @@ const InstrumentBuilder = () => {
             onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
           />
         </label>
-        <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}><FontAwesomeIcon icon={faFloppyDisk} /> Save preset</button>
-        <button type="button" className={`legacy-form-button instrument-builder-delete ${selectedIsSaved ? "is-enabled" : "is-disabled"}`} onClick={deletePreset} disabled={!selectedIsSaved} aria-disabled={!selectedIsSaved}><FontAwesomeIcon icon={faTrash} /> Delete</button>
+        <button type="button" className="control-button legacy-form-button instrument-builder-save" onClick={savePreset}><FontAwesomeIcon icon={faFloppyDisk} /> Save preset</button>
+        <button type="button" className={`control-button legacy-form-button instrument-builder-delete ${selectedIsSaved ? "is-enabled" : "is-disabled"}`} onClick={deletePreset} disabled={!selectedIsSaved} aria-disabled={!selectedIsSaved}><FontAwesomeIcon icon={faTrash} /> Delete</button>
       </div>
 
       <div className="instrument-builder-string-heading">
         <h2>Strings</h2>
         <div className="instrument-builder-count">
-          <button type="button" aria-label="Remove string" disabled={draft.strings.length <= MIN_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length - 1))}>
+          <button type="button" className="control-button control-button-icon" aria-label="Remove string" disabled={draft.strings.length <= MIN_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length - 1))}>
             <FontAwesomeIcon icon={faMinus} />
           </button>
           <span>{draft.strings.length}</span>
-          <button type="button" aria-label="Add string" disabled={draft.strings.length >= MAX_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length + 1))}>
+          <button type="button" className="control-button control-button-icon" aria-label="Add string" disabled={draft.strings.length >= MAX_INSTRUMENT_STRINGS} onClick={() => updateDraft(resizeInstrumentStrings(draft, draft.strings.length + 1))}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
