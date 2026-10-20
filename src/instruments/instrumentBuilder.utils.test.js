@@ -4,6 +4,8 @@ import {
   BUILDER_INSTRUMENT_TYPES,
   MAX_INSTRUMENT_STRINGS,
   changeInstrumentType,
+  generatePresetName,
+  getDefaultPresetForType,
   changeStringPitch,
   createInstrumentDraft,
   midiToNoteName,
@@ -26,6 +28,21 @@ describe("instrument builder presets", () => {
     );
     expect(BUILT_IN_INSTRUMENT_PRESETS.every(({ strings }) => strings.length <= MAX_INSTRUMENT_STRINGS)).toBe(true);
     expect(BUILT_IN_INSTRUMENT_PRESETS.every((preset) => validateInstrumentPreset(preset).length === 0)).toBe(true);
+  });
+
+
+  it("returns the built-in default preset for each instrument icon", () => {
+    expect(getDefaultPresetForType("guitar").id).toBe("builtin-guitar-standard");
+    expect(getDefaultPresetForType("bass").id).toBe("builtin-bass-standard");
+    expect(getDefaultPresetForType("ukulele").id).toBe("builtin-ukulele-standard");
+    expect(getDefaultPresetForType("banjo").strings).toHaveLength(5);
+    expect(getDefaultPresetForType("mandolin").strings).toHaveLength(4);
+    expect(getDefaultPresetForType("unknown")).toBeUndefined();
+  });
+
+  it("generates a useful preset name from instrument type, string count, and tuning", () => {
+    const guitar = getDefaultPresetForType("guitar");
+    expect(generatePresetName(guitar.type, guitar.strings)).toBe("6-String Guitar (E4 B3 G3 D3 A2 E2)");
   });
 
   it("converts MIDI pitches to readable note names and back", () => {
