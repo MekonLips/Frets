@@ -8,6 +8,15 @@ export const worker = new Worker(new URL('./exercise.worker.js', import.meta.url
 export const handleExerciseWorkerMessage = (event, store = useFretsStore) => {
     const { type, payload = {} } = event.data;
     const targetExercise = payload.exercise;
+    const state = store.getState();
+    const selectedInstrument = state.activeInstrumentDefinition || state.selectedInstrumentId;
+    const currentInstrument = typeof selectedInstrument === 'object'
+        ? selectedInstrument
+        : null;
+    const currentInstrumentKey = currentInstrument
+        ? `${currentInstrument.id}:${currentInstrument.openStringMidi.join(',')}`
+        : null;
+    if (payload.instrumentKey && currentInstrumentKey && payload.instrumentKey !== currentInstrumentKey) return;
 
     switch (type) {
         case SEQUENCE:
