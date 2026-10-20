@@ -14,6 +14,7 @@ import {
   setStringWinding,
   suggestWinding,
   validateInstrumentPreset,
+  toFretboardInstrument,
 } from "./instrumentBuilder.utils.js";
 import {
   INSTRUMENT_BUILDER_STORAGE_KEY,
@@ -30,6 +31,29 @@ describe("instrument builder presets", () => {
     expect(BUILT_IN_INSTRUMENT_PRESETS.every((preset) => validateInstrumentPreset(preset).length === 0)).toBe(true);
   });
 
+
+  it("adapts builder string definitions to fretboard pitches and winding", () => {
+    const preset = {
+      id: "user-test",
+      name: "Custom Guitar",
+      type: "guitar",
+      strings: [
+        { id: "high", midi: 64, winding: { mode: "manual", value: true } },
+        { id: "low", midi: 40, winding: { mode: "auto", value: false } },
+      ],
+    };
+    expect(toFretboardInstrument(preset)).toMatchObject({
+      id: "user-test",
+      name: "Custom Guitar",
+      type: "guitar",
+      strings: [7, 7],
+      openStringMidi: [64, 40],
+      stringDefinitions: [
+        { id: "high", midi: 64, winding: { mode: "manual", value: true } },
+        { id: "low", midi: 40, winding: { mode: "auto", value: true } },
+      ],
+    });
+  });
 
   it("returns the built-in default preset for each instrument icon", () => {
     expect(getDefaultPresetForType("guitar").id).toBe("builtin-guitar-standard");
