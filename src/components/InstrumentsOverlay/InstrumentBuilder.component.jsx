@@ -10,6 +10,8 @@ import {
   BUILT_IN_INSTRUMENT_PRESETS,
   BUILDER_INSTRUMENT_TYPES,
   DEFAULT_BUILDER_PRESET_ID,
+  getDefaultPresetForType,
+  generatePresetName,
   MAX_INSTRUMENT_STRINGS,
   MIN_INSTRUMENT_STRINGS,
   MAX_MIDI_PITCH,
@@ -57,8 +59,16 @@ const InstrumentBuilder = () => {
     setError("");
   };
 
+  const selectInstrumentType = (type) => {
+    const preset = getDefaultPresetForType(type);
+    if (!preset) return;
+    setSelectedPresetId(preset.id);
+    setDraft(createInstrumentDraft(preset));
+    setError("");
+  };
+
   const savePreset = () => {
-    const candidate = { ...draft, name: draft.name.trim() };
+    const candidate = { ...draft, name: draft.name.trim() || generatePresetName(draft.type, draft.strings) };
     const errors = validateInstrumentPreset(candidate);
     if (errors.length) {
       setError(errors[0]);
@@ -105,7 +115,7 @@ const InstrumentBuilder = () => {
             className={`instrument-builder-type ${draft.type === id ? "is-selected" : ""}`}
             aria-label={label}
             aria-pressed={draft.type === id}
-            onClick={() => updateDraft(changeInstrumentType(draft, id))}
+            onClick={() => selectInstrumentType(id)}
           >
             <img src={TYPE_IMAGES[id]} alt="" />
             <span>{label}</span>
@@ -127,10 +137,19 @@ const InstrumentBuilder = () => {
         </select>
       </label>
 
-      <label className="instrument-builder-field">
-        <span>Preset name</span>
-        <input className="instrument-builder-input" value={draft.name} maxLength={80} onChange={(event) => updateDraft({ ...draft, name: event.target.value })} />
-      </label>
+      <div className="instrument-builder-name-row">
+        <label className="instrument-builder-field">
+          <span>Preset name (optional)</span>
+          <input
+            className="instrument-builder-input"
+            value={draft.name}
+            maxLength={80}
+            placeholder={generatePresetName(draft.type, draft.strings)}
+            onChange={(event) => updateDraft({ ...draft, name: event.target.value })}
+          />
+        </label>
+        <button type="button" className="legacy-form-button instrument-builder-save" onClick={savePreset}>Save preset</button>
+      </div>
 
       <div className="instrument-builder-string-heading">
         <h2>Strings</h2>
@@ -181,7 +200,6 @@ const InstrumentBuilder = () => {
       </div>
 
       <div className="instrument-builder-actions">
-        <button type="button" className="legacy-form-button" onClick={savePreset}>Save preset</button>
         {selectedIsSaved && (
           <button type="button" className="legacy-form-button instrument-builder-delete" onClick={deletePreset}>
             <FontAwesomeIcon icon={faTrash} /> Delete
