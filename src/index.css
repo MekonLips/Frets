@@ -286,15 +286,7 @@
   .legacy-form-select {
     @apply cursor-pointer border-0 text-white;
     margin: 0 0.2vw;
-    padding: 1vh 2.75rem 1vh 1vw;
     background-color: rgb(255 255 255 / 10%);
-    font-size: 1.2rem;
-    -webkit-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.9rem center;
-    background-size: 0.75rem 0.5rem;
   }
   .legacy-form-select option { color: white; background-color: rgb(0 0 0 / 50%); }
   .legacy-form-button { @apply cursor-pointer border border-white text-white; margin: 0 0.5vw; padding: 1vh 1vw; background-color: transparent; font-size: 1.2rem; }
@@ -487,11 +479,6 @@
   .instrument-builder-delete.is-disabled,
   .instrument-builder-delete:disabled { @apply cursor-not-allowed border-white/10 bg-white/5 text-neutral-500 opacity-60; }
   .instrument-builder-name-row .legacy-form-button svg { @apply h-3.5 w-3.5; }
-  .instrument-builder select,
-  .instrument-builder .legacy-form-select {
-    padding-right: 2.75rem;
-    background-position: right 0.9rem center;
-  }
 }
 @media (max-width: 640px) {
   .instrument-builder-name-row { @apply gap-1; }
@@ -499,3 +486,40 @@
 }
 
 
+/* All select controls share the compact instrument-builder appearance. */
+@layer components {
+  select,
+  .legacy-form-select {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 0.25rem;
+    color: white;
+    background-color: rgb(38 38 38);
+    font: inherit;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.75rem 0.5rem;
+  }
+  select:focus-visible,
+  .legacy-form-select:focus-visible {
+    outline: 2px solid rgb(255 255 255 / 70%);
+    outline-offset: 1px;
+  }
+  select:disabled,
+  .legacy-form-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .instrument-builder select,
+  .instrument-builder .legacy-form-select {
+    padding-right: 2.25rem;
+    background-position: right 0.75rem center;
+  }
+}
