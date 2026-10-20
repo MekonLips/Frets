@@ -12,14 +12,30 @@ export const NOTES_NUM = NOTES.length;
 export const FRETS_NUM = NOTES_NUM * 2;
 
 // instrument
+export const INSTRUMENT_TYPES = {
+    GUITAR: 1,
+    BASS: 2,
+    MANDOLIN: 3,
+    UKULELE: 4,
+    BANJO: 5,
+};
+
+export const INSTRUMENT_TYPE_NAMES = {
+    [INSTRUMENT_TYPES.GUITAR]: "Guitar",
+    [INSTRUMENT_TYPES.BASS]: "Bass",
+    [INSTRUMENT_TYPES.MANDOLIN]: "Mandolin",
+    [INSTRUMENT_TYPES.UKULELE]: "Ukulele",
+    [INSTRUMENT_TYPES.BANJO]: "Banjo",
+};
+
 // Open-string MIDI pitches follow the fretboard's displayed row order (top to bottom).
 // Guitar rows are high-to-low E4 B3 G3 D3 A2 E2; bass rows are G2 D2 A1 E1.
 export const INSTRUMENTS = [
-    { id: 1, name: "6 String Guitar Standard", strings: [7,2,10,5,0,7], openStringMidi: [64,59,55,50,45,40] },
-    { id: 2, name: "6 String Guitar Eb",       strings: [6,1,9,4,11,6], openStringMidi: [63,58,54,49,44,39] },
-    { id: 3, name: "6 String Guitar Open D",   strings: [5,0,9,5,0,5], openStringMidi: [62,57,54,50,45,38] },
-    { id: 4, name: "4 String Bass Standard",   strings: [10,5,0,7], openStringMidi: [43,38,33,28] },
-    { id: 5, name: "4 String Bass Eb",         strings: [9,4,11,6], openStringMidi: [42,37,32,27] },
+    { id: 1, name: "6 String Guitar Standard", type: INSTRUMENT_TYPES.GUITAR, strings: [7,2,10,5,0,7], openStringMidi: [64,59,55,50,45,40] },
+    { id: 2, name: "6 String Guitar Eb",       type: INSTRUMENT_TYPES.GUITAR, strings: [6,1,9,4,11,6], openStringMidi: [63,58,54,49,44,39] },
+    { id: 3, name: "6 String Guitar Open D",   type: INSTRUMENT_TYPES.GUITAR, strings: [5,0,9,5,0,5], openStringMidi: [62,57,54,50,45,38] },
+    { id: 4, name: "4 String Bass Standard",   type: INSTRUMENT_TYPES.BASS, strings: [10,5,0,7], openStringMidi: [43,38,33,28] },
+    { id: 5, name: "4 String Bass Eb",         type: INSTRUMENT_TYPES.BASS, strings: [9,4,11,6], openStringMidi: [42,37,32,27] },
 ];
 
 export const GRID_BASE_WIDTH = 1.6;
