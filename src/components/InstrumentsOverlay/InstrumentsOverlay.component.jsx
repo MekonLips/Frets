@@ -6,7 +6,6 @@ import { useFretsStore } from '../../store/useFretsStore';
 import Portal from '../Portal/Portal.component';
 import Panel from '../Panel/Panel.component';
 import InstrumentBuilder from './InstrumentBuilder.component';
-import InstrumentSelector from '../Controls/InstrumentSelector/InstrumentSelector.component';
 
 const InstrumentsOverlay = () => {
     const show = useFretsStore(state => state.showInstruments);
@@ -16,10 +15,6 @@ const InstrumentsOverlay = () => {
         <Panel show={show} className="legacy-instruments-panel">
             <div className="legacy-instruments-content">
                 <h1>Instruments</h1>
-                <div className="instrument-builder-current">
-                    <h2>Current fretboard instrument</h2>
-                    <InstrumentSelector />
-                </div>
                 <InstrumentBuilder />
             </div>
             <button
