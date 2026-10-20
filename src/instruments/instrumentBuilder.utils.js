@@ -137,7 +137,7 @@ export function resizeInstrumentStrings(instrument, count) {
   let strings = instrument.strings.slice(0, nextCount);
   while (strings.length < nextCount) {
     const index = strings.length;
-    const midi = strings.length ? instrument.strings[strings.length - 1].midi : 60;
+    const midi = strings.length ? strings[strings.length - 1].midi : 60;
     strings = [...strings, {
       id: `string-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${index}`,
       midi,
