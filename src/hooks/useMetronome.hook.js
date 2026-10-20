@@ -24,7 +24,11 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     });
     const [ beatsPerMeasure, setBeatsPerMeasure ] = useState(instrument.strings.length);
     const [ beat, setBeat ] = useState(0);
+    // Each quarter-note beat has a fixed number of scheduler ticks. A measure
+    // contains one beat per string for these exercises, so its total tick count
+    // must scale with string count (including five-string banjos).
     const ticksPerBeat = beatsPerMeasure % 3 === 0 || state.subdivision % 3 === 0 ? TICKS_PER_BEAT_TERNARY : TICKS_PER_BEAT_BINARY;
+    const ticksPerMeasure = ticksPerBeat * beatsPerMeasure;
     const audioContext = useRef(null);
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
@@ -39,7 +43,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const scheduledTime = nextNoteTime.current;
             const loopCompleted = tick(currentBeat.current, scheduledTime);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
-            const beatInterval = beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+            const beatInterval = secondsPerBeat / ticksPerBeat;
             nextNoteTime.current = scheduledTime + beatInterval;
 
             // Make the loop transition relative to the selected tempo instead
@@ -49,7 +53,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 nextNoteTime.current = scheduledTime + beatInterval * 0.75;
 
             currentBeat.current = currentBeat.current + 1;
-            if (currentBeat.current === ticksPerBeat)
+            if (currentBeat.current === ticksPerMeasure)
                 currentBeat.current = 0;
         }
     };
