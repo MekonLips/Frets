@@ -66,7 +66,7 @@ describe("instrument builder presets", () => {
 
   it("generates a useful preset name from instrument type, string count, and tuning", () => {
     const guitar = getDefaultPresetForType("guitar");
-    expect(generatePresetName(guitar.type, guitar.strings)).toBe("6-String Guitar (E4 B3 G3 D3 A2 E2)");
+    expect(generatePresetName(guitar.type, guitar.strings)).toBe("6-String Guitar (E2 A2 D3 G3 B3 E4)");
   });
 
   it("converts MIDI pitches to readable note names and back", () => {
