@@ -523,3 +523,27 @@
     background-position: right 0.75rem center;
   }
 }
+
+
+/* Shared styling for instrument string-count and exercise action buttons. */
+@layer components {
+  .control-button {
+    @apply inline-flex min-h-8 items-center justify-center gap-2 rounded border border-white/20 bg-white/5 px-3 py-1 text-sm text-white transition-colors;
+  }
+  .control-button:hover:not(:disabled),
+  .control-button:focus-visible:not(:disabled) {
+    @apply bg-white/10;
+  }
+  .control-button:focus-visible {
+    @apply outline outline-2 outline-white/70 outline-offset-1;
+  }
+  .control-button:disabled {
+    @apply cursor-not-allowed opacity-30;
+  }
+  .control-button-icon {
+    @apply h-8 w-8 min-h-8 p-0;
+  }
+  .control-button-icon svg {
+    @apply h-4 w-4;
+  }
+}
