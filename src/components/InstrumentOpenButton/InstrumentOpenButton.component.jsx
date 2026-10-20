@@ -21,8 +21,9 @@ const INSTRUMENT_TYPE_ICONS = {
 
 const InstrumentOpenButton = () => {
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const setShow = useFretsStore(state => state.setShowInstruments);
-    const instrument = getSelectedInstrument(selectedId);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedId);
 
     return <div className="legacy-nav-icon-button-wrapper">
         <button
@@ -35,7 +36,7 @@ const InstrumentOpenButton = () => {
             <FontAwesomeIcon icon={faGear} />
             <img
                 className="legacy-instrument-icon"
-                src={INSTRUMENT_TYPE_ICONS[instrument.type]}
+                src={INSTRUMENT_TYPE_ICONS[instrument.type] || ({ guitar: guitarIcon, bass: bassIcon, mandolin: mandolinIcon, ukulele: ukuleleIcon, banjo: banjoIcon })[instrument.type]}
                 alt=""
                 aria-hidden="true"
             />
