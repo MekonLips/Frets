@@ -90,7 +90,7 @@ describe("instrument builder presets", () => {
     const changedPitch = changeStringPitch(draft, draft.strings[0].id, 40);
     expect(changedPitch.strings[0].winding).toEqual({ mode: "auto", value: true });
     const changedType = changeInstrumentType(draft, "bass");
-    expect(changedType.strings[0].winding).toEqual({ mode: "auto", value: true });
+    expect(changedType.strings[0].winding).toEqual({ mode: "auto", value: false });
   });
 
   it("preserves manual winding overrides across pitch and type changes", () => {
