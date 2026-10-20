@@ -90,10 +90,11 @@ const InstrumentBuilder = () => {
       setError("Could not save presets in this browser.");
       return;
     }
-    const saved = next[next.length - 1];
+    const saved = existing ? next.find(({ id }) => id === existing.id) : next[next.length - 1];
     setSavedPresets(next);
     setSelectedPresetId(existing ? existing.id : saved.id);
     setDraft({ ...candidate, id: existing ? existing.id : saved.id, isBuiltIn: false });
+    setInstrumentDefinition(toFretboardInstrument(saved));
     setError("");
   };
 
