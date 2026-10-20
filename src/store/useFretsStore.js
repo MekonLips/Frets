@@ -20,7 +20,16 @@ export const useFretsStore = create(persist((set) => ({
   exerciseAccidentals: {},
   exercises: {},
   setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false, exercises: {} }),
-  setInstrumentDefinition: (activeInstrumentDefinition) => set({ activeInstrumentDefinition, timerRunning: false, exercises: {} }),
+  setInstrumentDefinition: (activeInstrumentDefinition) => set((state) => {
+    const instrumentKey = (instrument) => instrument
+      ? JSON.stringify([instrument.id, instrument.type, instrument.strings, instrument.openStringMidi])
+      : null;
+    const instrumentChanged = instrumentKey(state.activeInstrumentDefinition) !== instrumentKey(activeInstrumentDefinition);
+    return {
+      activeInstrumentDefinition,
+      ...(instrumentChanged ? { timerRunning: false, exercises: {} } : {}),
+    };
+  }),
   setStartFret: (startFret) => set({ startFret }),
   setShowRange: (showRange) => set({ showRange }),
   setShowNav: (showNav) => set(state => ({ showNav, ...(showNav ? { showInstruments: false } : {}) })),
