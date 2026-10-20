@@ -418,7 +418,7 @@
   .instrument-builder-string-heading { @apply flex items-center justify-between gap-3; }
   .instrument-builder-string-heading h2 { @apply m-0 text-base font-semibold; }
   .instrument-builder-count { @apply flex items-center gap-3; }
-  .instrument-builder-count button { @apply h-8 w-8; }
+  .instrument-builder-count button { @apply flex h-8 w-8 items-center justify-center rounded border border-white/20 bg-white/5 text-white disabled:cursor-not-allowed disabled:opacity-30; }
   .instrument-builder-count span { @apply min-w-4 text-center tabular-nums; }
   .instrument-builder-hint { @apply m-0 text-xs leading-5 text-neutral-400; }
   .instrument-builder-strings { @apply flex flex-col gap-2; }
@@ -522,28 +522,4 @@
     padding-right: 2.25rem;
     background-position: right 0.75rem center;
   }
-}
-
-
-/* Reusable compact button treatment for secondary controls and icon actions. */
-@layer components {
-  .control-button {
-    @apply inline-flex min-h-8 items-center justify-center gap-2 rounded border border-white/20 bg-white/5 px-3 py-1 text-sm text-white transition-colors;
-  }
-  .control-button:hover:not(:disabled),
-  .control-button:focus-visible:not(:disabled) { @apply bg-white/10; }
-  .control-button:focus-visible { @apply outline outline-2 outline-white/70 outline-offset-1; }
-  .control-button:disabled { @apply cursor-not-allowed opacity-30; }
-  .control-button-icon { @apply h-8 w-8 min-h-8 p-0; }
-  .control-button-icon svg { @apply h-4 w-4; }
-  .instrument-builder-count button.control-button-icon { @apply border-white/20 bg-white/5 text-white; }
-  .instrument-builder-count button.control-button-icon:hover:not(:disabled) { @apply bg-white/10; }
-  .legacy-sequence-button.control-button-icon { @apply h-12 w-16 rounded-full border-0 bg-transparent p-0 text-3xl; }
-  .legacy-sequence-button.control-button-icon svg { @apply h-auto w-auto; }
-  .legacy-sequence-button.control-button-icon:disabled { @apply opacity-30; }
-  .instrument-builder-name-row .control-button { @apply min-h-8 px-3 py-1 text-sm; }
-  .instrument-builder-name-row .instrument-builder-delete.is-enabled { @apply border-red-400/60 bg-red-500/10 text-red-200; }
-  .instrument-builder-name-row .instrument-builder-delete.is-enabled:hover:not(:disabled) { @apply bg-red-500/20; }
-  .instrument-builder-name-row .instrument-builder-delete.is-disabled,
-  .instrument-builder-name-row .instrument-builder-delete:disabled { @apply border-white/10 bg-white/5 text-neutral-500 opacity-60; }
 }
