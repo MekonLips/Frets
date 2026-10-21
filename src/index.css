@@ -53,7 +53,7 @@
   .legacy-instructions h1 { @apply mb-2 text-xl; }
   .exercise-navigation { @apply mb-2 flex items-center gap-2 text-2xl; }
   .exercise-navigation-link {
-    @apply inline-flex items-center justify-center px-1 py-1 font-bold;
+    @apply inline-flex items-center justify-center px-2 py-1 font-bold;
     color: white;
     text-decoration: none;
     transition: color 150ms ease;
