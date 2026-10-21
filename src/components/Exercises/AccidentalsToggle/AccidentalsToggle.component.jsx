@@ -22,7 +22,7 @@ const AccidentalsToggleComponent = () => {
                         checked={useAccidentals}
                         onChange={event => {
                             const enabled = event.target.checked;
-                            setExerciseAccidentals(exerciseNumber, enabled);
+                            setUseAccidentals(enabled);
                             createSequence(enabled);
                         }}
                     />
