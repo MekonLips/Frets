@@ -19,7 +19,7 @@ export const useExercise = () => {
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     const instrumentKey = `${instrument.id}:${instrument.openStringMidi.join(',')}`;
     const start = useFretsStore(state => state.startFret);
-    const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
+    const useAccidentals = useFretsStore(state => state.useAccidentals);
 
     const createSequence = useCallback((accidentalsOverride, shuffle = false) => {
         const exerciseNumber = parseInt(exercise);
