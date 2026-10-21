@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore } from '../../../store/useFretsStore';
-import useExercise from '../../../hooks/useExercise.hook';
 
 const AccidentalsToggleComponent = () => {
     const { exercise } = useParams();
