@@ -2,15 +2,13 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore } from '../../../store/useFretsStore';
-import useExercise from '../../../hooks/useExercise.hook';
 
 const AccidentalsToggleComponent = () => {
     const { exercise } = useParams();
     const isExercise = Boolean(exercise);
     const exerciseNumber = Number(exercise);
-    const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
-    const setExerciseAccidentals = useFretsStore(state => state.setExerciseAccidentals);
-    const { createSequence } = useExercise();
+    const useAccidentals = useFretsStore(state => state.useAccidentals);
+    const setUseAccidentals = useFretsStore(state => state.setUseAccidentals);
 
     if (isExercise)
         return <div className="accidentals-toggle">
@@ -22,8 +20,7 @@ const AccidentalsToggleComponent = () => {
                         checked={useAccidentals}
                         onChange={event => {
                             const enabled = event.target.checked;
-                            setExerciseAccidentals(exerciseNumber, enabled);
-                            createSequence(enabled);
+                            setUseAccidentals(enabled);
                         }}
                     />
                 </label>}
