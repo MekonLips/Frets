@@ -10,7 +10,8 @@ const ExercisesComponent = () => {
     
     useEffect(() => {
         // React StrictMode replays effects in development. Avoid racing duplicate worker requests.
-        if (!sequence.length && lastRequestedExercise.current !== requestKey) {
+        const accidentalsAffectExercise = [4, 5, 6].includes(Number(exercise));
+        if ((!sequence.length || accidentalsAffectExercise) && lastRequestedExercise.current !== requestKey) {
             lastRequestedExercise.current = requestKey;
             createSequence();
         }
