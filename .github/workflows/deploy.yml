@@ -1,6 +1,9 @@
 name: Deploy to S3 and CloudFront
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
