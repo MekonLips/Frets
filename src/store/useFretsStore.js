@@ -97,7 +97,7 @@ export const useFretsStore = create(persist((set) => ({
     startFret: state.startFret,
     showRange: state.showRange,
     tempoBpm: state.tempoBpm,
-    exerciseAccidentals: state.exerciseAccidentals,
+    useAccidentals: state.useAccidentals,
   }),
 }));
 
