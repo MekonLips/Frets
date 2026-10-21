@@ -46,7 +46,7 @@ export const useExercise = () => {
             payload: { exercise, strings: instrument.strings, start, sequence },
         }), [exercise, instrument.strings, start, sequence]);
 
-    return { worker, isExercise, exercise, sequence, notes, pattern, instrument, start, createSequence, createNotes, createPattern };
+    return { worker, isExercise, exercise, sequence, notes, pattern, instrument, start, useAccidentals, createSequence, createNotes, createPattern };
 };
 
 export default useExercise;
