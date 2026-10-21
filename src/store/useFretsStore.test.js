@@ -171,6 +171,13 @@ describe('Frets store state transitions', () => {
     });
   });
 
+  it('shares the accidentals preference across exercises', () => {
+    store.getState().setUseAccidentals(true);
+
+    expect(store.getState().useAccidentals).toBe(true);
+    expect(store.getState()).not.toHaveProperty('exerciseAccidentals');
+  });
+
   it('supports functional updates to the session timer', () => {
     const state = store.getState();
     state.setSessionRemaining(90000);
@@ -195,7 +202,7 @@ describe('Frets store state transitions', () => {
     state.setStartFret(5);
     state.setShowRange(true);
     state.setTempoBpm(90);
-    state.setExerciseAccidentals(4, true);
+    state.setUseAccidentals(true);
     state.setExerciseSequence(4, [0, 2, 4]);
     state.setSessionRemaining(1234);
     state.setTimerRunning(true);
@@ -209,7 +216,7 @@ describe('Frets store state transitions', () => {
       startFret: 5,
       showRange: true,
       tempoBpm: 90,
-      exerciseAccidentals: { 4: true },
+      useAccidentals: true,
     });
     expect(persisted.state).not.toHaveProperty('exercises');
     expect(persisted.state).not.toHaveProperty('sessionRemaining');
