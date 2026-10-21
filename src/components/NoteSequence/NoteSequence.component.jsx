@@ -23,7 +23,7 @@ const NoteSequenceComponent = () => {
         setStage(exercise, idx + 1);
     };
 
-    if (isExercise && sequence.length && parseInt(exercise) !== 6)
+    if (isExercise && sequence.length)
         return <div className="legacy-sequence-container">
             <button className="legacy-sequence-button" onClick={prevClickHandler} disabled={isFirstStage(stage)}><FontAwesomeIcon icon={faCaretLeft} /></button>
             <h1 className="legacy-sequence">{sequence.map((noteIdx, idx) => <a className={`legacy-sequence-note ${idx === stage - 1 ? 'is-current' : ''}`} key={`NoteSequence/Note/${idx}`} href="#" onClick={e => clickNoteHandler(e, idx)}>{getNoteByIdx(noteIdx)}</a>)}</h1>

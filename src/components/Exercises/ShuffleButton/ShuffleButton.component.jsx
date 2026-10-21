@@ -1,9 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShuffle, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from '../../../store/useFretsStore';
-import { EXERCISES_NUM } from '../../../config/frets.config';
 import useExercise from '../../../hooks/useExercise.hook';
 
 const ShuffleButton = ({ label = false } = {}) => {
@@ -13,7 +12,7 @@ const ShuffleButton = ({ label = false } = {}) => {
         setStage(exercise, 1);
         createSequence(undefined, true);
     };
-    if (isExercise && parseInt(exercise) !== EXERCISES_NUM)
+    if (isExercise)
         return <button className="control-button" onClick={clickHandler}>Shuffle note sequence <FontAwesomeIcon icon={faShuffle} /></button>
     return null;
 };

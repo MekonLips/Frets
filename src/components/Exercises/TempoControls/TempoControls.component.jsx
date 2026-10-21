@@ -2,16 +2,14 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore } from '../../../store/useFretsStore';
-import { EXERCISES_NUM } from '../../../config/frets.config';
 
 const TempoControlsComponent = () => {
     const { exercise } = useParams();
-    const exerciseNumber = Number(exercise);
     const isExercise = Boolean(exercise);
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const setTempoBpm = useFretsStore(state => state.setTempoBpm);
 
-    if (!isExercise || exerciseNumber === EXERCISES_NUM) return null;
+    if (!isExercise) return null;
 
     return <>
         <div className="tempo-controls legacy-practice-controls">

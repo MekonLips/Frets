@@ -14,18 +14,19 @@ const AccidentalsToggleComponent = () => {
 
     if (isExercise)
         return <div className="accidentals-toggle">
-            {(exerciseNumber === 4 || exerciseNumber === 5) && <label className="legacy-accidentals-toggle">
-                <span>Use accidentals?</span>
-                <input
-                    type="checkbox"
-                    checked={useAccidentals}
-                    onChange={event => {
-                        const enabled = event.target.checked;
-                        setExerciseAccidentals(exerciseNumber, enabled);
-                        createSequence(enabled);
-                    }}
-                />
-            </label>}
+            {(exerciseNumber === 4 || exerciseNumber === 5 || exerciseNumber === 6) && 
+                <label className="legacy-accidentals-toggle">
+                    <span>Use accidentals?</span>
+                    <input
+                        type="checkbox"
+                        checked={useAccidentals}
+                        onChange={event => {
+                            const enabled = event.target.checked;
+                            setExerciseAccidentals(exerciseNumber, enabled);
+                            createSequence(enabled);
+                        }}
+                    />
+                </label>}
         </div>
     return null;
 };

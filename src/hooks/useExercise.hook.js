@@ -25,7 +25,7 @@ export const useExercise = () => {
         const exerciseNumber = parseInt(exercise);
         const accidentals = exerciseNumber === 3
             ? true
-            : (exerciseNumber === 4 || exerciseNumber === 5)
+            : (exerciseNumber === 4 || exerciseNumber === 5 || exerciseNumber === 6)
                 ? (accidentalsOverride ?? useAccidentals) ? null : false
                 : false;
         postExerciseWorkerMessage({
