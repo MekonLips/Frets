@@ -52,7 +52,6 @@ const App = () => {
                 <Instructions />
               </div>
               <div className="exercise-controls">
-                <TempoControls />
                 <div className="timer">
                   <TimerDisplay />
                   <div class="timer-controls">
@@ -60,6 +59,7 @@ const App = () => {
                     <TimerResetButton />
                   </div>
                 </div>
+                <TempoControls />
                 <ShuffleButton />
                 <AccidentalsToggle />
                 <Metronome />
