@@ -209,7 +209,7 @@ describe('Frets store state transitions', () => {
       startFret: 5,
       showRange: true,
       tempoBpm: 90,
-      exerciseAccidentals: { 4: true },
+      useAccidentals: true,
     });
     expect(persisted.state).not.toHaveProperty('exercises');
     expect(persisted.state).not.toHaveProperty('sessionRemaining');
