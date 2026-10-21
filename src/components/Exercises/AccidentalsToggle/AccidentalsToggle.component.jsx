@@ -10,7 +10,6 @@ const AccidentalsToggleComponent = () => {
     const exerciseNumber = Number(exercise);
     const useAccidentals = useFretsStore(state => state.useAccidentals);
     const setUseAccidentals = useFretsStore(state => state.setUseAccidentals);
-    const { createSequence } = useExercise();
 
     if (isExercise)
         return <div className="accidentals-toggle">
@@ -23,7 +22,6 @@ const AccidentalsToggleComponent = () => {
                         onChange={event => {
                             const enabled = event.target.checked;
                             setUseAccidentals(enabled);
-                            createSequence(enabled);
                         }}
                     />
                 </label>}
