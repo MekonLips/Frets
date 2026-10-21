@@ -17,7 +17,7 @@ export const useFretsStore = create(persist((set) => ({
   sessionRemaining: TIME_LIMIT,
   timerRunning: false,
   tempoBpm: 40,
-  exerciseAccidentals: {},
+  useAccidentals: false,
   exercises: {},
   setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false, exercises: {} }),
   setInstrumentDefinition: (activeInstrumentDefinition) => set((state) => {
