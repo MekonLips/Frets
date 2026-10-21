@@ -171,6 +171,13 @@ describe('Frets store state transitions', () => {
     });
   });
 
+  it('shares the accidentals preference across exercises', () => {
+    store.getState().setUseAccidentals(true);
+
+    expect(store.getState().useAccidentals).toBe(true);
+    expect(store.getState()).not.toHaveProperty('exerciseAccidentals');
+  });
+
   it('supports functional updates to the session timer', () => {
     const state = store.getState();
     state.setSessionRemaining(90000);
