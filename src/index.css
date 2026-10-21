@@ -51,6 +51,20 @@
   .legacy-nav-link h1 { @apply mb-2 text-xl; }
   .legacy-nav-link p { @apply my-[0.4rem] text-sm; }
   .legacy-instructions h1 { @apply mb-2 text-xl; }
+  .exercise-navigation {
+    @apply mb-2 flex items-center gap-4 text-xl;
+    font: inherit;
+  }
+  .exercise-navigation-link {
+    color: white;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .exercise-navigation-link:hover,
+  .exercise-navigation-link:focus-visible,
+  .exercise-navigation-link.is-current {
+    color: orange;
+  }
   .legacy-instructions p { @apply my-4 text-sm leading-6; }
 }
 
