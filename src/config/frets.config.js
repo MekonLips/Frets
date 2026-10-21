@@ -65,14 +65,17 @@ export const EXERCISE_INSTRUCTIONS = [
         'continue until pattern completed or until timer runs out',
     ],
     [
+        'accidentals optional',
         'play note 1 up then note 2 down then loop',
         'continue until feels easy or until timer runs out',
     ],
     [
+        'accidentals optional',
         'alternate playing randomised notes up and down',
         'continue until pattern completed or until timer runs out',
     ],
     [
+        'accidentals optional',
         'increase / decrease speed buttons',
         'repeat exercises 2 - 5',
         'repeat until able to complete at 80bpm or until timer runs out',
