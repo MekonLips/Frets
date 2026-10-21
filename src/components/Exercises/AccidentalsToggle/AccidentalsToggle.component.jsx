@@ -8,8 +8,8 @@ const AccidentalsToggleComponent = () => {
     const { exercise } = useParams();
     const isExercise = Boolean(exercise);
     const exerciseNumber = Number(exercise);
-    const useAccidentals = useFretsStore(state => state.exerciseAccidentals[String(exercise ?? '')] ?? false);
-    const setExerciseAccidentals = useFretsStore(state => state.setExerciseAccidentals);
+    const useAccidentals = useFretsStore(state => state.useAccidentals);
+    const setUseAccidentals = useFretsStore(state => state.setUseAccidentals);
     const { createSequence } = useExercise();
 
     if (isExercise)
