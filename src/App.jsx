@@ -13,15 +13,17 @@ import Instrument from './components/Instrument/Instrument.component';
 import Notes from './components/Instrument/Notes/Notes.component';
 import RangeSelector from './components/Controls/RangeSelector/RangeSelector.component';
 import Range from './components/Range/Range.component';
-import Timer from './components/Timer/Timer.component';
+import TimerDisplay from './components/Timer/TimerDisplay.component';
 import TimerToggleButton from './components/Timer/ToggleButton/ToggleButton.component';
 import TimerResetButton from './components/Timer/ResetButton/ResetButton.component';
 import Metronome from './components/Metronome/Metronome.component';
 import Exercises from './components/Exercises/Exercises.component';
 import Instructions from './components/Exercises/Instructions/Instructions.component';
-import Controls from './components/Exercises/Controls/Controls.component';
+import TempoControls from './components/Exercises/TempoControls/TempoControls.component';
 import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
+import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.component';
+import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
 
 const App = () => {
   const location = useLocation();
@@ -45,15 +47,21 @@ const App = () => {
               <NavOpenButton />
               <NavHomeButton />
             </div>
-            <div>
-              <div>
+            <div className="exercise-panel">
+              <div className="exercise-instructions">
                 <Instructions />
-                <Controls />
               </div>
-              <div>
-                <Timer />
-                <TimerToggleButton />
-                <TimerResetButton />
+              <div className="exercise-controls">
+                <TempoControls />
+                <div className="timer">
+                  <TimerDisplay />
+                  <div class="timer-controls">
+                    <TimerToggleButton />
+                    <TimerResetButton />
+                  </div>
+                </div>
+                <ShuffleButton />
+                <AccidentalsToggle />
                 <Metronome />
               </div>
             </div>

@@ -337,18 +337,11 @@
 
 @layer components {
   .legacy-accidentals-toggle {
-    @apply my-2 flex items-center justify-start gap-2 text-sm;
+    @apply flex items-center justify-start gap-2 text-sm;
   }
   .legacy-accidentals-toggle input[type="checkbox"] {
     order: 2;
     accent-color: orange;
-  }
-}
-
-
-@layer components {
-  .legacy-tempo-control {
-    margin-bottom: 0.75rem;
   }
 }
 
@@ -567,5 +560,18 @@
   }
   .control-button-icon svg {
     @apply h-4 w-4;
+  }
+}
+
+/* Timer styles */
+@layer components {
+  .exercise-controls {
+    @apply flex flex-col gap-3;
+  }
+  .timer {
+    @apply flex justify-between items-center;
+  }
+  .timer-controls {
+    @apply flex items-center gap-1;
   }
 }

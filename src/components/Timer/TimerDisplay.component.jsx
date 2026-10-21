@@ -4,16 +4,16 @@ import { useParams } from 'react-router';
 import { formatTime } from '../../utils/datetime.utils';
 import useTimer from '../../hooks/useTimer.hook';
 
-const TimerComponent = () => {
+const TimerDisplayComponent = () => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
     const { remaining } = useTimer();
     if (isExercise)
-        return <code>
+        return <code className='timer-display'>
             {formatTime(remaining)}
         </code>
     else
         return null;
 };
 
-export default TimerComponent;
+export default TimerDisplayComponent;

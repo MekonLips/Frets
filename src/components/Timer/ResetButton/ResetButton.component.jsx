@@ -16,7 +16,7 @@ const ResetButton = ({ children }) => {
         setTimerRunning(false);
     };
     if (isExercise)
-        return <button className={`control-button ${children ? "" : "control-button-icon"}`} aria-label="Reset timer" onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
+        return <button className={`timer-reset-button control-button ${children ? "" : "control-button-icon"}`} aria-label="Reset timer" onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
     return null;
 };
 

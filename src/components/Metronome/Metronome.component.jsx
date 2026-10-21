@@ -51,7 +51,7 @@ const MetronomeComponent = () => {
         }
     }, [beat, lastBeat, exercise, reset, skip, setRunning, setStage]);
 
-    if (isExercise) return <p>{beat}</p>;
+    // if (isExercise) return <p>{beat}</p>;
     return null;
 };
 
