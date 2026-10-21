@@ -195,7 +195,7 @@ describe('Frets store state transitions', () => {
     state.setStartFret(5);
     state.setShowRange(true);
     state.setTempoBpm(90);
-    state.setExerciseAccidentals(4, true);
+    state.setUseAccidentals(true);
     state.setExerciseSequence(4, [0, 2, 4]);
     state.setSessionRemaining(1234);
     state.setTimerRunning(true);
