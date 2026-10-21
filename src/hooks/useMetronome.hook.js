@@ -14,7 +14,8 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     const [ state, setState ] = useState({
         beat: 0,
         subBeat: 0,
@@ -23,7 +24,11 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
     });
     const [ beatsPerMeasure, setBeatsPerMeasure ] = useState(instrument.strings.length);
     const [ beat, setBeat ] = useState(0);
+    // Each quarter-note beat has a fixed number of scheduler ticks. A measure
+    // contains one beat per string for these exercises, so its total tick count
+    // must scale with string count (including five-string banjos).
     const ticksPerBeat = beatsPerMeasure % 3 === 0 || state.subdivision % 3 === 0 ? TICKS_PER_BEAT_TERNARY : TICKS_PER_BEAT_BINARY;
+    const ticksPerMeasure = ticksPerBeat * beatsPerMeasure;
     const audioContext = useRef(null);
     const nextNoteTime = useRef(0);
     const currentBeat = useRef(0);
@@ -38,7 +43,7 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
             const scheduledTime = nextNoteTime.current;
             const loopCompleted = tick(currentBeat.current, scheduledTime);
             const secondsPerBeat = SECONDS_IN_MINUTE / state.tempo;
-            const beatInterval = beatsPerMeasure / ticksPerBeat * secondsPerBeat;
+            const beatInterval = secondsPerBeat / ticksPerBeat;
             nextNoteTime.current = scheduledTime + beatInterval;
 
             // Make the loop transition relative to the selected tempo instead
@@ -48,14 +53,14 @@ const useMetronome = ({ tempo = 120, subdivision = 1 } = {}) => {
                 nextNoteTime.current = scheduledTime + beatInterval * 0.75;
 
             currentBeat.current = currentBeat.current + 1;
-            if (currentBeat.current === ticksPerBeat)
+            if (currentBeat.current === ticksPerMeasure)
                 currentBeat.current = 0;
         }
     };
 
     const tick = (beat, time) => {
         const isFirstBeat = beat === 0;
-        const isQuarterBeat = beat % (ticksPerBeat / beatsPerMeasure) === 0;
+        const isQuarterBeat = beat % ticksPerBeat === 0;
 
         // Exercise notes are the audible beat; do not layer the old click track over them.
         if (isFirstBeat || isQuarterBeat) {

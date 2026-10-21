@@ -283,7 +283,11 @@
   .legacy-sequence-button:first-child > svg { transform: translateX(-0.2rem); }
   .legacy-sequence-button:last-child { margin-left: 2vw; }
   .legacy-sequence-button:last-child > svg { transform: translateX(0.2rem); }
-  .legacy-form-select { @apply cursor-pointer border-0 text-white; margin: 0 0.2vw; padding: 1vh 1vw; background-color: rgb(255 255 255 / 10%); font-size: 1.2rem; }
+  .legacy-form-select {
+    @apply cursor-pointer border-0 text-white;
+    margin: 0 0.2vw;
+    background-color: rgb(255 255 255 / 10%);
+  }
   .legacy-form-select option { color: white; background-color: rgb(0 0 0 / 50%); }
   .legacy-form-button { @apply cursor-pointer border border-white text-white; margin: 0 0.5vw; padding: 1vh 1vw; background-color: transparent; font-size: 1.2rem; }
 }
@@ -298,8 +302,32 @@
     @apply flex items-center gap-2 text-sm;
   }
   .legacy-practice-controls input[type="range"] {
+    appearance: none;
     width: 9rem;
-    accent-color: orange;
+    height: 1.25rem;
+    background: linear-gradient(
+      to right,
+      white 0%,
+      white var(--tempo-progress),
+      #737373 var(--tempo-progress),
+      #737373 100%
+    ) center / 100% 6px no-repeat;
+  }
+  .legacy-practice-controls input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: orange;
+    cursor: pointer;
+  }
+  .legacy-practice-controls input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: 0;
+    border-radius: 50%;
+    background: orange;
+    cursor: pointer;
   }
   .legacy-practice-controls input[type="checkbox"] {
     accent-color: orange;
@@ -354,5 +382,190 @@
   .legacy-sequence-note::before {
     width: 2.5rem;
     height: 2.5rem;
+  }
+}
+
+/* The instrument controls panel mirrors the exercise navigation panel from the opposite side. */
+@layer components {
+  .legacy-instruments-panel { left: 25%; right: 0; }
+  .legacy-instruments-panel.legacy-nav-panel-closed { transform: translateX(100%); }
+  .legacy-instruments-panel.legacy-nav-panel-open { transform: translateX(0); }
+  .legacy-instruments-content { @apply flex h-full flex-col gap-6 p-8; }
+  .legacy-instruments-content h1 { @apply mb-2 text-xl; }
+  .legacy-instruments-close-button {
+    @apply absolute left-[calc(-3rem+1px)] top-0 flex h-full w-12 cursor-pointer items-center justify-center border-0 p-0 text-xl text-gray-400 transition-colors duration-200;
+    background-color: rgb(0 0 0);
+    box-shadow: -3px 0 6px 0 rgb(0 0 0 / 40%), 6px 0 12px 0 rgb(0 0 0 / 40%);
+    display: none;
+  }
+  .legacy-instruments-close-button.is-visible { display: flex; }
+  .legacy-instruments-close-button:hover,
+  .legacy-instruments-close-button:focus,
+  .legacy-instruments-close-button:active { color: white; background-color: rgb(8 8 8); }
+  .legacy-grid > div.legacy-instrument-menu-trigger { @apply flex w-full flex-col items-end justify-start gap-1; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper { @apply flex w-full flex-col items-end; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button { @apply h-auto w-[3.4rem] shrink-0 self-end rounded-full; }
+  .legacy-instrument-menu-trigger .legacy-nav-icon-button-wrapper > button.legacy-instrument-open-button { @apply flex flex-col items-center gap-2; transition: none; }
+  .legacy-instrument-open-button .legacy-instrument-icon { @apply block h-auto w-[2.1rem] max-w-full object-contain; transition: none; filter: brightness(0) saturate(100%) invert(57%) sepia(5%) saturate(480%) hue-rotate(176deg) brightness(91%) contrast(86%); }
+  .legacy-instrument-open-button:hover .legacy-instrument-icon,
+  .legacy-instrument-open-button:focus .legacy-instrument-icon,
+  .legacy-instrument-open-button:active .legacy-instrument-icon { filter: brightness(0) invert(1); }
+  .legacy-grid > div.legacy-tab-sequence-cell { @apply col-start-1 col-end-4 row-start-3 row-end-4 flex-col items-center justify-center gap-4; }
+  .legacy-tab-sequence-cell > .legacy-tab-range-container,
+  .legacy-tab-sequence-cell > .legacy-sequence-container { @apply w-1/2; }
+  .legacy-tab-range-container { @apply flex w-full flex-col items-center justify-center gap-3; }
+  .legacy-tab-range-container .legacy-tab-container { @apply h-auto w-full; }
+  .legacy-tab-range-container .legacy-range-selector-container { @apply flex w-full items-center justify-center p-0; }
+  .legacy-tab-range-container label { @apply flex w-full justify-center; }
+  .legacy-tab-range-container .legacy-form-select { @apply max-w-full text-center; }
+}
+
+
+/* Instrument builder */
+@layer components {
+  .legacy-instruments-content { @apply overflow-y-auto; }
+  .instrument-builder { @apply flex min-h-0 flex-col gap-4; max-width: 44rem; }
+  .instrument-builder-type-row { @apply grid grid-cols-5 gap-2; }
+  .instrument-builder-type {
+    @apply flex min-w-0 flex-col items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 p-2 text-xs text-neutral-400 transition-colors;
+    @apply hover:cursor-pointer;
+  }
+  .instrument-builder-type img { @apply h-9 w-9 object-contain; filter: brightness(0) saturate(100%) invert(57%) sepia(5%) saturate(480%) hue-rotate(176deg) brightness(91%) contrast(86%); }
+  .instrument-builder-type:hover,
+  .instrument-builder-type:focus-visible,
+  .instrument-builder-type.is-selected { @apply border-white/30 bg-white/10 text-white; }
+  .instrument-builder-type:hover img,
+  .instrument-builder-type:focus-visible img,
+  .instrument-builder-type.is-selected img { filter: brightness(0) invert(1); }
+  .instrument-builder-field { @apply flex flex-col gap-2 text-sm text-neutral-300; }
+  .instrument-builder-field .legacy-form-select { @apply w-full max-w-full text-base; }
+  .instrument-builder-input { @apply min-w-0 rounded border border-white/20 bg-neutral-800 px-3 py-2 text-sm text-white; }
+  .instrument-builder-string-heading { @apply flex items-center justify-between gap-3; }
+  .instrument-builder-string-heading h2 { @apply m-0 text-base font-semibold; }
+  .instrument-builder-count { @apply flex items-center gap-3; }
+  .instrument-builder-count button { @apply flex h-8 w-8 items-center justify-center rounded border border-white/20 bg-white/5 text-white disabled:cursor-not-allowed disabled:opacity-30; }
+  .instrument-builder-count span { @apply min-w-4 text-center tabular-nums; }
+  .instrument-builder-hint { @apply m-0 text-xs leading-5 text-neutral-400; }
+  .instrument-builder-strings { @apply flex flex-col gap-2; }
+  .instrument-builder-string { @apply grid items-center gap-2; grid-template-columns: 1.5rem minmax(0, 1fr) minmax(0, 1.25fr); }
+  .instrument-builder-string-number { @apply text-sm text-neutral-400; }
+  .instrument-builder-string label { @apply min-w-0; }
+  .instrument-builder-string select { @apply w-full; }
+  .instrument-builder-actions { @apply flex flex-wrap items-center gap-2; }
+  .instrument-builder-actions .legacy-form-button { @apply m-0 text-sm; }
+  .instrument-builder-delete { @apply flex items-center gap-2 border-red-400/50 text-red-200; }
+  .instrument-builder-error { @apply m-0 text-sm text-red-300; }
+  .instrument-builder-sr-only { @apply sr-only; }
+}
+@media (max-width: 640px) {
+  .legacy-instruments-panel { left: 0; }
+  .legacy-instruments-content { @apply gap-4 p-4; }
+  .instrument-builder-type { @apply px-1 py-2; }
+  .instrument-builder-type img { @apply h-7 w-7; }
+}
+
+
+@layer components {
+}
+
+
+@layer components {
+  .instrument-builder-name-row { @apply flex items-end gap-2; }
+  .instrument-builder-name-row .instrument-builder-field { @apply min-w-0 flex-1; }
+  .instrument-builder-name-row .instrument-builder-input { @apply w-full; }
+  .instrument-builder-save { @apply shrink-0 whitespace-nowrap; }
+}
+@media (max-width: 420px) {
+  .instrument-builder-name-row { @apply items-end gap-1; }
+  .instrument-builder-save { padding-left: 0.6rem; padding-right: 0.6rem; }
+}
+
+
+/* Compact, consistent instrument-builder form controls. */
+@layer components {
+  .instrument-builder-name-row { @apply flex items-end gap-2; }
+  .instrument-builder-name-row .instrument-builder-field { @apply min-w-0 flex-1; }
+  .instrument-builder-name-row .instrument-builder-input { @apply w-full; }
+  .instrument-builder-name-row .legacy-form-button {
+    @apply m-0 inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap border-white/25 px-3 py-2 text-sm;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .instrument-builder-save { @apply border-white/25 text-white; }
+  .instrument-builder-delete { @apply border-red-400/60 text-red-200; }
+  .instrument-builder-delete.is-enabled { @apply border-red-400/60 bg-red-500/10 text-red-200; }
+  .instrument-builder-delete.is-enabled:hover,
+  .instrument-builder-delete.is-enabled:focus-visible { @apply bg-red-500/20; }
+  .instrument-builder-delete.is-disabled,
+  .instrument-builder-delete:disabled { @apply cursor-not-allowed border-white/10 bg-white/5 text-neutral-500 opacity-60; }
+  .instrument-builder-name-row .legacy-form-button svg { @apply h-3.5 w-3.5; }
+}
+@media (max-width: 640px) {
+  .instrument-builder-name-row { @apply gap-1; }
+  .instrument-builder-name-row .legacy-form-button { @apply gap-1 px-2; }
+}
+
+
+/* All select controls share the compact instrument-builder appearance. */
+@layer components {
+  select,
+  .legacy-form-select {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 0.25rem;
+    color: white;
+    background-color: rgb(38 38 38);
+    font: inherit;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23d4d4d4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.75rem 0.5rem;
+  }
+  select:focus-visible,
+  .legacy-form-select:focus-visible {
+    outline: 2px solid rgb(255 255 255 / 70%);
+    outline-offset: 1px;
+  }
+  select:disabled,
+  .legacy-form-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .instrument-builder select,
+  .instrument-builder .legacy-form-select {
+    padding-right: 2.25rem;
+    background-position: right 0.75rem center;
+  }
+}
+
+
+/* Shared styling for instrument string-count and exercise action buttons. */
+@layer components {
+  .control-button {
+    @apply inline-flex min-h-8 items-center justify-center gap-2 rounded border border-white/20 bg-white/5 px-3 py-1 text-sm text-white transition-colors;
+  }
+  .control-button:hover:not(:disabled),
+  .control-button:focus-visible:not(:disabled) {
+    @apply bg-white/10 cursor-pointer;
+  }
+  .control-button:focus-visible {
+    @apply outline outline-2 outline-white/70 outline-offset-1;
+  }
+  .control-button:disabled {
+    @apply cursor-not-allowed opacity-30;
+  }
+  .control-button-icon {
+    @apply h-8 w-8 min-h-8 p-0;
+  }
+  .control-button-icon svg {
+    @apply h-4 w-4;
   }
 }

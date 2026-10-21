@@ -6,6 +6,8 @@ import {
   EXERCISES_NUM,
   FRETS_NUM,
   INSTRUMENTS,
+  INSTRUMENT_TYPES,
+  INSTRUMENT_TYPE_NAMES,
   MARKERS,
   NATURALS,
   NOTES,
@@ -37,8 +39,12 @@ describe('fretboard configuration', () => {
 
   it('defines unique instruments with valid note indices and matching MIDI tunings', () => {
     expect(new Set(INSTRUMENTS.map(({ id }) => id)).size).toBe(INSTRUMENTS.length);
+    expect(Object.values(INSTRUMENT_TYPES)).toEqual([1, 2, 3, 4, 5]);
+    expect(Object.keys(INSTRUMENT_TYPE_NAMES).map(Number)).toEqual(Object.values(INSTRUMENT_TYPES));
+    expect(new Set(Object.values(INSTRUMENT_TYPE_NAMES)).size).toBe(Object.values(INSTRUMENT_TYPES).length);
 
     for (const instrument of INSTRUMENTS) {
+      expect(Object.values(INSTRUMENT_TYPES)).toContain(instrument.type);
       expect(instrument.strings.length).toBeGreaterThan(0);
       expect(instrument.openStringMidi).toHaveLength(instrument.strings.length);
       expect(instrument.strings.every((noteIndex) => Number.isInteger(noteIndex) && noteIndex >= 0 && noteIndex < NOTES_NUM)).toBe(true);

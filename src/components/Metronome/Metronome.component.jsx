@@ -15,7 +15,8 @@ const MetronomeComponent = () => {
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     // Exercises 4 and 5 play one pass across the strings per note; other exercises
     // retain their existing up-and-down pattern (two passes per note).
     const stringsPerNote = instrument.strings.length * ([4, 5].includes(Number(exercise)) ? 1 : 2);

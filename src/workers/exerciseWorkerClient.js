@@ -1,4 +1,4 @@
-import { useFretsStore } from '../store/useFretsStore';
+import { useFretsStore, getSelectedInstrument } from '../store/useFretsStore';
 import { ACTIONS } from '../config/frets.config';
 
 const { SEQUENCE, NOTES, PATTERN } = ACTIONS.PATTERNS;
@@ -8,6 +8,10 @@ export const worker = new Worker(new URL('./exercise.worker.js', import.meta.url
 export const handleExerciseWorkerMessage = (event, store = useFretsStore) => {
     const { type, payload = {} } = event.data;
     const targetExercise = payload.exercise;
+    const state = store.getState();
+    const selectedInstrument = getSelectedInstrument(state.activeInstrumentDefinition || state.selectedInstrumentId);
+    const currentInstrumentKey = `${selectedInstrument.id}:${selectedInstrument.openStringMidi.join(',')}`;
+    if (payload.instrumentKey && payload.instrumentKey !== currentInstrumentKey) return;
 
     switch (type) {
         case SEQUENCE:

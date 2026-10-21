@@ -18,7 +18,8 @@ const TabComponent = () => {
         ? (beat - 1) % pattern.length
         : -1;
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedId);
     const hasOnePassPerNote = [4, 5].includes(Number(exercise));
     const notesPerStage = instrument.strings.length * (hasOnePassPerNote ? 1 : 2);
     const visibleStages = hasOnePassPerNote ? 2 : 1;

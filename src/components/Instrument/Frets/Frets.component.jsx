@@ -5,7 +5,8 @@ import { FRETS_NUM, GRID_MARGIN, GRID_ROW_HEIGHT, GRID_ROW_HEIGHT_MIN, Z_INDEX, 
 
 const FretsComponent = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
-    const instrument = getSelectedInstrument(selectedInstrumentId);
+    const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
+    const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
     const startFret = useFretsStore(state => state.startFret);
     const frets = Array.from({ length: FRETS_NUM + 2 }, (_, idx) =>
       <div className={`legacy-fret ${idx === 1 ? 'legacy-fret-first-real' : ''} ${idx === FRETS_NUM + 1 ? 'legacy-fret-last' : ''} ${MARKERS.includes(idx) ? 'legacy-fret-marker' : ''} ${idx > 0 && idx % NOTES_NUM === 0 ? 'legacy-fret-double-marker' : ''}`} key={`Fret/${idx}`} style={{ '--fret-column': idx + 1, '--fret-index': idx, '--fret-z': Z_INDEX.Fret, '--fret-border-light': COLORS.Fret.gradientColor1, '--fret-border-dark': COLORS.Fret.gradientColor2, '--fret-bg': COLORS.Fretboard.backgroundColorDark, '--nut-bg': COLORS.Nut.backgroundColor, '--neck-bg': COLORS.Fretboard.backgroundColor, '--dot-bg': COLORS.Dot.backgroundColor, '--notes-num': NOTES_NUM }} />);

@@ -14,7 +14,7 @@ const RefreshButton = ({ children }) => {
         createSequence(undefined, true);
     };
     if (isExercise && parseInt(exercise) !== EXERCISES_NUM)
-        return <button onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
+        return <button className={`control-button ${children ? "" : "control-button-icon"}`} onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
     return null;
 };
 
