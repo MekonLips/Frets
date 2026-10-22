@@ -92,7 +92,7 @@ const TabComponent = () => {
         return sections;
     };
 
-    if (isExercise && parseInt(exercise) !== EXERCISES_NUM)
+    if (isExercise)
         return <div className="legacy-tab-container" style={{ zIndex: Z_INDEX.Tab }}>
             <div className="legacy-tab-content">
                 <div className="legacy-tab">
