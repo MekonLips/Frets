@@ -71,7 +71,7 @@ const ExerciseToggleButton = () => {
         onClick={handlePlaybackToggle}
         aria-label={isCountingIn ? 'Cancel count in' : sequencePlaying ? 'Pause note sequence' : 'Play note sequence'}
     >
-        {isCountingIn ? countIn : sequencePlaying ? 'Pause' : 'Play'}
+        {isCountingIn ? `Playing in ${countIn}...` : sequencePlaying ? 'Pause' : 'Play'}
         {!isCountingIn && <FontAwesomeIcon icon={sequencePlaying ? faPause : faPlay} />}
     </button>;
 };
