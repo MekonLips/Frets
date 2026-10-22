@@ -8,6 +8,26 @@ export const isAccidental = idx => ACCIDENTALS.find(_ => _ === idx) ? true : fal
 
 export const getNoteByIdx = idx => NOTES[idx];
 
+// Exercises 4, 5, and 6 play one string pass per sequence note.
+export const hasSinglePassPattern = exercise => [4, 5, 6].includes(Number(exercise));
+
+export const getTabPatternWindow = ({ pattern = [], stage = 1, stringCount, exercise } = {}) => {
+    if (!Array.isArray(pattern) || !Number.isInteger(stringCount) || stringCount < 1) {
+        return { start: 0, pattern: [] };
+    }
+
+    const currentStage = Number.isInteger(stage) && stage > 0 ? stage : 1;
+    const singlePass = hasSinglePassPattern(exercise);
+    const positionsPerStage = stringCount * (singlePass ? 1 : 2);
+    const visibleStages = singlePass ? 2 : 1;
+    const start = (currentStage - 1) * positionsPerStage;
+
+    return {
+        start,
+        pattern: pattern.slice(start, (currentStage - 1 + visibleStages) * positionsPerStage),
+    };
+};
+
 export const getNoteIdxs = () => NOTES.map((note, idx) => idx);
 
 export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
@@ -95,5 +115,14 @@ export const getPattern = ({ exercise, noteIdxs = [], strings = [], start = STAR
 };
 
 export const repeat = (repeats, ...rest) => new Array(repeats).fill(rest).flat();
+
+// Map the displayed A-to-G# note indices to the corresponding pitch in octave 3.
+// MIDI note 48 is C3; accidentals are represented by their semitone offsets.
+export const getNoteSequenceMidiPitch = (noteIdx) => {
+    if (!Number.isInteger(noteIdx) || noteIdx < 0 || noteIdx >= NOTES_NUM) {
+        throw new RangeError('Note index must be an integer between 0 and 11.');
+    }
+    return 48 + ((noteIdx + 9) % NOTES_NUM);
+};
 
 export const getNoteFrequency = (halfSteps = 0) => midiToFrequency(69 + halfSteps);

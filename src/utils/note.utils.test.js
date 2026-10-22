@@ -6,10 +6,13 @@ import {
   getNaturalIdxs,
   getNoteByIdx,
   getNoteFrequency,
+  getNoteSequenceMidiPitch,
   getNotesFromIdxs,
   getNoteIdxs,
   getPattern,
   getRandomNoteSequence,
+  getTabPatternWindow,
+  hasSinglePassPattern,
   isAccidental,
   isNatural,
   noteName,
@@ -18,6 +21,26 @@ import {
 } from './note.utils.js';
 
 describe('fretboard note helpers', () => {
+  it('recognizes exercises that play one string pass per sequence note', () => {
+    for (const exercise of [4, 5, 6]) {
+      expect(hasSinglePassPattern(exercise)).toBe(true);
+    }
+    for (const exercise of [1, 2, 3]) {
+      expect(hasSinglePassPattern(exercise)).toBe(false);
+    }
+  });
+  it('shows the current and next note in one-pass exercise tabs', () => {
+    const strings = INSTRUMENTS[0].strings;
+    const sequence = [3, 5, 7, 8, 10, 0, 2];
+    const pattern = getPattern({ exercise: 6, noteIdxs: sequence, strings, start: 1 });
+
+    sequence.forEach((noteIdx, index) => {
+      const window = getTabPatternWindow({ pattern, stage: index + 1, stringCount: strings.length, exercise: 6 });
+      const visibleNotes = [...new Set(window.pattern.map(position => position.noteIdx))];
+      expect(visibleNotes).toEqual(sequence.slice(index, index + 2));
+    });
+  });
+
   it('wraps note names through the twelve-note chromatic set', () => {
     expect(noteName(0)).toBe('A');
     expect(noteName(12)).toBe('A');
@@ -44,6 +67,15 @@ describe('fretboard note helpers', () => {
     expect(getFretInRange(7, 7, 1)).toBe(12);
     expect(getFretInRange(0, 7, 6)).toBe(17);
     expect(getFretInRange(0, 7, 13)).toBe(17);
+  });
+
+  it('maps sequence note indices to pitches in octave 3', () => {
+    expect(getNoteSequenceMidiPitch(3)).toBe(48); // C3
+    expect(getNoteSequenceMidiPitch(5)).toBe(50); // D3
+    expect(getNoteSequenceMidiPitch(7)).toBe(52); // E3
+    expect(getNoteSequenceMidiPitch(1)).toBe(58); // A#3
+    expect(() => getNoteSequenceMidiPitch(-1)).toThrow(RangeError);
+    expect(() => getNoteSequenceMidiPitch(12)).toThrow(RangeError);
   });
 
   it('converts semitone offsets from A4 to note frequencies', () => {

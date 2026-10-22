@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from '../../store/useFretsStore';
-import { getNoteByIdx } from '../../utils/note.utils';
+import { getNoteByIdx, getNoteSequenceMidiPitch } from '../../utils/note.utils';
+import { playPluckedNote } from '../../utils/audio.utils';
 
 const NoteSequenceComponent = () => {
     const { exercise } = useParams();
@@ -20,6 +21,11 @@ const NoteSequenceComponent = () => {
     const nextClickHandler = () => setStage(exercise, stage => !isLastStage(stage) ? stage + 1 : stage);
     const clickNoteHandler = (e, idx) => {
         e.preventDefault();
+        try {
+            playPluckedNote(getNoteSequenceMidiPitch(sequence[idx]));
+        } catch (error) {
+            // Audio is optional; note selection should still work if unsupported.
+        }
         setStage(exercise, idx + 1);
     };
 
