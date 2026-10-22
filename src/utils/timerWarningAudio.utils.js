@@ -31,6 +31,13 @@ export const resumeTimerWarningAudio = () => {
     }
 };
 
+export const getTimerToggleFrequencies = (isStarting, midiNote = C5_MIDI) => {
+    const baseFrequency = 440 * (2 ** ((midiNote - 69) / 12));
+    return isStarting
+        ? { startFrequency: baseFrequency, endFrequency: baseFrequency * 2 }
+        : { startFrequency: baseFrequency * 2, endFrequency: baseFrequency };
+};
+
 // Play a short, bell-like octave glide when the session timer starts or pauses.
 export const playTimerToggleChime = (isStarting, midiNote = C5_MIDI) => {
     const context = getTimerWarningAudioContext();
@@ -42,9 +49,7 @@ export const playTimerToggleChime = (isStarting, midiNote = C5_MIDI) => {
         });
     }
 
-    const baseFrequency = 440 * (2 ** ((midiNote - 69) / 12));
-    const startFrequency = isStarting ? baseFrequency : baseFrequency * 2;
-    const endFrequency = isStarting ? baseFrequency * 2 : baseFrequency;
+    const { startFrequency, endFrequency } = getTimerToggleFrequencies(isStarting, midiNote);
     const startAt = context.currentTime;
     const glideDuration = 0.18;
     const oscillator = context.createOscillator();
