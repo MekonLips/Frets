@@ -28,6 +28,7 @@ describe('Frets store state transitions', () => {
     expect(state.tempoBpm).toBe(40);
     expect(state.sessionRemaining).toBe(TIME_LIMIT);
     expect(state.timerRunning).toBe(false);
+    expect(state.sequencePlaying).toBe(false);
     expect(state.selectedNotesMode).toBe(SELECTED_NOTES);
     expect(state.selectedNotesModeIndex).toBe(SELECTED_NOTES);
     expect(state.selectedNoteIdx).toBe(SELECTED_NOTE);
