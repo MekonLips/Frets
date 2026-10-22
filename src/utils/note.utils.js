@@ -96,4 +96,13 @@ export const getPattern = ({ exercise, noteIdxs = [], strings = [], start = STAR
 
 export const repeat = (repeats, ...rest) => new Array(repeats).fill(rest).flat();
 
+// Map the displayed A-to-G# note indices to the corresponding pitch in octave 3.
+// MIDI note 48 is C3; accidentals are represented by their semitone offsets.
+export const getNoteSequenceMidiPitch = (noteIdx) => {
+    if (!Number.isInteger(noteIdx) || noteIdx < 0 || noteIdx >= NOTES_NUM) {
+        throw new RangeError('Note index must be an integer between 0 and 11.');
+    }
+    return 48 + ((noteIdx + 9) % NOTES_NUM);
+};
+
 export const getNoteFrequency = (halfSteps = 0) => midiToFrequency(69 + halfSteps);
