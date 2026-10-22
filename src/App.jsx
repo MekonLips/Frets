@@ -28,6 +28,7 @@ import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.co
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
 import LoopToggle from './components/Exercises/LoopToggle/LoopToggle.component';
 import ExercisesNavigation from './components/Exercises/Navigation.component';
+import LearnYourFretsButton from './components/LearnYourFretsButton/LearnYourFretsButton.component';
 
 const App = () => {
   const location = useLocation();
@@ -68,11 +69,12 @@ const App = () => {
               <NavOpenButton />
               <NavHomeButton />
             </div>
-            <div className="exercise-panel">
+            <div className={`exercise-panel ${!match.params.exercise ? 'home-exercise-panel' : ''}`}>
               <div className="exercise-instructions">
                 <ExercisesNavigation />
                 <Instructions />
                 <ExerciseToggleButton />
+                <LearnYourFretsButton />
               </div>
               <div className="exercise-controls">
                 <div className="timer">

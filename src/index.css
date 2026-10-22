@@ -29,7 +29,7 @@
 /* Legacy component styles migrated to Tailwind's semantic component layer. */
 @layer components {
   .legacy-nav-panel {
-    @apply fixed bottom-0 left-0 right-1/4 top-0 bg-neutral-900 transition-transform duration-300;
+    @apply fixed bottom-0 left-0 right-1/4 top-0 px-5 bg-neutral-900 transition-transform duration-300;
     background-color: rgb(16 16 16);
   }
   .legacy-nav-panel-open { @apply translate-x-0; }
@@ -51,6 +51,9 @@
   .legacy-nav-link h1 { @apply mb-2 text-xl; }
   .legacy-nav-link p { @apply my-[0.4rem] text-sm; }
   .legacy-instructions h1 { @apply mb-2 text-xl; }
+  .exercise-instructions .learn-your-frets-button {
+    @apply mx-auto;
+  }
   .exercise-navigation { @apply mb-2 flex items-center gap-2 text-2xl; }
   .exercise-navigation-link {
     @apply inline-flex items-center justify-center px-2 py-1 font-bold;
@@ -631,5 +634,65 @@
   .legacy-loop-toggle input[type="checkbox"] {
     order: 2;
     accent-color: orange;
+  }
+}
+
+
+/* Welcome overlay and prominent home-page entry point. */
+@layer components {
+  .legacy-nav-panel p {
+    @apply leading-8;
+  }
+  .legacy-nav-welcome {
+    @apply w-full list-none px-[5vh] pt-[3vh] pb-0;
+  }
+  .legacy-nav-welcome h1 {
+    @apply mb-2 text-2xl font-semibold;
+  }
+  .legacy-nav-welcome p {
+    @apply my-2 max-w-2xl text-sm leading-5 text-neutral-300;
+  }
+  .legacy-nav-begin {
+    @apply mt-2 inline-flex;
+  }
+  .legacy-nav-separator {
+    @apply mx-[5vh] my-4 w-[calc(100%-10vh)] list-none border-b border-white/15;
+  }
+  .app-sections {
+    @apply w-full ml-0 pl-0 list-none;
+  }
+  .app-sections h2 {
+    @apply mb-1 text-base font-semibold;
+  }
+  .app-sections p {
+    @apply my-1 text-sm leading-5 text-neutral-300;
+  }
+  .control-button-large {
+    @apply gap-3 px-5 py-3 text-lg font-semibold;
+  }
+  .learn-your-frets-button {
+    @apply inline-flex items-center whitespace-nowrap shadow-lg;
+  }
+  .overlay-separator {
+    @apply my-5 h-1;
+  }
+}
+@media (max-width: 640px) {
+  .legacy-nav-welcome { @apply px-6 pt-6; }
+  .legacy-nav-separator { margin-left: 1.5rem; margin-right: 1.5rem; width: calc(100% - 3rem); }
+  .control-button-large { @apply gap-2 px-4 py-2 text-base; }
+}
+
+
+/* Centre the home-page call to action within the top-middle grid cell. */
+@layer components {
+  .home-exercise-panel {
+    @apply flex items-center justify-center;
+  }
+  .home-exercise-panel .exercise-instructions {
+    @apply flex h-full w-full items-center justify-center;
+  }
+  .home-exercise-panel .learn-your-frets-button {
+    @apply m-0;
   }
 }
