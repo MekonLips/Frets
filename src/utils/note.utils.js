@@ -76,12 +76,12 @@ const getDescendingNotes = (noteIdx, strings, start) => {
     return pattern;
 };
 
-// Build every exercise pattern from one place. Exercises 4 and 5 alternate
+// Build every exercise pattern from one place. Exercises 4, 5, and 6 alternate
 // direction per note; the other exercises play each note ascending and descending.
 export const getPattern = ({ exercise, noteIdxs = [], strings = [], start = START_FRET }) => {
     const exerciseNumber = Number(exercise);
     return noteIdxs.flatMap((noteIdx, index) => {
-        if (exerciseNumber === 4 || exerciseNumber === 5) {
+        if (exerciseNumber === 4 || exerciseNumber === 5 || exerciseNumber === 6) {
             return index % 2 === 0
                 ? getAscendingNotes(noteIdx, strings, start)
                 : getDescendingNotes(noteIdx, strings, start);
