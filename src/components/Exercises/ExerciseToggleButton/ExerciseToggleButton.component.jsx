@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from '../../../store/useFretsStore';
+import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
 const ExerciseToggleButton = () => {
     const { exercise } = useParams();
@@ -15,7 +16,10 @@ const ExerciseToggleButton = () => {
     return <button
         type="button"
         className="exercise-toggle-button control-button"
-        onClick={toggleSequencePlayback}
+        onClick={() => {
+            resumeTimerWarningAudio();
+            toggleSequencePlayback();
+        }}
         aria-label={sequencePlaying ? 'Pause note sequence' : 'Play note sequence'}
     >
         {sequencePlaying ? 'Pause' : 'Play'}
