@@ -27,11 +27,11 @@ import AccidentalsToggle from './components/Exercises/AccidentalsToggle/Accident
 
 const App = () => {
   const location = useLocation();
-  const setTimerRunning = useFretsStore(state => state.setTimerRunning);
+  const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
 
   useEffect(() => {
-    setTimerRunning(false);
-  }, [location.pathname, setTimerRunning]);
+    setSequencePlaying(false);
+  }, [location.pathname, setSequencePlaying]);
 
   return <Route
       path={['/exercises/:exercise', '/']}
