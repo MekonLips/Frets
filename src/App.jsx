@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Route, useLocation } from 'react-router';
 
 import { useFretsStore } from './store/useFretsStore';
@@ -32,12 +32,26 @@ import ExercisesNavigation from './components/Exercises/Navigation.component';
 const App = () => {
   const location = useLocation();
   const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
+  const startFret = useFretsStore(state => state.startFret);
   const setStartFret = useFretsStore(state => state.setStartFret);
+  const previousPathname = useRef(location.pathname);
+  const savedExerciseStartFret = useRef(null);
 
   useEffect(() => {
     setSequencePlaying(false);
-    if (!location.pathname.startsWith('/exercises/')) setStartFret(1);
-  }, [location.pathname, setSequencePlaying, setStartFret]);
+
+    const wasViewingExercise = previousPathname.current.startsWith('/exercises/');
+    const isViewingExercise = location.pathname.startsWith('/exercises/');
+
+    if (wasViewingExercise && !isViewingExercise) {
+      savedExerciseStartFret.current = startFret;
+      setStartFret(1);
+    } else if (!wasViewingExercise && isViewingExercise && savedExerciseStartFret.current !== null) {
+      setStartFret(savedExerciseStartFret.current);
+    }
+
+    previousPathname.current = location.pathname;
+  }, [location.pathname, setSequencePlaying, setStartFret, startFret]);
 
   return <Route
       path={['/exercises/:exercise', '/']}

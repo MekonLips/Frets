@@ -62,7 +62,7 @@ describe('fretboard note helpers', () => {
     expect(pattern.every((position) => position.fret >= 1 && position.fret <= FRETS_NUM)).toBe(true);
   });
 
-  it('alternates direction by note for exercises 4 and 5', () => {
+  it('alternates direction by note for exercises 4, 5, and 6', () => {
     const strings = INSTRUMENTS[0].strings;
     const pattern = getPattern({ exercise: 4, noteIdxs: [0, 2, 4], strings, start: 1 });
 
@@ -70,6 +70,12 @@ describe('fretboard note helpers', () => {
     expect(pattern[0].dir).toBe('up');
     expect(pattern[strings.length].dir).toBe('down');
     expect(pattern[strings.length * 2].dir).toBe('up');
+
+    const exerciseSixPattern = getPattern({ exercise: 6, noteIdxs: [0, 2, 4], strings, start: 1 });
+    expect(exerciseSixPattern).toHaveLength(3 * strings.length);
+    expect(exerciseSixPattern[0]).toMatchObject({ noteIdx: 0, dir: 'up' });
+    expect(exerciseSixPattern[strings.length]).toMatchObject({ noteIdx: 2, dir: 'down' });
+    expect(exerciseSixPattern[strings.length * 2]).toMatchObject({ noteIdx: 4, dir: 'up' });
   });
 
   it('supports ascending and descending patterns across different string counts', () => {
