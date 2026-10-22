@@ -8,14 +8,14 @@ import { useFretsStore } from '../../../store/useFretsStore';
 const ExerciseToggleButton = () => {
     const { exercise } = useParams();
     const sequencePlaying = useFretsStore(state => state.sequencePlaying);
-    const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
+    const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
 
     if (!exercise) return null;
 
     return <button
         type="button"
         className="exercise-toggle-button control-button"
-        onClick={() => setSequencePlaying(!sequencePlaying)}
+        onClick={toggleSequencePlayback}
         aria-label={sequencePlaying ? 'Pause note sequence' : 'Play note sequence'}
     >
         {sequencePlaying ? 'Pause' : 'Play'}
