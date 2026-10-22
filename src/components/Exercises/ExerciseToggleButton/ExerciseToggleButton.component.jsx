@@ -5,8 +5,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { getExerciseControlConfig } from '../../../config/frets.config';
 import { useFretsStore } from '../../../store/useFretsStore';
-import { getNoteSequenceMidiPitch } from '../../../utils/note.utils';
-import { playPluckedNote } from '../../../utils/audio.utils';
+import { playCountInClick } from '../../../utils/audio.utils';
 import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
 const EMPTY_SEQUENCE = Object.freeze([]);
@@ -16,24 +15,16 @@ const ExerciseToggleButton = () => {
     const history = useHistory();
     const sequencePlaying = useFretsStore(state => state.sequencePlaying);
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
-    const selectedSequenceNote = useFretsStore(state => {
-        const currentExercise = state.exercises[String(exercise ?? '')];
-        const sequence = currentExercise?.sequence ?? EMPTY_SEQUENCE;
-        return sequence[(currentExercise?.stage ?? 1) - 1] ?? sequence[0];
-    });
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const [countIn, setCountIn] = useState(null);
 
     useEffect(() => {
         if (countIn === null) return undefined;
 
-        // Match the count-in pitch to the currently selected sequence note.
-        if (Number.isInteger(selectedSequenceNote)) {
-            try {
-                playPluckedNote(getNoteSequenceMidiPitch(selectedSequenceNote));
-            } catch (error) {
-                // Keep the countdown usable if audio is unavailable.
-            }
+        try {
+            playCountInClick();
+        } catch (error) {
+            // Keep the countdown usable if audio is unavailable.
         }
 
         const timeout = setTimeout(() => {
@@ -47,7 +38,7 @@ const ExerciseToggleButton = () => {
         }, 60000 / tempoBpm);
 
         return () => clearTimeout(timeout);
-    }, [countIn, selectedSequenceNote, tempoBpm, toggleSequencePlayback]);
+    }, [countIn, tempoBpm, toggleSequencePlayback]);
 
     if (!exercise) return null;
 
