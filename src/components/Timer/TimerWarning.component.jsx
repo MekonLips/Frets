@@ -93,14 +93,14 @@ const TimerWarning = () => {
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(frequency, startAt);
         gain.gain.setValueAtTime(0.0001, startAt);
-        gain.gain.exponentialRampToValueAtTime(SWELL_PEAK_GAIN, startAt + duration * 0.82);
-        gain.gain.setValueAtTime(SWELL_PEAK_GAIN, startAt + duration * 0.82);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+        gain.gain.exponentialRampToValueAtTime(SWELL_PEAK_GAIN, startAt + Math.max(0.025, duration - 0.05));
+        gain.gain.setValueAtTime(SWELL_PEAK_GAIN, startAt + duration);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration + 0.12);
 
         oscillator.connect(gain);
         gain.connect(context.destination);
         oscillator.start(startAt);
-        oscillator.stop(startAt + duration + 0.02);
+        oscillator.stop(startAt + duration + 0.14);
 
         // A gentle two-partial chime starts at expiry. Keep all nodes cancellable
         // so pausing the timer cannot leave a scheduled chime playing in the background.
