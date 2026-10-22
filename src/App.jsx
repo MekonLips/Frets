@@ -25,6 +25,7 @@ import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
 import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.component';
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
+import ExercisesNavigation from './components/Exercises/Navigation.component';
 
 const App = () => {
   const location = useLocation();
@@ -50,6 +51,7 @@ const App = () => {
             </div>
             <div className="exercise-panel">
               <div className="exercise-instructions">
+                <ExercisesNavigation />
                 <Instructions />
                 <ExerciseToggleButton />
               </div>
