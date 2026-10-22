@@ -1,15 +1,23 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 
-import { NOTES } from '../../config/frets.config';
 import { useFretsStore } from '../../store/useFretsStore';
 import { getTimerWarningAudioContext } from '../../utils/timerWarningAudio.utils';
 
-const WARNING_DURATION_MS = 5000;
+export const TIMER_WARNING_DURATION_MS = 5000;
 const SWELL_PEAK_GAIN = 0.035;
 const CHIME_GAIN = 0.035;
 const CHIME_DURATION_SECONDS = 0.75;
-const NOTE_MIDI_BASE = 69; // NOTES[0] is A; C is therefore MIDI 72 (C5).
+const C5_MIDI = 72;
+const NOTE_NAMES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+
+export const getTimerWarningMidiNote = (sequencePlaying, sequence, stage) => {
+    if (!sequencePlaying || !sequence?.length) return C5_MIDI;
+    const noteIndex = sequence[stage - 1];
+    return Number.isInteger(noteIndex) && noteIndex >= 0 && noteIndex < NOTE_NAMES.length
+        ? 69 + noteIndex
+        : C5_MIDI;
+};
 
 const TimerWarning = () => {
     const { exercise } = useParams();
@@ -19,10 +27,7 @@ const TimerWarning = () => {
     const exerciseState = useFretsStore(state => state.exercises[String(exercise ?? '')]);
     const sequence = exerciseState?.sequence ?? [];
     const stage = exerciseState?.stage ?? 1;
-    const noteIndex = sequencePlaying && sequence.length
-        ? sequence[stage - 1]
-        : 3; // C when no sequence is playing.
-    const midiNote = NOTE_MIDI_BASE + (Number.isInteger(noteIndex) ? noteIndex : 3);
+    const midiNote = getTimerWarningMidiNote(sequencePlaying, sequence, stage);
 
     const triggered = useRef(false);
     const previousRemaining = useRef(remaining);
@@ -33,20 +38,24 @@ const TimerWarning = () => {
         activeSound.current = null;
         if (!sound) return;
 
-        try {
-            const now = sound.context.currentTime;
-            sound.gain.gain.cancelScheduledValues(now);
-            sound.gain.gain.setTargetAtTime(0, now, 0.025);
-            sound.oscillator.stop(now + 0.12);
-        } catch {
-            // The sound may already have reached its scheduled end.
-        }
+        const now = sound.context.currentTime;
+        sound.nodes.forEach(node => {
+            try {
+                if (node.frequency) node.frequency.cancelScheduledValues(now);
+                if (node.gain) {
+                    node.gain.cancelScheduledValues(now);
+                    node.gain.setTargetAtTime(0.0001, now, 0.015);
+                }
+                node.stop(now + 0.06);
+            } catch {
+                // The node may already have reached its scheduled end.
+            }
+        });
     };
 
     useEffect(() => () => stopSound(), []);
 
-    // A timer reset increases the remaining time. Clear the warning latch so it
-    // can trigger normally during the next session.
+    // A reset increases the remaining time; clear the warning latch for the next run.
     useEffect(() => {
         if (remaining > previousRemaining.current) {
             stopSound();
@@ -55,8 +64,8 @@ const TimerWarning = () => {
         previousRemaining.current = remaining;
     }, [remaining]);
 
-    // Once the warning has started, pausing cancels it and latches it as spent.
-    // Resuming therefore does not replay either the swell or its expiry chime.
+    // Option 1: stopping the timer cancels the sound and never replays this warning
+    // until the session timer is reset.
     useEffect(() => {
         if (!running && activeSound.current) {
             stopSound();
@@ -65,7 +74,7 @@ const TimerWarning = () => {
     }, [running]);
 
     useEffect(() => {
-        if (!running || triggered.current || remaining <= 0 || remaining > WARNING_DURATION_MS) return;
+        if (!running || triggered.current || remaining <= 0 || remaining > TIMER_WARNING_DURATION_MS) return;
 
         const context = getTimerWarningAudioContext();
         if (!context) {
@@ -79,6 +88,7 @@ const TimerWarning = () => {
         const frequency = 440 * (2 ** ((midiNote - 69) / 12));
         const oscillator = context.createOscillator();
         const gain = context.createGain();
+        const nodes = [oscillator, gain];
 
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(frequency, startAt);
@@ -92,11 +102,13 @@ const TimerWarning = () => {
         oscillator.start(startAt);
         oscillator.stop(startAt + duration + 0.02);
 
-        // A quiet two-partial chime, scheduled to land at the timer's expiry.
+        // A gentle two-partial chime starts at expiry. Keep all nodes cancellable
+        // so pausing the timer cannot leave a scheduled chime playing in the background.
         [1, 2.01].forEach((partial, index) => {
             const chime = context.createOscillator();
             const chimeGain = context.createGain();
             const chimeStart = startAt + duration;
+            nodes.push(chime, chimeGain);
             chime.type = 'sine';
             chime.frequency.setValueAtTime(frequency * partial, chimeStart);
             chimeGain.gain.setValueAtTime(0.0001, chimeStart);
@@ -108,21 +120,23 @@ const TimerWarning = () => {
             chime.stop(chimeStart + CHIME_DURATION_SECONDS + 0.02);
         });
 
-        activeSound.current = { context, oscillator, gain };
-        const cleanupId = globalThis.setTimeout(() => {
-            if (activeSound.current?.oscillator === oscillator) activeSound.current = null;
-        }, remaining + 1000);
-
-        return () => globalThis.clearTimeout(cleanupId);
+        const sound = { context, oscillator, gain, nodes };
+        activeSound.current = sound;
+        nodes[nodes.length - 2].addEventListener?.('ended', () => {
+            if (activeSound.current === sound) activeSound.current = null;
+        }, { once: true });
     }, [running, remaining, midiNote]);
 
-    // Keep the swell's pitch aligned with the live sequence note without
-    // restarting the envelope when the user advances, shuffles, or changes exercise.
+    // Pitch follows live sequence changes without restarting the swell envelope.
     useEffect(() => {
         const sound = activeSound.current;
         if (!sound) return;
         const frequency = 440 * (2 ** ((midiNote - 69) / 12));
         sound.oscillator.frequency.setTargetAtTime(frequency, sound.context.currentTime, 0.025);
+        // Also retune the already-scheduled chime so it matches the current note at expiry.
+        sound.nodes.filter(node => node !== sound.oscillator && node.frequency).forEach((node, index) => {
+            node.frequency.setTargetAtTime(frequency * (index === 0 ? 1 : 2.01), sound.context.currentTime, 0.025);
+        });
     }, [midiNote]);
 
     return null;
