@@ -25,7 +25,7 @@ const renderForExercise = (exercise, component) => renderToStaticMarkup(
 describe('exercise-specific controls', () => {
     beforeEach(() => {
         useFretsStore.setState({
-            tempoBpm: 80,
+            tempoBpm: 40,
             useAccidentals: false,
             loopExercises: {},
             sequencePlaying: false,
@@ -42,9 +42,9 @@ describe('exercise-specific controls', () => {
         const exerciseTwo = renderForExercise(2, <TempoControls />);
 
         expect(exerciseOne).toContain('disabled=""');
-        expect(exerciseOne).toContain('80 BPM');
+        expect(exerciseOne).toContain('40 BPM');
         expect(exerciseTwo).not.toContain('disabled=""');
-        expect(exerciseTwo).toContain('80 BPM');
+        expect(exerciseTwo).toContain('40 BPM');
     });
 
     it('keeps shuffle visible but disabled for Exercises 1–4', () => {
