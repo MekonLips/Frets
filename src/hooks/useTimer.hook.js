@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useFretsStore } from '../store/useFretsStore';
 import { TIME_LIMIT, ACTIONS } from '../config/frets.config';
