@@ -101,7 +101,7 @@ const App = () => {
             <div className={!match.params.exercise ? 'home-fretboard-cell' : ''}>
               {!match.params.exercise && <button
                 type="button"
-                className="learn-your-frets-button button button-primary"
+                className="control-button control-button-large learn-your-frets-button"
                 onClick={() => {
                   resumeTimerWarningAudio();
                   if (!timerRunning) {
@@ -111,8 +111,8 @@ const App = () => {
                   history.push('/exercises/1');
                 }}
               >
-                <FontAwesomeIcon icon={faPlay} />
                 Learn Your Frets
+                <FontAwesomeIcon icon={faPlay} />
               </button>}
               <Instrument />
               <Notes />
