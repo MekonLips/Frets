@@ -226,6 +226,18 @@ describe('Frets store state transitions', () => {
     });
   });
 
+  it('stores loop preferences independently per exercise without persisting transient state', () => {
+    store.getState().setLoopExercise(3, true);
+    store.getState().setLoopExercise(4, false);
+    store.getState().setLoopExercise(6, true);
+
+    expect(store.getState().loopExercises).toEqual({ 3: true, 4: false, 6: true });
+    const [, serialized] = storage.setItem.mock.calls.at(-1);
+    const persisted = JSON.parse(serialized);
+    expect(persisted.state).not.toHaveProperty('loopExercises');
+    expect(persisted.state).not.toHaveProperty('exercises');
+  });
+
   it('shares the accidentals preference across exercises', () => {
     store.getState().setUseAccidentals(true);
 
