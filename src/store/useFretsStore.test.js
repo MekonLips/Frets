@@ -50,6 +50,31 @@ describe('Frets store state transitions', () => {
     expect(store.getState().sequencePlaying).toBe(false);
   });
 
+  it('starts the session timer when sequence playback starts, but does not stop it on pause', () => {
+    const state = store.getState();
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(true);
+    expect(store.getState().timerRunning).toBe(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+  });
+
+  it('does not change an already-running session timer when toggling sequence playback', () => {
+    const state = store.getState();
+    state.setTimerRunning(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(true);
+    expect(store.getState().timerRunning).toBe(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+  });
+
   it('stops the timer when the selected instrument changes', () => {
     store.getState().setTimerRunning(true);
     store.getState().setInstrument(4);
