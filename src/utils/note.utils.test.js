@@ -28,6 +28,18 @@ describe('fretboard note helpers', () => {
       expect(hasSinglePassPattern(exercise)).toBe(false);
     }
   });
+  it('shows the current and next note in one-pass exercise tabs', () => {
+    const strings = INSTRUMENTS[0].strings;
+    const sequence = [3, 5, 7, 8, 10, 0, 2];
+    const pattern = getPattern({ exercise: 6, noteIdxs: sequence, strings, start: 1 });
+
+    sequence.forEach((noteIdx, index) => {
+      const window = getTabPatternWindow({ pattern, stage: index + 1, stringCount: strings.length, exercise: 6 });
+      const visibleNotes = [...new Set(window.pattern.map(position => position.noteIdx))];
+      expect(visibleNotes).toEqual(sequence.slice(index, index + 2));
+    });
+  });
+
   it('wraps note names through the twelve-note chromatic set', () => {
     expect(noteName(0)).toBe('A');
     expect(noteName(12)).toBe('A');
