@@ -696,3 +696,15 @@
     @apply m-0;
   }
 }
+
+
+/* The note-sequence highlight is a single moving circle, not a per-note background. */
+@layer components {
+  .legacy-sequence-container.has-animated-highlight .legacy-sequence-note.is-current::before {
+    display: none;
+  }
+  .legacy-sequence-container.has-animated-highlight .legacy-sequence {
+    position: relative;
+    z-index: 1;
+  }
+}
