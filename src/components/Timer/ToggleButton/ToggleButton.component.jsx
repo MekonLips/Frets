@@ -4,13 +4,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from '../../../store/useFretsStore';
+import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
 const ToggleButton = ({ children, show = true }) => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
     const timerRunning = useFretsStore(state => state.timerRunning);
     const setTimerRunning = useFretsStore(state => state.setTimerRunning);
-    const clickHandler = () => setTimerRunning(!timerRunning);
+    const clickHandler = () => {
+        resumeTimerWarningAudio();
+        setTimerRunning(!timerRunning);
+    };
     if (isExercise && show)
         return <button className={`timer-toggle-button control-button ${children ? "" : "control-button-icon"}`} onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={timerRunning ? faPause : faPlay} />}</button>;
     return null;
