@@ -85,6 +85,7 @@ export const useFretsStore = create(persist((set) => ({
     return { exercises: { ...state.exercises, [key]: { ...current, beat: nextBeat } } };
   }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
+  setSequencePlaying: (sequencePlaying) => set({ sequencePlaying }),
   setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
   setUseAccidentals: (useAccidentals) => set({ useAccidentals }),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
