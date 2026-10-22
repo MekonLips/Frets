@@ -633,3 +633,52 @@
     accent-color: orange;
   }
 }
+
+
+/* Welcome overlay and prominent home-page entry point. */
+@layer components {
+  .legacy-nav-welcome {
+    @apply w-full list-none p-[5vh];
+  }
+  .legacy-nav-welcome h1 {
+    @apply mb-2 text-2xl font-semibold;
+  }
+  .legacy-nav-welcome p {
+    @apply my-3 max-w-2xl text-sm leading-6 text-neutral-300;
+  }
+  .legacy-nav-begin {
+    @apply mt-2 inline-flex items-center gap-2 px-5 py-3 text-base;
+  }
+  .legacy-nav-separator {
+    @apply mx-[5vh] my-4 w-[calc(100%-10vh)] list-none border-b border-white/15;
+  }
+  .legacy-nav-description {
+    @apply w-1/2 list-none;
+  }
+  .legacy-nav-description .legacy-nav-link {
+    @apply cursor-default;
+  }
+  .legacy-nav-description h2 {
+    @apply mb-2 text-base font-semibold;
+  }
+  .legacy-nav-description p {
+    @apply my-2 text-sm leading-6 text-neutral-300;
+  }
+  .home-fretboard-cell {
+    position: relative;
+  }
+  .learn-your-frets-button {
+    position: absolute;
+    z-index: 900;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    @apply inline-flex items-center gap-3 whitespace-nowrap px-6 py-4 text-xl font-semibold shadow-lg;
+  }
+}
+@media (max-width: 640px) {
+  .legacy-nav-description { @apply w-full; }
+  .legacy-nav-welcome { @apply p-6; }
+  .legacy-nav-separator { margin-left: 1.5rem; margin-right: 1.5rem; width: calc(100% - 3rem); }
+  .learn-your-frets-button { @apply gap-2 px-4 py-3 text-base; }
+}
