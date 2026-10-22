@@ -586,4 +586,10 @@
   .timer-controls {
     @apply flex items-center gap-1;
   }
+  .exercise-toggle-button {
+    @apply self-start;
+  }
+  .timer-display.is-overtime {
+    color: #22c55e;
+  }
 }
