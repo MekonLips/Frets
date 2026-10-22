@@ -49,6 +49,7 @@ export const playTimerToggleChime = (isStarting, midiNote = C5_MIDI) => {
         });
     }
 
+    const baseFrequency = 440 * (2 ** ((midiNote - 69) / 12));
     const { startFrequency, endFrequency } = getTimerToggleFrequencies(isStarting, midiNote);
     const startAt = context.currentTime;
     const glideDuration = 0.18;
