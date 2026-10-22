@@ -26,6 +26,7 @@ import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
 import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.component';
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
+import LoopToggle from './components/Exercises/LoopToggle/LoopToggle.component';
 import ExercisesNavigation from './components/Exercises/Navigation.component';
 
 const App = () => {
@@ -70,6 +71,7 @@ const App = () => {
                 <TempoControls />
                 <ShuffleButton />
                 <AccidentalsToggle />
+                <LoopToggle />
                 <Metronome />
               </div>
             </div>
