@@ -13,7 +13,7 @@ const TabComponent = () => {
     const stage = exerciseState?.stage ?? 1;
     const pattern = exerciseState?.pattern ?? [];
     const beat = exerciseState?.beat ?? 0;
-    const running = useFretsStore(state => state.timerRunning);
+    const running = useFretsStore(state => state.sequencePlaying);
     const activeIndex = running && beat > 0 && pattern.length
         ? (beat - 1) % pattern.length
         : -1;
