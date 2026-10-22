@@ -11,6 +11,23 @@ export const getNoteByIdx = idx => NOTES[idx];
 // Exercises 4, 5, and 6 play one string pass per sequence note.
 export const hasSinglePassPattern = exercise => [4, 5, 6].includes(Number(exercise));
 
+export const getTabPatternWindow = ({ pattern = [], stage = 1, stringCount, exercise } = {}) => {
+    if (!Array.isArray(pattern) || !Number.isInteger(stringCount) || stringCount < 1) {
+        return { start: 0, pattern: [] };
+    }
+
+    const currentStage = Number.isInteger(stage) && stage > 0 ? stage : 1;
+    const singlePass = hasSinglePassPattern(exercise);
+    const positionsPerStage = stringCount * (singlePass ? 1 : 2);
+    const visibleStages = singlePass ? 2 : 1;
+    const start = (currentStage - 1) * positionsPerStage;
+
+    return {
+        start,
+        pattern: pattern.slice(start, (currentStage - 1 + visibleStages) * positionsPerStage),
+    };
+};
+
 export const getNoteIdxs = () => NOTES.map((note, idx) => idx);
 
 export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
