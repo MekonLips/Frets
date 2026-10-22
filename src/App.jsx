@@ -14,6 +14,7 @@ import Notes from './components/Instrument/Notes/Notes.component';
 import RangeSelector from './components/Controls/RangeSelector/RangeSelector.component';
 import Range from './components/Range/Range.component';
 import TimerDisplay from './components/Timer/TimerDisplay.component';
+import TimerWarning from './components/Timer/TimerWarning.component';
 import TimerToggleButton from './components/Timer/ToggleButton/ToggleButton.component';
 import TimerResetButton from './components/Timer/ResetButton/ResetButton.component';
 import ExerciseToggleButton from './components/Exercises/ExerciseToggleButton/ExerciseToggleButton.component';
@@ -42,6 +43,7 @@ const App = () => {
       render={({ match }) =>
         <>
           {match.params.exercise && <Exercises />}
+          {match.params.exercise && <TimerWarning />}
           <Overlay />
           <Nav />
           <InstrumentsOverlay />
