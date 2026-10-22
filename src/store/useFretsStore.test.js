@@ -75,12 +75,28 @@ describe('Frets store state transitions', () => {
     expect(store.getState().timerRunning).toBe(true);
   });
 
-  it('stops the timer when the selected instrument changes', () => {
+  it('keeps the session timer running and pauses sequence playback when selecting a preset', () => {
     store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
     store.getState().setInstrument(4);
 
     expect(store.getState().selectedInstrumentId).toBe(4);
-    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+    expect(store.getState().sequencePlaying).toBe(false);
+  });
+
+  it('keeps the session timer running and pauses sequence playback when the builder instrument changes', () => {
+    store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
+    store.getState().setInstrumentDefinition({
+      id: 'custom-guitar',
+      type: 'guitar',
+      strings: [7, 2, 10, 5, 0, 7],
+      openStringMidi: [64, 59, 55, 50, 45, 40],
+    });
+
+    expect(store.getState().timerRunning).toBe(true);
+    expect(store.getState().sequencePlaying).toBe(false);
   });
 
   it('uses an active builder instrument definition and returns to legacy selection when cleared', async () => {
