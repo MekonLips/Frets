@@ -2,23 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore } from '../../store/useFretsStore';
-import { getTimerWarningAudioContext } from '../../utils/timerWarningAudio.utils';
+import { getTimerWarningAudioContext, getTimerWarningMidiNote } from '../../utils/timerWarningAudio.utils';
 
 export const TIMER_WARNING_DURATION_MS = 5000;
 const SWELL_PEAK_GAIN = 0.035;
 const CHIME_GAIN = 0.035;
 const CHIME_DURATION_SECONDS = 0.75;
-const C5_MIDI = 72;
-const NOTE_NAMES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-
-export const getTimerWarningMidiNote = (sequencePlaying, sequence, stage) => {
-    if (!sequencePlaying || !sequence?.length) return C5_MIDI;
-    const noteIndex = sequence[stage - 1];
-    return Number.isInteger(noteIndex) && noteIndex >= 0 && noteIndex < NOTE_NAMES.length
-        ? 69 + noteIndex
-        : C5_MIDI;
-};
-
 const TimerWarning = () => {
     const { exercise } = useParams();
     const remaining = useFretsStore(state => state.sessionRemaining);
