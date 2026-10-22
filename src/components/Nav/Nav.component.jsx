@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 
@@ -26,7 +26,7 @@ const NavComponent = () => {
                     <li className="legacy-nav-welcome">
                         <h1>Welcome to Frets!</h1>
                         <p>Frets helps you learn the notes across your instrument’s fretboard through short, focused daily exercises. Build familiarity, accuracy and confidence one note at a time.</p>
-                        <button type="button" className="button button-primary legacy-nav-begin" onClick={() => {
+                        <button type="button" className="control-button control-button-large legacy-nav-begin" onClick={() => {
                             clickHandler();
                             history.push('/exercises/1');
                         }}>
@@ -35,7 +35,7 @@ const NavComponent = () => {
                     </li>
                     <li className="legacy-nav-separator" aria-hidden="true" />
                     {Object.values(APP_SECTIONS).map(section =>
-                        <li className="legacy-nav-item legacy-nav-description" key={`Nav/Section/${section}`}>
+                        <li className="legacy-nav-description" key={`Nav/Section/${section}`}>
                             <div className="legacy-nav-link">
                                 <h2>{APP_SECTION_TITLES[section]}</h2>
                                 <p>{APP_SECTION_DESCRIPTIONS[section]}</p>
