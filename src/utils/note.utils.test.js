@@ -6,6 +6,7 @@ import {
   getNaturalIdxs,
   getNoteByIdx,
   getNoteFrequency,
+  getNoteSequenceMidiPitch,
   getNotesFromIdxs,
   getNoteIdxs,
   getPattern,
@@ -44,6 +45,15 @@ describe('fretboard note helpers', () => {
     expect(getFretInRange(7, 7, 1)).toBe(12);
     expect(getFretInRange(0, 7, 6)).toBe(17);
     expect(getFretInRange(0, 7, 13)).toBe(17);
+  });
+
+  it('maps sequence note indices to pitches in octave 3', () => {
+    expect(getNoteSequenceMidiPitch(3)).toBe(48); // C3
+    expect(getNoteSequenceMidiPitch(5)).toBe(50); // D3
+    expect(getNoteSequenceMidiPitch(7)).toBe(52); // E3
+    expect(getNoteSequenceMidiPitch(1)).toBe(46); // A#2? sequence mapping remains chromatic from A
+    expect(() => getNoteSequenceMidiPitch(-1)).toThrow(RangeError);
+    expect(() => getNoteSequenceMidiPitch(12)).toThrow(RangeError);
   });
 
   it('converts semitone offsets from A4 to note frequencies', () => {
