@@ -82,6 +82,26 @@ export const EXERCISE_INSTRUCTIONS = [
     ],
 ];
 
+// Per-exercise control availability and defaults. Keep control policy here rather than
+// embedding exercise-number checks in individual UI components.
+export const EXERCISE_CONTROL_CONFIG = {
+    1: { tempo: false, shuffle: false, loop: { enabled: false, defaultValue: false }, accidentals: { enabled: false, defaultValue: false }, showPlayback: false },
+    2: { tempo: true,  shuffle: false, loop: { enabled: false, defaultValue: false }, accidentals: { enabled: false, defaultValue: false }, showPlayback: true },
+    3: { tempo: true,  shuffle: false, loop: { enabled: true,  defaultValue: false }, accidentals: { enabled: false, defaultValue: true  }, showPlayback: true },
+    4: { tempo: true,  shuffle: false, loop: { enabled: false, defaultValue: true  }, accidentals: { enabled: true,  defaultValue: false }, showPlayback: true },
+    5: { tempo: true,  shuffle: true,  loop: { enabled: false, defaultValue: false }, accidentals: { enabled: true,  defaultValue: false }, showPlayback: true },
+    6: { tempo: true,  shuffle: true,  loop: { enabled: true,  defaultValue: false }, accidentals: { enabled: true,  defaultValue: false }, showPlayback: true },
+};
+
+export const getExerciseControlConfig = (exercise) =>
+    EXERCISE_CONTROL_CONFIG[Number(exercise)] ?? {
+        tempo: true,
+        shuffle: true,
+        loop: { enabled: false, defaultValue: false },
+        accidentals: { enabled: false, defaultValue: false },
+        showPlayback: true,
+    };
+
 export const EXERCISES_NUM = EXERCISE_INSTRUCTIONS.length;
 
 // worker actions
