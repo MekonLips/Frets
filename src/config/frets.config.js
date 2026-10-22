@@ -102,6 +102,12 @@ export const getExerciseControlConfig = (exercise) =>
         showPlayback: true,
     };
 
+// The UI and playback scheduler must use the same per-exercise loop decision.
+// Explicit user state overrides the configured default, including Exercise 4's
+// default-on loop even though its control is intentionally disabled.
+export const isExerciseLoopActive = (exercise, loopExercises = {}) =>
+    loopExercises[String(exercise)] ?? getExerciseControlConfig(exercise).loop.defaultValue;
+
 export const EXERCISES_NUM = EXERCISE_INSTRUCTIONS.length;
 
 // worker actions
