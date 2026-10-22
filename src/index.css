@@ -682,3 +682,17 @@
   .legacy-nav-separator { margin-left: 1.5rem; margin-right: 1.5rem; width: calc(100% - 3rem); }
   .control-button-large { @apply gap-2 px-4 py-2 text-base; }
 }
+
+
+/* Centre the home-page call to action within the top-middle grid cell. */
+@layer components {
+  .home-exercise-panel {
+    @apply flex items-center justify-center;
+  }
+  .home-exercise-panel .exercise-instructions {
+    @apply flex h-full w-full items-center justify-center;
+  }
+  .home-exercise-panel .learn-your-frets-button {
+    @apply m-0;
+  }
+}
