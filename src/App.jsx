@@ -16,6 +16,7 @@ import Range from './components/Range/Range.component';
 import TimerDisplay from './components/Timer/TimerDisplay.component';
 import TimerToggleButton from './components/Timer/ToggleButton/ToggleButton.component';
 import TimerResetButton from './components/Timer/ResetButton/ResetButton.component';
+import ExerciseToggleButton from './components/Exercises/ExerciseToggleButton/ExerciseToggleButton.component';
 import Metronome from './components/Metronome/Metronome.component';
 import Exercises from './components/Exercises/Exercises.component';
 import Instructions from './components/Exercises/Instructions/Instructions.component';
