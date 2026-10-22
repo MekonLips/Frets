@@ -30,10 +30,12 @@ import ExercisesNavigation from './components/Exercises/Navigation.component';
 const App = () => {
   const location = useLocation();
   const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
+  const setStartFret = useFretsStore(state => state.setStartFret);
 
   useEffect(() => {
     setSequencePlaying(false);
-  }, [location.pathname, setSequencePlaying]);
+    if (location.pathname === '/') setStartFret(1);
+  }, [location.pathname, setSequencePlaying, setStartFret]);
 
   return <Route
       path={['/exercises/:exercise', '/']}
@@ -80,7 +82,7 @@ const App = () => {
             <div className="legacy-tab-sequence-cell">
               <div className="legacy-tab-range-container">
                 <Tab />
-                <div className="legacy-range-selector-container"><RangeSelector /></div>
+                {match.params.exercise && <div className="legacy-range-selector-container"><RangeSelector /></div>}
               </div>
               <NoteSequence />
             </div>
