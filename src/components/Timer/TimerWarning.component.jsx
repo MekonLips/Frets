@@ -122,9 +122,9 @@ const TimerWarning = () => {
 
         const sound = { context, oscillator, gain, nodes };
         activeSound.current = sound;
-        nodes[nodes.length - 2].addEventListener?.('ended', () => {
+        nodes[nodes.length - 2].onended = () => {
             if (activeSound.current === sound) activeSound.current = null;
-        }, { once: true });
+        };
     }, [running, remaining, midiNote]);
 
     // Pitch follows live sequence changes without restarting the swell envelope.
