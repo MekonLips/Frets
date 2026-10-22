@@ -19,6 +19,7 @@ export const useFretsStore = create(persist((set) => ({
   sequencePlaying: false,
   tempoBpm: 40,
   useAccidentals: false,
+  loopExercises: {},
   exercises: {},
   setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, sequencePlaying: false, exercises: {} }),
   setInstrumentDefinition: (activeInstrumentDefinition) => set((state) => {
@@ -92,6 +93,7 @@ export const useFretsStore = create(persist((set) => ({
   })),
   setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
   setUseAccidentals: (useAccidentals) => set({ useAccidentals }),
+  setLoopExercise: (exercise, enabled) => set((state) => ({ loopExercises: { ...state.loopExercises, [String(exercise)]: Boolean(enabled) } })),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
   resetSession: () => set({ sessionRemaining: TIME_LIMIT, timerRunning: false }),
 }), {
