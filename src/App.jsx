@@ -51,6 +51,7 @@ const App = () => {
             <div className="exercise-panel">
               <div className="exercise-instructions">
                 <Instructions />
+                <ExerciseToggleButton />
               </div>
               <div className="exercise-controls">
                 <div className="timer">
