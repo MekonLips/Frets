@@ -11,6 +11,7 @@ import {
   getNoteIdxs,
   getPattern,
   getRandomNoteSequence,
+  hasSinglePassPattern,
   isAccidental,
   isNatural,
   noteName,
@@ -19,6 +20,14 @@ import {
 } from './note.utils.js';
 
 describe('fretboard note helpers', () => {
+  it('recognizes exercises that play one string pass per sequence note', () => {
+    for (const exercise of [4, 5, 6]) {
+      expect(hasSinglePassPattern(exercise)).toBe(true);
+    }
+    for (const exercise of [1, 2, 3]) {
+      expect(hasSinglePassPattern(exercise)).toBe(false);
+    }
+  });
   it('wraps note names through the twelve-note chromatic set', () => {
     expect(noteName(0)).toBe('A');
     expect(noteName(12)).toBe('A');
