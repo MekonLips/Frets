@@ -75,8 +75,10 @@ const App = () => {
                 <ExercisesNavigation />
                 <Instructions />
                 <ExerciseToggleButton />
-                <LearnYourFretsButton />
-                {!match.params.exercise && <InstallFretsButton />}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <LearnYourFretsButton />
+                  {!match.params.exercise && <InstallFretsButton />}
+                </div>
               </div>
               <div className="exercise-controls">
                 <div className="timer">
