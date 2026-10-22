@@ -9,11 +9,12 @@ import { TIME_LIMIT } from '../../../config/frets.config';
 const ResetButton = ({ children }) => {
     const { exercise } = useParams();
     const isExercise = exercise ? true : false;
+    const timerRunning = useFretsStore(state => state.timerRunning);
     const setTimerRemaining = useFretsStore(state => state.setSessionRemaining);
     const setTimerRunning = useFretsStore(state => state.setTimerRunning);
     const clickHandler = () => {
         setTimerRemaining(TIME_LIMIT);
-        setTimerRunning(false);
+        setTimerRunning(timerRunning);
     };
     if (isExercise)
         return <button className={`timer-reset-button control-button ${children ? "" : "control-button-icon"}`} aria-label="Reset timer" onClick={clickHandler}>{children ? children : <FontAwesomeIcon icon={faUndo} />}</button>;
