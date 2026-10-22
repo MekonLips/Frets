@@ -9,7 +9,7 @@ const TimerDisplayComponent = () => {
     const isExercise = exercise ? true : false;
     const { remaining } = useTimer();
     if (isExercise)
-        return <code className='timer-display'>
+        return <code className={`timer-display${remaining < 0 ? ' is-overtime' : ''}`}>
             {formatTime(remaining)}
         </code>
     else
