@@ -16,6 +16,7 @@ export const useFretsStore = create(persist((set) => ({
   selectedNotesModeIndex: SELECTED_NOTES,
   sessionRemaining: TIME_LIMIT,
   timerRunning: false,
+  sequencePlaying: false,
   tempoBpm: 40,
   useAccidentals: false,
   exercises: {},
