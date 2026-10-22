@@ -16,17 +16,21 @@ const ExerciseToggleButton = () => {
     const history = useHistory();
     const sequencePlaying = useFretsStore(state => state.sequencePlaying);
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
-    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_SEQUENCE);
+    const selectedSequenceNote = useFretsStore(state => {
+        const currentExercise = state.exercises[String(exercise ?? '')];
+        const sequence = currentExercise?.sequence ?? EMPTY_SEQUENCE;
+        return sequence[(currentExercise?.stage ?? 1) - 1] ?? sequence[0];
+    });
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const [countIn, setCountIn] = useState(null);
 
     useEffect(() => {
         if (countIn === null) return undefined;
 
-        // Use the same first sequence note for each count-in beat.
-        if (sequence.length) {
+        // Match the count-in pitch to the currently selected sequence note.
+        if (Number.isInteger(selectedSequenceNote)) {
             try {
-                playPluckedNote(getNoteSequenceMidiPitch(sequence[0]));
+                playPluckedNote(getNoteSequenceMidiPitch(selectedSequenceNote));
             } catch (error) {
                 // Keep the countdown usable if audio is unavailable.
             }
@@ -43,7 +47,7 @@ const ExerciseToggleButton = () => {
         }, 60000 / tempoBpm);
 
         return () => clearTimeout(timeout);
-    }, [countIn, sequence, tempoBpm, toggleSequencePlayback]);
+    }, [countIn, selectedSequenceNote, tempoBpm, toggleSequencePlayback]);
 
     if (!exercise) return null;
 
