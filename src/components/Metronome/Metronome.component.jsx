@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
-import { getExerciseControlConfig } from '../../config/frets.config';
+import { isExerciseLoopActive } from '../../config/frets.config';
 import useMetronome from '../../hooks/useMetronome.hook';
 
 const MetronomeComponent = () => {
@@ -25,7 +25,7 @@ const MetronomeComponent = () => {
     const stage = exerciseState?.stage ?? 1;
     const setStage = useFretsStore(state => state.setExerciseStage);
     const loopExercises = useFretsStore(state => state.loopExercises);
-    const loopActive = loopExercises[String(exercise)] ?? getExerciseControlConfig(exercise).loop.defaultValue;
+    const loopActive = isExerciseLoopActive(exercise, loopExercises);
 
     useEffect(() => {
         // The stage should switch on the first beat of the next note, not
