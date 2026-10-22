@@ -79,7 +79,7 @@ const App = () => {
               <div className="exercise-controls">
                 <div className="timer">
                   <TimerDisplay />
-                  <div class="timer-controls">
+                  <div className="timer-controls">
                     <TimerToggleButton />
                     <TimerResetButton />
                   </div>
