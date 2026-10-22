@@ -1,31 +1,24 @@
 import React from 'react';
 import { useParams } from 'react-router';
 
+import { getExerciseControlConfig } from '../../../config/frets.config';
 import { useFretsStore } from '../../../store/useFretsStore';
 
 const AccidentalsToggleComponent = () => {
     const { exercise } = useParams();
-    const isExercise = Boolean(exercise);
-    const exerciseNumber = Number(exercise);
     const useAccidentals = useFretsStore(state => state.useAccidentals);
     const setUseAccidentals = useFretsStore(state => state.setUseAccidentals);
+    if (!exercise) return null;
 
-    if (isExercise)
-        return <div className="accidentals-toggle">
-            {(exerciseNumber === 4 || exerciseNumber === 5 || exerciseNumber === 6) && 
-                <label className="legacy-accidentals-toggle">
-                    <span>Use accidentals?</span>
-                    <input
-                        type="checkbox"
-                        checked={useAccidentals}
-                        onChange={event => {
-                            const enabled = event.target.checked;
-                            setUseAccidentals(enabled);
-                        }}
-                    />
-                </label>}
-        </div>
-    return null;
+    const config = getExerciseControlConfig(exercise).accidentals;
+    const checked = config.enabled ? useAccidentals : config.defaultValue;
+    return <div className="accidentals-toggle">
+        <label className={`legacy-accidentals-toggle${config.enabled ? '' : ' is-disabled'}`}>
+            <span>Use accidentals?</span>
+            <input type="checkbox" checked={checked} disabled={!config.enabled}
+                onChange={event => setUseAccidentals(event.target.checked)} />
+        </label>
+    </div>;
 };
 
 export default AccidentalsToggleComponent;

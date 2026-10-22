@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
+import { isExerciseLoopActive } from '../../config/frets.config';
 import useMetronome from '../../hooks/useMetronome.hook';
 
 const MetronomeComponent = () => {
@@ -23,6 +24,8 @@ const MetronomeComponent = () => {
     const lastBeat = pattern.length;
     const stage = exerciseState?.stage ?? 1;
     const setStage = useFretsStore(state => state.setExerciseStage);
+    const loopExercises = useFretsStore(state => state.loopExercises);
+    const loopActive = isExerciseLoopActive(exercise, loopExercises);
 
     useEffect(() => {
         // The stage should switch on the first beat of the next note, not
@@ -39,7 +42,7 @@ const MetronomeComponent = () => {
 
     useEffect(() => {
         if (lastBeat > 0 && beat >= lastBeat) {
-            if (Number(exercise) === 4) {
+            if (loopActive) {
                 // The scheduler already wraps its exercise cursor. Resetting
                 // it here would also reset nextNoteTime and erase the loop pause.
                 setStage(exercise, 1);
@@ -49,7 +52,7 @@ const MetronomeComponent = () => {
                 setRunning(false);
             }
         }
-    }, [beat, lastBeat, exercise, reset, skip, setRunning, setStage]);
+    }, [beat, lastBeat, exercise, reset, skip, setRunning, setStage, loopActive]);
 
     // if (isExercise) return <p>{beat}</p>;
     return null;

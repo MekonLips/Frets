@@ -3,6 +3,9 @@ import {
   ACCIDENTALS,
   ACTIONS,
   EXERCISE_INSTRUCTIONS,
+  EXERCISE_CONTROL_CONFIG,
+  getExerciseControlConfig,
+  isExerciseLoopActive,
   EXERCISES_NUM,
   FRETS_NUM,
   INSTRUMENTS,
@@ -59,6 +62,57 @@ describe('fretboard configuration', () => {
 
     for (const actionGroup of Object.values(ACTIONS)) {
       expect(new Set(Object.values(actionGroup)).size).toBe(Object.values(actionGroup).length);
+    }
+  });
+
+
+  it('configures control availability and defaults for every exercise', () => {
+    expect(Object.keys(EXERCISE_CONTROL_CONFIG).map(Number)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(getExerciseControlConfig(1)).toMatchObject({
+      tempo: false, shuffle: false, showPlayback: false,
+      loop: { enabled: false, defaultValue: false },
+      accidentals: { enabled: false, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(2)).toMatchObject({ tempo: true, shuffle: false });
+    expect(getExerciseControlConfig(3)).toMatchObject({
+      tempo: true, shuffle: false,
+      loop: { enabled: true, defaultValue: false },
+      accidentals: { enabled: false, defaultValue: true },
+    });
+    expect(getExerciseControlConfig(4)).toMatchObject({
+      tempo: true, shuffle: false,
+      loop: { enabled: false, defaultValue: true },
+      accidentals: { enabled: true, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(5)).toMatchObject({
+      tempo: true, shuffle: true,
+      loop: { enabled: false, defaultValue: false },
+      accidentals: { enabled: true, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(6)).toMatchObject({
+      tempo: true, shuffle: true,
+      loop: { enabled: true, defaultValue: false },
+      accidentals: { enabled: true, defaultValue: false },
+    });
+  });
+
+
+  it('resolves loop activation from per-exercise state and configured defaults', () => {
+    expect(isExerciseLoopActive(1)).toBe(false);
+    expect(isExerciseLoopActive(3)).toBe(false);
+    expect(isExerciseLoopActive(4)).toBe(true);
+    expect(isExerciseLoopActive(6)).toBe(false);
+
+    expect(isExerciseLoopActive(4, { 4: false })).toBe(false);
+    expect(isExerciseLoopActive(3, { 3: true })).toBe(true);
+    expect(isExerciseLoopActive(6, { 6: true })).toBe(true);
+  });
+
+  it('uses the same configured loop default for numeric and string exercise IDs', () => {
+    for (const exercise of [1, 2, 3, 4, 5, 6]) {
+      expect(isExerciseLoopActive(String(exercise))).toBe(
+        getExerciseControlConfig(exercise).loop.defaultValue,
+      );
     }
   });
 
