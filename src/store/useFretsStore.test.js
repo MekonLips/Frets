@@ -204,10 +204,12 @@ describe('Frets store state transitions', () => {
     const state = store.getState();
     state.setSessionRemaining(1000);
     state.setTimerRunning(true);
+    state.setSequencePlaying(true);
     state.resetSession();
 
     expect(store.getState().sessionRemaining).toBe(TIME_LIMIT);
     expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(true);
   });
 
   it('persists preferences but excludes transient exercise and session state', () => {
