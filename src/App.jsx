@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Route, useLocation } from 'react-router';
+import { Route, useLocation, useHistory } from 'react-router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from './store/useFretsStore';
 import Overlay from './components/Overlay/Overlay.component';
@@ -28,9 +30,13 @@ import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.co
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
 import LoopToggle from './components/Exercises/LoopToggle/LoopToggle.component';
 import ExercisesNavigation from './components/Exercises/Navigation.component';
+import { resumeTimerWarningAudio, playTimerToggleChime } from './utils/timerWarningAudio.utils';
 
 const App = () => {
   const location = useLocation();
+  const history = useHistory();
+  const timerRunning = useFretsStore(state => state.timerRunning);
+  const setTimerRunning = useFretsStore(state => state.setTimerRunning);
   const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
   const startFret = useFretsStore(state => state.startFret);
   const setStartFret = useFretsStore(state => state.setStartFret);
@@ -92,7 +98,22 @@ const App = () => {
             <div className="legacy-instrument-menu-trigger">
               <InstrumentOpenButton />
             </div>
-            <div>
+            <div className={!match.params.exercise ? 'home-fretboard-cell' : ''}>
+              {!match.params.exercise && <button
+                type="button"
+                className="learn-your-frets-button button button-primary"
+                onClick={() => {
+                  resumeTimerWarningAudio();
+                  if (!timerRunning) {
+                    playTimerToggleChime(true);
+                    setTimerRunning(true);
+                  }
+                  history.push('/exercises/1');
+                }}
+              >
+                <FontAwesomeIcon icon={faPlay} />
+                Learn Your Frets
+              </button>}
               <Instrument />
               <Notes />
             </div>
