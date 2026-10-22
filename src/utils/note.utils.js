@@ -8,6 +8,9 @@ export const isAccidental = idx => ACCIDENTALS.find(_ => _ === idx) ? true : fal
 
 export const getNoteByIdx = idx => NOTES[idx];
 
+// Exercises 4, 5, and 6 play one string pass per sequence note.
+export const hasSinglePassPattern = exercise => [4, 5, 6].includes(Number(exercise));
+
 export const getNoteIdxs = () => NOTES.map((note, idx) => idx);
 
 export const noteName = (index) => NOTES[((index % NOTES_NUM) + NOTES_NUM) % NOTES_NUM];
