@@ -37,6 +37,19 @@ describe('Frets store state transitions', () => {
     expect(state.exercises).toEqual({});
   });
 
+  it('keeps session timer and sequence playback state independent', () => {
+    store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
+    store.getState().setTimerRunning(false);
+
+    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(true);
+
+    store.getState().setSequencePlaying(false);
+    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(false);
+  });
+
   it('stops the timer when the selected instrument changes', () => {
     store.getState().setTimerRunning(true);
     store.getState().setInstrument(4);
