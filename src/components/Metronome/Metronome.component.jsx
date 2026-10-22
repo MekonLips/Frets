@@ -12,8 +12,8 @@ const MetronomeComponent = () => {
     const exerciseState = useFretsStore(state => state.exercises[String(exercise ?? '')]);
     const sequence = exerciseState?.sequence ?? [];
     const pattern = exerciseState?.pattern ?? [];
-    const running = useFretsStore(state => state.timerRunning);
-    const setRunning = useFretsStore(state => state.setTimerRunning);
+    const running = useFretsStore(state => state.sequencePlaying);
+    const setRunning = useFretsStore(state => state.setSequencePlaying);
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
