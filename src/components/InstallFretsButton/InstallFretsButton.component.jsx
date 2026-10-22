@@ -56,9 +56,18 @@ const InstallFretsButton = () => {
 
     return <button
         type="button"
-        className="control-button"
         onClick={handleInstall}
         aria-label="Install Frets"
+        style={{
+            display: 'block',
+            margin: '0.5em auto 0',
+            padding: 0,
+            border: 0,
+            background: 'transparent',
+            color: '#aaa',
+            fontSize: '0.8em',
+            cursor: 'pointer',
+        }}
     >
         Install Frets <FontAwesomeIcon icon={faDownload} />
     </button>;
