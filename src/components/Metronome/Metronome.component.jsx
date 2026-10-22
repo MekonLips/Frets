@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 
 import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
 import { isExerciseLoopActive } from '../../config/frets.config';
+import { hasSinglePassPattern } from '../../utils/note.utils';
 import useMetronome from '../../hooks/useMetronome.hook';
 
 const MetronomeComponent = () => {
@@ -18,9 +19,8 @@ const MetronomeComponent = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
-    // Exercises 4 and 5 play one pass across the strings per note; other exercises
-    // retain their existing up-and-down pattern (two passes per note).
-    const stringsPerNote = instrument.strings.length * ([4, 5].includes(Number(exercise)) ? 1 : 2);
+    // Keep stage progression aligned with the pattern direction used by each exercise.
+    const stringsPerNote = instrument.strings.length * (hasSinglePassPattern(exercise) ? 1 : 2);
     const lastBeat = pattern.length;
     const stage = exerciseState?.stage ?? 1;
     const setStage = useFretsStore(state => state.setExerciseStage);
