@@ -64,7 +64,7 @@ const NoteSequenceComponent = () => {
     };
 
     if (isExercise && sequence.length)
-        return <div className="legacy-sequence-container" ref={containerRef} style={{ position: 'relative' }}>
+        return <div className="legacy-sequence-container has-animated-highlight" ref={containerRef} style={{ position: 'relative' }}>
             {highlightPosition && <span
                 ref={highlightRef}
                 aria-hidden="true"
