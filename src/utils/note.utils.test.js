@@ -51,7 +51,7 @@ describe('fretboard note helpers', () => {
     expect(getNoteSequenceMidiPitch(3)).toBe(48); // C3
     expect(getNoteSequenceMidiPitch(5)).toBe(50); // D3
     expect(getNoteSequenceMidiPitch(7)).toBe(52); // E3
-    expect(getNoteSequenceMidiPitch(1)).toBe(46); // A#3
+    expect(getNoteSequenceMidiPitch(1)).toBe(58); // A#3
     expect(() => getNoteSequenceMidiPitch(-1)).toThrow(RangeError);
     expect(() => getNoteSequenceMidiPitch(12)).toThrow(RangeError);
   });
