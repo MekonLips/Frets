@@ -3,6 +3,8 @@ import {
   ACCIDENTALS,
   ACTIONS,
   EXERCISE_INSTRUCTIONS,
+  EXERCISE_CONTROL_CONFIG,
+  getExerciseControlConfig,
   EXERCISES_NUM,
   FRETS_NUM,
   INSTRUMENTS,
@@ -60,6 +62,37 @@ describe('fretboard configuration', () => {
     for (const actionGroup of Object.values(ACTIONS)) {
       expect(new Set(Object.values(actionGroup)).size).toBe(Object.values(actionGroup).length);
     }
+  });
+
+
+  it('configures control availability and defaults for every exercise', () => {
+    expect(Object.keys(EXERCISE_CONTROL_CONFIG).map(Number)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(getExerciseControlConfig(1)).toMatchObject({
+      tempo: false, shuffle: false, showPlayback: false,
+      loop: { enabled: false, defaultValue: false },
+      accidentals: { enabled: false, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(2)).toMatchObject({ tempo: true, shuffle: false });
+    expect(getExerciseControlConfig(3)).toMatchObject({
+      tempo: true, shuffle: false,
+      loop: { enabled: true, defaultValue: false },
+      accidentals: { enabled: false, defaultValue: true },
+    });
+    expect(getExerciseControlConfig(4)).toMatchObject({
+      tempo: true, shuffle: false,
+      loop: { enabled: false, defaultValue: true },
+      accidentals: { enabled: true, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(5)).toMatchObject({
+      tempo: true, shuffle: true,
+      loop: { enabled: false, defaultValue: false },
+      accidentals: { enabled: true, defaultValue: false },
+    });
+    expect(getExerciseControlConfig(6)).toMatchObject({
+      tempo: true, shuffle: true,
+      loop: { enabled: true, defaultValue: false },
+      accidentals: { enabled: true, defaultValue: false },
+    });
   });
 
   it('defines valid GUI state defaults', () => {
