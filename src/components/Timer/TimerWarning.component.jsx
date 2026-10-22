@@ -5,7 +5,7 @@ import { useFretsStore } from '../../store/useFretsStore';
 import { getTimerWarningAudioContext } from '../../utils/timerWarningAudio.utils';
 
 export const TIMER_WARNING_DURATION_MS = 5000;
-const SWELL_PEAK_GAIN = 0.009;
+const SWELL_PEAK_GAIN = 0.035;
 const CHIME_GAIN = 0.035;
 const CHIME_DURATION_SECONDS = 0.75;
 const C5_MIDI = 72;
@@ -93,7 +93,7 @@ const TimerWarning = () => {
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(frequency, startAt);
         gain.gain.setValueAtTime(0.0001, startAt);
-        gain.gain.exponentialRampToValueAtTime(SWELL_PEAK_GAIN, startAt + Math.max(0.05, duration - 0.1));
+        gain.gain.exponentialRampToValueAtTime(SWELL_PEAK_GAIN, startAt + Math.max(0.025, duration - 0.05));
         gain.gain.setValueAtTime(SWELL_PEAK_GAIN, startAt + duration);
         gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration + 0.12);
 
