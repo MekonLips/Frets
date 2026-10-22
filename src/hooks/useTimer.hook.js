@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useFretsStore } from '../store/useFretsStore';
-import { TIME_LIMIT, ACTIONS } from '../config/frets.config';
+import { ACTIONS } from '../config/frets.config';
 const { START, STOP, TICK } = ACTIONS.TIMER;
 
 const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
