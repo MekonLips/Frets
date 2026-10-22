@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
-import { getNoteByIdx } from '../../utils/note.utils';
+import { getNoteByIdx, hasSinglePassPattern } from '../../utils/note.utils';
 import { pad } from '../../utils/string.utils';
 import { EXERCISES_NUM, Z_INDEX } from '../../config/frets.config';
 
@@ -20,7 +20,7 @@ const TabComponent = () => {
     const selectedId = useFretsStore(state => state.selectedInstrumentId);
     const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedId);
-    const hasOnePassPerNote = [4, 5].includes(Number(exercise));
+    const hasOnePassPerNote = hasSinglePassPattern(exercise);
     const notesPerStage = instrument.strings.length * (hasOnePassPerNote ? 1 : 2);
     const visibleStages = hasOnePassPerNote ? 2 : 1;
     const sliceStart = (stage - 1) * notesPerStage;
