@@ -66,4 +66,22 @@ export const playTimerToggleChime = (isStarting, midiNote = C5_MIDI) => {
     gain.connect(context.destination);
     oscillator.start(startAt);
     oscillator.stop(startAt + 0.34);
+
+    // Layer the same two-partial chime used by the timer-expiry warning
+    // after the glide, rooted at the selected sequence note (or C by default).
+    const chimeStart = startAt + glideDuration;
+    const chimeDuration = 0.75;
+    [1, 2.01].forEach((partial, index) => {
+        const chime = context.createOscillator();
+        const chimeGain = context.createGain();
+        chime.type = 'sine';
+        chime.frequency.setValueAtTime(baseFrequency * partial, chimeStart);
+        chimeGain.gain.setValueAtTime(0.0001, chimeStart);
+        chimeGain.gain.exponentialRampToValueAtTime(0.035 / (index + 1), chimeStart + 0.012);
+        chimeGain.gain.exponentialRampToValueAtTime(0.0001, chimeStart + chimeDuration);
+        chime.connect(chimeGain);
+        chimeGain.connect(context.destination);
+        chime.start(chimeStart);
+        chime.stop(chimeStart + chimeDuration + 0.02);
+    });
 };
