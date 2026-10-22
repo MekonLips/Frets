@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
@@ -9,13 +9,13 @@ import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils'
 
 const ExerciseToggleButton = () => {
     const { exercise } = useParams();
-    const navigate = useNavigate();
+    const history = useHistory();
     const sequencePlaying = useFretsStore(state => state.sequencePlaying);
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
     if (!exercise) return null;
 
     if (!getExerciseControlConfig(exercise).showPlayback)
-        return <button type="button" className="exercise-toggle-button control-button" onClick={() => navigate('/exercises/2')}>
+        return <button type="button" className="exercise-toggle-button control-button" onClick={() => history.push('/exercises/2')}>
             Continue <FontAwesomeIcon icon={faPlay} />
         </button>;
 
