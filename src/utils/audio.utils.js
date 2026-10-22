@@ -13,6 +13,42 @@ const getSharedAudioContext = () => {
 };
 
 /**
+ * Plays a short, percussive woodblock-like click for exercise count-ins.
+ */
+export const playCountInClick = ({ volume = 0.2 } = {}) => {
+  const audioContext = getSharedAudioContext();
+  if (!audioContext || audioContext.state === 'closed') return false;
+  if (audioContext.state === 'suspended') audioContext.resume();
+
+  const startAt = audioContext.currentTime;
+  const endAt = startAt + 0.11;
+  const master = audioContext.createGain();
+  master.gain.setValueAtTime(Math.max(0.001, volume), startAt);
+  master.gain.exponentialRampToValueAtTime(0.0001, endAt);
+  master.connect(audioContext.destination);
+
+  // Slightly inharmonic, high-pitched partials give the click a wooden tone.
+  [1180, 1730].forEach((frequency, index) => {
+    const oscillator = audioContext.createOscillator();
+    const partialGain = audioContext.createGain();
+    oscillator.type = index === 0 ? 'sine' : 'triangle';
+    oscillator.frequency.setValueAtTime(frequency, startAt);
+    partialGain.gain.setValueAtTime(index === 0 ? 1 : 0.32, startAt);
+    oscillator.connect(partialGain);
+    partialGain.connect(master);
+    oscillator.start(startAt);
+    oscillator.stop(endAt);
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      partialGain.disconnect();
+    };
+  });
+
+  master.onended = undefined;
+  return true;
+};
+
+/**
  * Plays a short, plucked-string-like note using a triangle fundamental and a
  * quieter second harmonic. Pass an existing context/time to schedule notes
  * accurately alongside the metronome.
