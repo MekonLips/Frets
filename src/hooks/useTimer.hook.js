@@ -11,7 +11,6 @@ const useTimer = () => {
     const setRemaining = useFretsStore(state => state.setSessionRemaining);
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
-    const [expired, setExpired] = useState(false);
 
     const onmessage = async e => {
         switch (e.data) {
