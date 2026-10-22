@@ -25,6 +25,7 @@ describe('exercise worker client', () => {
         vi.resetModules();
         ({ handleExerciseWorkerMessage, worker } = await import('./exerciseWorkerClient.js'));
         state = {
+            exercises: {},
             setExerciseResults: vi.fn(),
             setExerciseNotes: vi.fn(),
             setExercisePattern: vi.fn(),
@@ -100,6 +101,36 @@ describe('exercise worker client', () => {
             notes: [],
             pattern: [],
         });
+    });
+
+    it('ignores stale note positions when a newer sequence is already active', () => {
+        state.exercises['6'] = { sequence: [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2] };
+        const staleNotes = Array.from({ length: 7 }, (_, index) => [{ string: 1, fret: index + 1 }]);
+
+        handleExerciseWorkerMessage({
+            data: {
+                type: NOTES,
+                payload: {
+                    exercise: 6,
+                    sequence: [3, 5, 7, 8, 10, 0, 2],
+                    notes: staleNotes,
+                },
+            },
+        }, store);
+
+        expect(state.setExerciseNotes).not.toHaveBeenCalled();
+    });
+
+    it('accepts note positions when their sequence still matches the active sequence', () => {
+        const sequence = [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2];
+        const notes = sequence.map((note, index) => [{ string: 1, fret: index + 1, note }]);
+        state.exercises['6'] = { sequence: [...sequence] };
+
+        handleExerciseWorkerMessage({
+            data: { type: NOTES, payload: { exercise: 6, sequence: [...sequence], notes } },
+        }, store);
+
+        expect(state.setExerciseNotes).toHaveBeenCalledWith(6, notes);
     });
 
     it('routes notes and patterns to their originating exercise', () => {
