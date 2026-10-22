@@ -20,7 +20,7 @@ export const useFretsStore = create(persist((set) => ({
   tempoBpm: 40,
   useAccidentals: false,
   exercises: {},
-  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false, exercises: {} }),
+  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false, sequencePlaying: false, exercises: {} }),
   setInstrumentDefinition: (activeInstrumentDefinition) => set((state) => {
     const instrumentKey = (instrument) => instrument
       ? JSON.stringify([instrument.id, instrument.type, instrument.strings, instrument.openStringMidi])
