@@ -7,7 +7,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      // Keep service-worker registration disabled in this install-only phase.
+      injectRegister: null,
       manifest: {
         name: 'Frets — Guitar Fretboard Practice',
         short_name: 'Frets',
