@@ -11,6 +11,7 @@ import {
   getNoteIdxs,
   getPattern,
   getRandomNoteSequence,
+  getTabPatternWindow,
   hasSinglePassPattern,
   isAccidental,
   isNatural,
