@@ -34,7 +34,7 @@ const App = () => {
 
   useEffect(() => {
     setSequencePlaying(false);
-    if (location.pathname === '/') setStartFret(1);
+    if (!location.pathname.startsWith('/exercises/')) setStartFret(1);
   }, [location.pathname, setSequencePlaying, setStartFret]);
 
   return <Route
