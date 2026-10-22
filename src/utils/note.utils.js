@@ -98,15 +98,6 @@ export const repeat = (repeats, ...rest) => new Array(repeats).fill(rest).flat()
 
 // Map the displayed A-to-G# note indices to the corresponding pitch in octave 3.
 // MIDI note 48 is C3; accidentals are represented by their semitone offsets.
-// Convert a pattern position (one string note) into the sequence note stage.
-// Each sequence note spans one position per string, regardless of direction.
-export const getSequenceStageForPatternIndex = (patternIndex, stringCount) => {
-    if (!Number.isInteger(patternIndex) || patternIndex < 0 || !Number.isInteger(stringCount) || stringCount < 1) {
-        return 1;
-    }
-    return Math.floor(patternIndex / stringCount) + 1;
-};
-
 export const getNoteSequenceMidiPitch = (noteIdx) => {
     if (!Number.isInteger(noteIdx) || noteIdx < 0 || noteIdx >= NOTES_NUM) {
         throw new RangeError('Note index must be an integer between 0 and 11.');
