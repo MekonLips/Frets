@@ -593,3 +593,42 @@
     color: #22c55e;
   }
 }
+
+/* Disabled exercise controls remain in place and communicate their unavailable state. */
+@layer components {
+  .legacy-practice-controls label.is-disabled,
+  .legacy-practice-controls label.is-disabled strong,
+  .legacy-accidentals-toggle.is-disabled,
+  .legacy-loop-toggle.is-disabled,
+  .control-button.is-disabled {
+    color: rgb(255 255 255 / 35%);
+  }
+  .legacy-practice-controls label.is-disabled input[type="range"] {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .legacy-practice-controls input[type="range"]:disabled::-webkit-slider-thumb,
+  .legacy-practice-controls input[type="range"]:disabled::-moz-range-thumb {
+    background: #737373;
+    cursor: not-allowed;
+  }
+  .control-button.is-disabled {
+    border-color: rgb(255 255 255 / 10%);
+    background-color: rgb(255 255 255 / 2%);
+    opacity: 1;
+    cursor: not-allowed;
+  }
+  .control-button.is-disabled svg { opacity: 0.4; }
+  .legacy-accidentals-toggle.is-disabled input,
+  .legacy-loop-toggle.is-disabled input {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .legacy-loop-toggle {
+    @apply flex items-center justify-start gap-2 text-sm;
+  }
+  .legacy-loop-toggle input[type="checkbox"] {
+    order: 2;
+    accent-color: orange;
+  }
+}
