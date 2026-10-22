@@ -9,12 +9,14 @@ import { getNoteSequenceMidiPitch } from '../../../utils/note.utils';
 import { playPluckedNote } from '../../../utils/audio.utils';
 import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
+const EMPTY_SEQUENCE = Object.freeze([]);
+
 const ExerciseToggleButton = () => {
     const { exercise } = useParams();
     const history = useHistory();
     const sequencePlaying = useFretsStore(state => state.sequencePlaying);
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
-    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? []);
+    const sequence = useFretsStore(state => state.exercises[String(exercise ?? '')]?.sequence ?? EMPTY_SEQUENCE);
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const [countIn, setCountIn] = useState(null);
 
