@@ -28,7 +28,7 @@ export const useFretsStore = create(persist((set) => ({
     const instrumentChanged = instrumentKey(state.activeInstrumentDefinition) !== instrumentKey(activeInstrumentDefinition);
     return {
       activeInstrumentDefinition,
-      ...(instrumentChanged ? { timerRunning: false, exercises: {} } : {}),
+      ...(instrumentChanged ? { timerRunning: false, sequencePlaying: false, exercises: {} } : {}),
     };
   }),
   setStartFret: (startFret) => set({ startFret }),
