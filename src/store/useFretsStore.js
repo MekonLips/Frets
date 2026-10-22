@@ -86,6 +86,10 @@ export const useFretsStore = create(persist((set) => ({
   }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
   setSequencePlaying: (sequencePlaying) => set({ sequencePlaying }),
+  toggleSequencePlayback: () => set((state) => ({
+    sequencePlaying: !state.sequencePlaying,
+    ...(!state.sequencePlaying && !state.timerRunning ? { timerRunning: true } : {}),
+  })),
   setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
   setUseAccidentals: (useAccidentals) => set({ useAccidentals }),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),
