@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Route, useLocation, useHistory } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import { Route, useLocation } from 'react-router';
 
 import { useFretsStore } from './store/useFretsStore';
 import Overlay from './components/Overlay/Overlay.component';
@@ -30,13 +28,10 @@ import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.co
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
 import LoopToggle from './components/Exercises/LoopToggle/LoopToggle.component';
 import ExercisesNavigation from './components/Exercises/Navigation.component';
-import { resumeTimerWarningAudio, playTimerToggleChime } from './utils/timerWarningAudio.utils';
+import LearnYourFretsButton from './components/LearnYourFretsButton/LearnYourFretsButton.component';
 
 const App = () => {
   const location = useLocation();
-  const history = useHistory();
-  const timerRunning = useFretsStore(state => state.timerRunning);
-  const setTimerRunning = useFretsStore(state => state.setTimerRunning);
   const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
   const startFret = useFretsStore(state => state.startFret);
   const setStartFret = useFretsStore(state => state.setStartFret);
@@ -79,6 +74,7 @@ const App = () => {
                 <ExercisesNavigation />
                 <Instructions />
                 <ExerciseToggleButton />
+                <LearnYourFretsButton />
               </div>
               <div className="exercise-controls">
                 <div className="timer">
@@ -98,22 +94,7 @@ const App = () => {
             <div className="legacy-instrument-menu-trigger">
               <InstrumentOpenButton />
             </div>
-            <div className={!match.params.exercise ? 'home-fretboard-cell' : ''}>
-              {!match.params.exercise && <button
-                type="button"
-                className="control-button control-button-large learn-your-frets-button"
-                onClick={() => {
-                  resumeTimerWarningAudio();
-                  if (!timerRunning) {
-                    playTimerToggleChime(true);
-                    setTimerRunning(true);
-                  }
-                  history.push('/exercises/1');
-                }}
-              >
-                Learn Your Frets
-                <FontAwesomeIcon icon={faPlay} />
-              </button>}
+            <div>
               <Instrument />
               <Notes />
             </div>
