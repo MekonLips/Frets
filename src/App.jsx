@@ -69,7 +69,7 @@ const App = () => {
               <NavOpenButton />
               <NavHomeButton />
             </div>
-            <div className="exercise-panel">
+            <div className={`exercise-panel ${!match.params.exercise ? 'home-exercise-panel' : ''}`}>
               <div className="exercise-instructions">
                 <ExercisesNavigation />
                 <Instructions />
