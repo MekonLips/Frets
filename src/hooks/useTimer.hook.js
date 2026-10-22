@@ -15,11 +15,8 @@ const useTimer = () => {
     const onmessage = async e => {
         switch (e.data) {
             case TICK:
-                setRemaining(time => {
-                    if (time > 0) return time - 1000;
-                    setExpired(true);
-                    return time;
-                });
+                // Continue counting below zero so overtime is visible while practice continues.
+                setRemaining(time => time - 1000);
                 break;
             default:
                 console.log(`%ctype ${e.data} not recognised`, 'color: red;');
