@@ -5,6 +5,7 @@ import {
   EXERCISE_INSTRUCTIONS,
   EXERCISE_CONTROL_CONFIG,
   getExerciseControlConfig,
+  isExerciseLoopActive,
   EXERCISES_NUM,
   FRETS_NUM,
   INSTRUMENTS,
@@ -93,6 +94,26 @@ describe('fretboard configuration', () => {
       loop: { enabled: true, defaultValue: false },
       accidentals: { enabled: true, defaultValue: false },
     });
+  });
+
+
+  it('resolves loop activation from per-exercise state and configured defaults', () => {
+    expect(isExerciseLoopActive(1)).toBe(false);
+    expect(isExerciseLoopActive(3)).toBe(false);
+    expect(isExerciseLoopActive(4)).toBe(true);
+    expect(isExerciseLoopActive(6)).toBe(false);
+
+    expect(isExerciseLoopActive(4, { 4: false })).toBe(false);
+    expect(isExerciseLoopActive(3, { 3: true })).toBe(true);
+    expect(isExerciseLoopActive(6, { 6: true })).toBe(true);
+  });
+
+  it('uses the same configured loop default for numeric and string exercise IDs', () => {
+    for (const exercise of [1, 2, 3, 4, 5, 6]) {
+      expect(isExerciseLoopActive(String(exercise))).toBe(
+        getExerciseControlConfig(exercise).loop.defaultValue,
+      );
+    }
   });
 
   it('defines valid GUI state defaults', () => {
