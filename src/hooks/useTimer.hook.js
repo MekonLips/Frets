@@ -35,15 +35,7 @@ const useTimer = () => {
         else worker.postMessage({ type: STOP });
     }, [running]);
 
-    useEffect(() => {
-        if (expired) {
-            setExpired(false);
-            setRemaining(TIME_LIMIT);
-            setRunning(false);
-        }
-    }, [expired, setRemaining, setRunning]);
-
-    return { running, remaining, expired };
+    return { running, remaining };
 };
 
 export default useTimer;
