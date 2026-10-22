@@ -28,6 +28,7 @@ describe('Frets store state transitions', () => {
     expect(state.tempoBpm).toBe(40);
     expect(state.sessionRemaining).toBe(TIME_LIMIT);
     expect(state.timerRunning).toBe(false);
+    expect(state.sequencePlaying).toBe(false);
     expect(state.selectedNotesMode).toBe(SELECTED_NOTES);
     expect(state.selectedNotesModeIndex).toBe(SELECTED_NOTES);
     expect(state.selectedNoteIdx).toBe(SELECTED_NOTE);
@@ -36,12 +37,66 @@ describe('Frets store state transitions', () => {
     expect(state.exercises).toEqual({});
   });
 
-  it('stops the timer when the selected instrument changes', () => {
+  it('keeps session timer and sequence playback state independent', () => {
     store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
+    store.getState().setTimerRunning(false);
+
+    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(true);
+
+    store.getState().setSequencePlaying(false);
+    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(false);
+  });
+
+  it('starts the session timer when sequence playback starts, but does not stop it on pause', () => {
+    const state = store.getState();
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(true);
+    expect(store.getState().timerRunning).toBe(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+  });
+
+  it('does not change an already-running session timer when toggling sequence playback', () => {
+    const state = store.getState();
+    state.setTimerRunning(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(true);
+    expect(store.getState().timerRunning).toBe(true);
+
+    state.toggleSequencePlayback();
+    expect(store.getState().sequencePlaying).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+  });
+
+  it('keeps the session timer running and pauses sequence playback when selecting a preset', () => {
+    store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
     store.getState().setInstrument(4);
 
     expect(store.getState().selectedInstrumentId).toBe(4);
-    expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().timerRunning).toBe(true);
+    expect(store.getState().sequencePlaying).toBe(false);
+  });
+
+  it('keeps the session timer running and pauses sequence playback when the builder instrument changes', () => {
+    store.getState().setTimerRunning(true);
+    store.getState().setSequencePlaying(true);
+    store.getState().setInstrumentDefinition({
+      id: 'custom-guitar',
+      type: 'guitar',
+      strings: [7, 2, 10, 5, 0, 7],
+      openStringMidi: [64, 59, 55, 50, 45, 40],
+    });
+
+    expect(store.getState().timerRunning).toBe(true);
+    expect(store.getState().sequencePlaying).toBe(false);
   });
 
   it('uses an active builder instrument definition and returns to legacy selection when cleared', async () => {
@@ -190,10 +245,12 @@ describe('Frets store state transitions', () => {
     const state = store.getState();
     state.setSessionRemaining(1000);
     state.setTimerRunning(true);
+    state.setSequencePlaying(true);
     state.resetSession();
 
     expect(store.getState().sessionRemaining).toBe(TIME_LIMIT);
     expect(store.getState().timerRunning).toBe(false);
+    expect(store.getState().sequencePlaying).toBe(true);
   });
 
   it('persists preferences but excludes transient exercise and session state', () => {

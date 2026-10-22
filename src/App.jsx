@@ -16,6 +16,7 @@ import Range from './components/Range/Range.component';
 import TimerDisplay from './components/Timer/TimerDisplay.component';
 import TimerToggleButton from './components/Timer/ToggleButton/ToggleButton.component';
 import TimerResetButton from './components/Timer/ResetButton/ResetButton.component';
+import ExerciseToggleButton from './components/Exercises/ExerciseToggleButton/ExerciseToggleButton.component';
 import Metronome from './components/Metronome/Metronome.component';
 import Exercises from './components/Exercises/Exercises.component';
 import Instructions from './components/Exercises/Instructions/Instructions.component';
@@ -24,14 +25,17 @@ import NoteSequence from './components/NoteSequence/NoteSequence.component';
 import Grid from './components/Grid/Grid.component';
 import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.component';
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
+import ExercisesNavigation from './components/Exercises/Navigation.component';
 
 const App = () => {
   const location = useLocation();
-  const setTimerRunning = useFretsStore(state => state.setTimerRunning);
+  const setSequencePlaying = useFretsStore(state => state.setSequencePlaying);
+  const setStartFret = useFretsStore(state => state.setStartFret);
 
   useEffect(() => {
-    setTimerRunning(false);
-  }, [location.pathname, setTimerRunning]);
+    setSequencePlaying(false);
+    if (!location.pathname.startsWith('/exercises/')) setStartFret(1);
+  }, [location.pathname, setSequencePlaying, setStartFret]);
 
   return <Route
       path={['/exercises/:exercise', '/']}
@@ -49,7 +53,9 @@ const App = () => {
             </div>
             <div className="exercise-panel">
               <div className="exercise-instructions">
+                <ExercisesNavigation />
                 <Instructions />
+                <ExerciseToggleButton />
               </div>
               <div className="exercise-controls">
                 <div className="timer">
@@ -76,7 +82,7 @@ const App = () => {
             <div className="legacy-tab-sequence-cell">
               <div className="legacy-tab-range-container">
                 <Tab />
-                <div className="legacy-range-selector-container"><RangeSelector /></div>
+                {match.params.exercise && <div className="legacy-range-selector-container"><RangeSelector /></div>}
               </div>
               <NoteSequence />
             </div>

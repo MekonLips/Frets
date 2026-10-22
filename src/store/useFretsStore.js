@@ -16,10 +16,11 @@ export const useFretsStore = create(persist((set) => ({
   selectedNotesModeIndex: SELECTED_NOTES,
   sessionRemaining: TIME_LIMIT,
   timerRunning: false,
+  sequencePlaying: false,
   tempoBpm: 40,
   useAccidentals: false,
   exercises: {},
-  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, timerRunning: false, exercises: {} }),
+  setInstrument: (selectedInstrumentId) => set({ selectedInstrumentId, activeInstrumentDefinition: null, sequencePlaying: false, exercises: {} }),
   setInstrumentDefinition: (activeInstrumentDefinition) => set((state) => {
     const instrumentKey = (instrument) => instrument
       ? JSON.stringify([instrument.id, instrument.type, instrument.strings, instrument.openStringMidi])
@@ -27,7 +28,7 @@ export const useFretsStore = create(persist((set) => ({
     const instrumentChanged = instrumentKey(state.activeInstrumentDefinition) !== instrumentKey(activeInstrumentDefinition);
     return {
       activeInstrumentDefinition,
-      ...(instrumentChanged ? { timerRunning: false, exercises: {} } : {}),
+      ...(instrumentChanged ? { sequencePlaying: false, exercises: {} } : {}),
     };
   }),
   setStartFret: (startFret) => set({ startFret }),
@@ -84,6 +85,11 @@ export const useFretsStore = create(persist((set) => ({
     return { exercises: { ...state.exercises, [key]: { ...current, beat: nextBeat } } };
   }),
   setTimerRunning: (timerRunning) => set({ timerRunning }),
+  setSequencePlaying: (sequencePlaying) => set({ sequencePlaying }),
+  toggleSequencePlayback: () => set((state) => ({
+    sequencePlaying: !state.sequencePlaying,
+    ...(!state.sequencePlaying && !state.timerRunning ? { timerRunning: true } : {}),
+  })),
   setTempoBpm: (tempoBpm) => set({ tempoBpm: Math.min(200, Math.max(40, Number(tempoBpm) || 40)) }),
   setUseAccidentals: (useAccidentals) => set({ useAccidentals }),
   setSessionRemaining: (sessionRemaining) => set((state) => ({ sessionRemaining: typeof sessionRemaining === 'function' ? sessionRemaining(state.sessionRemaining) : sessionRemaining })),

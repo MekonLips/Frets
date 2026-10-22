@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useFretsStore } from '../store/useFretsStore';
-import { TIME_LIMIT, ACTIONS } from '../config/frets.config';
+import { ACTIONS } from '../config/frets.config';
 const { START, STOP, TICK } = ACTIONS.TIMER;
 
 const worker = new Worker(new URL('../workers/timer.worker.js', import.meta.url), { type: 'module' });
@@ -11,16 +11,12 @@ const useTimer = () => {
     const setRemaining = useFretsStore(state => state.setSessionRemaining);
     const running = useFretsStore(state => state.timerRunning);
     const setRunning = useFretsStore(state => state.setTimerRunning);
-    const [expired, setExpired] = useState(false);
 
     const onmessage = async e => {
         switch (e.data) {
             case TICK:
-                setRemaining(time => {
-                    if (time > 0) return time - 1000;
-                    setExpired(true);
-                    return time;
-                });
+                // Continue counting below zero so overtime is visible while practice continues.
+                setRemaining(time => time - 1000);
                 break;
             default:
                 console.log(`%ctype ${e.data} not recognised`, 'color: red;');
@@ -39,15 +35,7 @@ const useTimer = () => {
         else worker.postMessage({ type: STOP });
     }, [running]);
 
-    useEffect(() => {
-        if (expired) {
-            setExpired(false);
-            setRemaining(TIME_LIMIT);
-            setRunning(false);
-        }
-    }, [expired, setRemaining, setRunning]);
-
-    return { running, remaining, expired };
+    return { running, remaining };
 };
 
 export default useTimer;

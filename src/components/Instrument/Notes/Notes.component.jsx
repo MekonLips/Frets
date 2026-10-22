@@ -20,7 +20,7 @@ const NotesComponent = () => {
     const selectedInstrumentId = useFretsStore(state => state.selectedInstrumentId);
     const activeInstrumentDefinition = useFretsStore(state => state.activeInstrumentDefinition);
     const instrument = getSelectedInstrument(activeInstrumentDefinition || selectedInstrumentId);
-    const running = useFretsStore(state => state.timerRunning);
+    const running = useFretsStore(state => state.sequencePlaying);
     const activeIndex = running && beat > 0 && pattern.length
         ? (beat - 1) % pattern.length
         : -1;
