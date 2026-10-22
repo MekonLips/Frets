@@ -4,7 +4,8 @@ import { useParams } from 'react-router';
 import { useFretsStore, getSelectedInstrument } from '../../store/useFretsStore';
 import { getNoteByIdx, getTabPatternWindow } from '../../utils/note.utils';
 import { pad } from '../../utils/string.utils';
-import { EXERCISES_NUM, Z_INDEX } from '../../config/frets.config';
+import { getTabFretPosition, getTabLineWidth } from '../../utils/tab.utils';
+import { Z_INDEX } from '../../config/frets.config';
 
 const TabComponent = () => {
     const { exercise } = useParams();
@@ -36,12 +37,13 @@ const TabComponent = () => {
         return arr;
     }, [<pre key="Tab/Break/0">{pad(selectedNote, ' ', 2)}</pre>]);
 
-    // The left-to-right position follows playback order within each string
-    // group, while the row itself stays on its physical guitar string.
-    const createLine = (line, string, fret, isActive, sequenceOffset) => {
-        const position = sequenceOffset * 3 + 1;
-        const width = fret < 10 ? 1 : 2;
-        const template = new Array(20).fill('-');
+    // Keep each fret in the slot assigned to its physical string and pass
+    // direction. The layout helper owns the ascending/descending placement rule.
+    const createLine = (line, note, isActive, stringCount) => {
+        const { string, fret } = note;
+        const position = getTabFretPosition(note, stringCount);
+        const width = String(fret).length;
+        const template = new Array(getTabLineWidth(stringCount)).fill('-');
         template.splice(position, width, ...String(fret).split(''));
         const key = `Tab/Line/${line}/String/${string}/Fret/${fret}`;
 
@@ -57,20 +59,19 @@ const TabComponent = () => {
         for (let i = 0; i < valuePattern.length; i += valueInstrument.strings.length) {
             const entries = valuePattern
                 .slice(i, i + valueInstrument.strings.length)
-                .map((note, offset) => ({ note, index: i + offset, sequenceOffset: offset }))
+                .map((note, offset) => ({ note, index: i + offset }))
                 .filter(({ note }) => Boolean(note));
 
-            // Keep standard tablature row order (string 1 at the top), but
-            // place each fret according to its original sequence position.
-            // Thus ascending starts bottom-left and descending starts top-left.
+            // Keep standard tablature row order (string 1 at the top).
+            // Horizontal placement is derived from direction and physical
+            // string index, not the entry's array offset.
             const strings = entries
                 .sort((a, b) => a.note.string - b.note.string)
-                .map(({ note, index, sequenceOffset }) => createLine(
+                .map(({ note, index }) => createLine(
                     index,
-                    note.string,
-                    note.fret,
+                    note,
                     patternOffset + index === activeIndex,
-                    sequenceOffset
+                    valueInstrument.strings.length
                 ));
 
             if (valuePattern[i]) {
