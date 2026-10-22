@@ -596,6 +596,7 @@
 
 /* Disabled exercise controls remain in place and communicate their unavailable state. */
 @layer components {
+  .exercise-toggle-button { text-decoration: none; }
   .legacy-practice-controls label.is-disabled,
   .legacy-practice-controls label.is-disabled strong,
   .legacy-accidentals-toggle.is-disabled,
