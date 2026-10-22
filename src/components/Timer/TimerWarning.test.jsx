@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { getTimerWarningMidiNote, TIMER_WARNING_DURATION_MS } from './TimerWarning.component.jsx';
+import { TIMER_WARNING_DURATION_MS } from './TimerWarning.component.jsx';
+import { getTimerWarningMidiNote } from '../../utils/timerWarningAudio.utils';
 
 describe('session timer warning', () => {
     it('uses a five-second warning threshold by default', () => {
