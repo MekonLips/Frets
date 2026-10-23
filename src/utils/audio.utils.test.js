@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { playPluckedNote } from './audio.utils.js';
+import { playCountInClick, playPluckedNote } from './audio.utils.js';
 
 const createAudioContext = (state = 'running', currentTime = 2) => {
   const makeParam = () => ({
@@ -81,5 +81,32 @@ describe('playPluckedNote', () => {
     expect(harmonicGain.disconnect).toHaveBeenCalledOnce();
     expect(filter.disconnect).toHaveBeenCalledOnce();
     expect(master.disconnect).toHaveBeenCalledOnce();
+  });
+});
+
+describe('playCountInClick', () => {
+  it('waits for a suspended audio context to resume before scheduling the click', async () => {
+    const context = createAudioContext('suspended', 4);
+    context.resume.mockImplementation(async () => {
+      await Promise.resolve();
+      context.state = 'running';
+    });
+    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
+
+    await expect(playCountInClick()).resolves.toBe(true);
+
+    expect(context.resume).toHaveBeenCalledOnce();
+    expect(context.createOscillator).toHaveBeenCalledTimes(2);
+    for (const { value: oscillator } of context.createOscillator.mock.results) {
+      expect(oscillator.start).toHaveBeenCalledWith(4);
+    }
+  });
+
+  it('returns false when the audio context cannot run', async () => {
+    const context = createAudioContext('suspended', 4);
+    context.resume.mockRejectedValue(new Error('resume failed'));
+    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
+
+    await expect(playCountInClick()).rejects.toThrow('resume failed');
   });
 });
