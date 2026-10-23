@@ -13,18 +13,9 @@ const getSharedAudioContext = () => {
 };
 
 /**
- * Plays a short, percussive woodblock-like click for exercise count-ins.
+ * Schedule one woodblock-like click on the shared Web Audio timeline.
  */
-export const playCountInClick = async ({ volume = 0.2 } = {}) => {
-  const audioContext = getSharedAudioContext();
-  if (!audioContext || audioContext.state === 'closed') return false;
-
-  // Resume must finish before scheduling the click. Otherwise the count-in
-  // timer can advance while the audio context is still suspended.
-  if (audioContext.state === 'suspended') await audioContext.resume();
-  if (audioContext.state !== 'running') return false;
-
-  const startAt = audioContext.currentTime;
+const scheduleCountInClickAt = (audioContext, startAt, volume) => {
   const endAt = startAt + 0.11;
   const master = audioContext.createGain();
   master.gain.setValueAtTime(Math.max(0.001, volume), startAt);
@@ -47,8 +38,36 @@ export const playCountInClick = async ({ volume = 0.2 } = {}) => {
       partialGain.disconnect();
     };
   });
+};
 
-  master.onended = undefined;
+/**
+ * Plays a short, percussive woodblock-like click for exercise count-ins.
+ */
+export const playCountInClick = async ({ volume = 0.2, time } = {}) => {
+  const audioContext = getSharedAudioContext();
+  if (!audioContext || audioContext.state === 'closed') return false;
+  if (audioContext.state === 'suspended') await audioContext.resume();
+  if (audioContext.state !== 'running') return false;
+
+  scheduleCountInClickAt(audioContext, Number.isFinite(time) ? time : audioContext.currentTime, volume);
+  return true;
+};
+
+/**
+ * Schedule the entire count-in on the audio clock so output latency on the
+ * first click cannot shorten the audible interval to the second click.
+ */
+export const scheduleCountInClicks = async ({ count = 4, intervalSeconds, volume = 0.2 } = {}) => {
+  const audioContext = getSharedAudioContext();
+  if (!audioContext || audioContext.state === 'closed') return false;
+  if (!Number.isFinite(intervalSeconds) || intervalSeconds <= 0) return false;
+  if (audioContext.state === 'suspended') await audioContext.resume();
+  if (audioContext.state !== 'running') return false;
+
+  const firstClickAt = audioContext.currentTime + 0.05;
+  for (let index = 0; index < Math.max(0, Math.floor(count)); index += 1) {
+    scheduleCountInClickAt(audioContext, firstClickAt + index * intervalSeconds, volume);
+  }
   return true;
 };
 
