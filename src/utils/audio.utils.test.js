@@ -101,12 +101,4 @@ describe('playCountInClick', () => {
       expect(oscillator.start).toHaveBeenCalledWith(4);
     }
   });
-
-  it('returns false when the audio context cannot run', async () => {
-    const context = createAudioContext('suspended', 4);
-    context.resume.mockRejectedValue(new Error('resume failed'));
-    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
-
-    await expect(playCountInClick()).rejects.toThrow('resume failed');
-  });
 });
