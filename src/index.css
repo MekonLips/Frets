@@ -695,6 +695,15 @@
   .home-exercise-panel .learn-your-frets-button {
     @apply m-0;
   }
+  .home-links {
+    @apply flex flex-col items-center;
+  }
+  .install-frets-button {
+    @apply my-2 mx-auto p-0 border-none bg-transparent text-[#aaa] text-[0.8em] cursor-pointer block;
+  }
+  .legacy-nav-panel .install-frets-button {
+    @apply mx-0;
+  }
 }
 
 

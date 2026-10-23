@@ -28,8 +28,7 @@ import ShuffleButton from './components/Exercises/ShuffleButton/ShuffleButton.co
 import AccidentalsToggle from './components/Exercises/AccidentalsToggle/AccidentalsToggle.component';
 import LoopToggle from './components/Exercises/LoopToggle/LoopToggle.component';
 import ExercisesNavigation from './components/Exercises/Navigation.component';
-import LearnYourFretsButton from './components/LearnYourFretsButton/LearnYourFretsButton.component';
-import InstallFretsButton from './components/InstallFretsButton/InstallFretsButton.component';
+import HomeLinks from './components/HomeLinks/HomeLinks.component';
 
 const App = () => {
   const location = useLocation();
@@ -75,10 +74,7 @@ const App = () => {
                 <ExercisesNavigation />
                 <Instructions />
                 <ExerciseToggleButton />
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <LearnYourFretsButton />
-                  {!match.params.exercise && <InstallFretsButton />}
-                </div>
+                <HomeLinks match={match} />
               </div>
               <div className="exercise-controls">
                 <div className="timer">

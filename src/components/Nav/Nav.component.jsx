@@ -16,10 +16,8 @@ const NavComponent = () => {
             <div>
                 <h1>Welcome to Frets!</h1>
                 <p>Frets helps you learn the notes across your instrument’s fretboard through short, focused daily exercises. Build familiarity, accuracy and confidence one note at a time.</p>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <LearnYourFretsButton forceView />
-                    <InstallFretsButton />
-                </div>
+                <p><LearnYourFretsButton forceView /><br />
+                <InstallFretsButton /></p>
                 <div className="overlay-separator" />
                 <ul className="app-sections">
                     {Object.values(APP_SECTIONS).map(section =>
