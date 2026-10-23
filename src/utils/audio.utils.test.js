@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { playCountInClick, playPluckedNote } from './audio.utils.js';
+import { playCountInClick, playPluckedNote, scheduleCountInClicks } from './audio.utils.js';
 
 const createAudioContext = (state = 'running', currentTime = 2) => {
   const makeParam = () => ({
@@ -101,4 +101,15 @@ describe('playCountInClick', () => {
       expect(oscillator.start).toHaveBeenCalledWith(4);
     }
   });
+  it('schedules every count-in click at fixed intervals on the audio timeline', async () => {
+    const context = createAudioContext('running', 4);
+    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
+
+    await expect(scheduleCountInClicks({ count: 4, intervalSeconds: 1.5 })).resolves.toBe(true);
+
+    expect(context.createOscillator).toHaveBeenCalledTimes(8);
+    const startTimes = context.createOscillator.mock.results.map(({ value }) => value.start.mock.calls[0][0]);
+    expect(startTimes).toEqual([4.05, 4.05, 5.55, 5.55, 7.05, 7.05, 8.55, 8.55]);
+  });
+
 });
