@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
@@ -17,6 +17,7 @@ const ExerciseToggleButton = () => {
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const [countIn, setCountIn] = useState(null);
+    const cancelScheduledCountIn = useRef(null);
 
     useEffect(() => {
         if (countIn === null) return undefined;
@@ -27,12 +28,17 @@ const ExerciseToggleButton = () => {
         const scheduleNextCount = async () => {
             // Schedule all clicks against one audio-clock timeline. Only do
             // this once, at the start of a new count-in.
-            if (countIn === 4) {
+            if (countIn === 4 && !cancelScheduledCountIn.current) {
                 try {
-                    await scheduleCountInClicks({
+                    const scheduled = await scheduleCountInClicks({
                         count: 4,
                         intervalSeconds: 60 / tempoBpm,
                     });
+                    cancelScheduledCountIn.current = scheduled?.cancel ?? null;
+                    if (cancelled) {
+                        cancelScheduledCountIn.current?.();
+                        cancelScheduledCountIn.current = null;
+                    }
                 } catch (error) {
                     // Keep the countdown usable if audio is unavailable.
                 }
@@ -48,6 +54,7 @@ const ExerciseToggleButton = () => {
                 }
 
                 setCountIn(null);
+                cancelScheduledCountIn.current = null;
                 toggleSequencePlayback();
             }, 60000 / tempoBpm);
         };
@@ -71,6 +78,8 @@ const ExerciseToggleButton = () => {
         resumeTimerWarningAudio();
 
         if (countIn !== null) {
+            cancelScheduledCountIn.current?.();
+            cancelScheduledCountIn.current = null;
             setCountIn(null);
             return;
         }
