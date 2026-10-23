@@ -13,15 +13,11 @@ const getSharedAudioContext = () => {
 };
 
 /**
- * Plays a short, percussive woodblock-like click for exercise count-ins.
+ * Schedule one woodblock-like click on the shared Web Audio timeline.
  */
-export const playCountInClick = ({ volume = 0.2 } = {}) => {
-  const audioContext = getSharedAudioContext();
-  if (!audioContext || audioContext.state === 'closed') return false;
-  if (audioContext.state === 'suspended') audioContext.resume();
-
-  const startAt = audioContext.currentTime;
+const scheduleCountInClickAt = (audioContext, startAt, volume) => {
   const endAt = startAt + 0.11;
+  const oscillators = [];
   const master = audioContext.createGain();
   master.gain.setValueAtTime(Math.max(0.001, volume), startAt);
   master.gain.exponentialRampToValueAtTime(0.0001, endAt);
@@ -38,14 +34,60 @@ export const playCountInClick = ({ volume = 0.2 } = {}) => {
     partialGain.connect(master);
     oscillator.start(startAt);
     oscillator.stop(endAt);
+    oscillators.push(oscillator);
     oscillator.onended = () => {
       oscillator.disconnect();
       partialGain.disconnect();
     };
   });
+  return oscillators;
+};
 
-  master.onended = undefined;
+/**
+ * Plays a short, percussive woodblock-like click for exercise count-ins.
+ */
+export const playCountInClick = async ({ volume = 0.2, time } = {}) => {
+  const audioContext = getSharedAudioContext();
+  if (!audioContext || audioContext.state === 'closed') return false;
+  if (audioContext.state === 'suspended') await audioContext.resume();
+  if (audioContext.state !== 'running') return false;
+
+  scheduleCountInClickAt(audioContext, Number.isFinite(time) ? time : audioContext.currentTime, volume);
   return true;
+};
+
+/**
+ * Schedule the entire count-in on the audio clock so output latency on the
+ * first click cannot shorten the audible interval to the second click.
+ */
+export const scheduleCountInClicks = async ({ count = 4, intervalSeconds, volume = 0.2 } = {}) => {
+  const audioContext = getSharedAudioContext();
+  if (!audioContext || audioContext.state === 'closed') return false;
+  if (!Number.isFinite(intervalSeconds) || intervalSeconds <= 0) return false;
+  if (audioContext.state === 'suspended') await audioContext.resume();
+  if (audioContext.state !== 'running') return false;
+
+  const firstClickAt = audioContext.currentTime + 0.05;
+  const scheduledOscillators = [];
+  for (let index = 0; index < Math.max(0, Math.floor(count)); index += 1) {
+    const startAt = firstClickAt + index * intervalSeconds;
+    const oscillators = scheduleCountInClickAt(audioContext, startAt, volume);
+    oscillators.forEach(oscillator => scheduledOscillators.push({ oscillator, startAt }));
+  }
+
+  return {
+    cancel: () => {
+      const now = audioContext.currentTime;
+      scheduledOscillators.forEach(({ oscillator, startAt }) => {
+        if (startAt <= now) return;
+        try {
+          oscillator.stop();
+        } catch (error) {
+          // The oscillator may already have been stopped or disconnected.
+        }
+      });
+    },
+  };
 };
 
 /**

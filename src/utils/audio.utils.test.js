@@ -83,3 +83,38 @@ describe('playPluckedNote', () => {
     expect(master.disconnect).toHaveBeenCalledOnce();
   });
 });
+
+describe('playCountInClick', () => {
+  it('waits for a suspended audio context to resume before scheduling the click', async () => {
+    vi.resetModules();
+    const { playCountInClick } = await import('./audio.utils.js');
+    const context = createAudioContext('suspended', 4);
+    context.resume.mockImplementation(async () => {
+      await Promise.resolve();
+      context.state = 'running';
+    });
+    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
+
+    await expect(playCountInClick()).resolves.toBe(true);
+
+    expect(context.resume).toHaveBeenCalledOnce();
+    expect(context.createOscillator).toHaveBeenCalledTimes(2);
+    for (const { value: oscillator } of context.createOscillator.mock.results) {
+      expect(oscillator.start).toHaveBeenCalledWith(4);
+    }
+  });
+  it('schedules every count-in click at fixed intervals on the audio timeline', async () => {
+    vi.resetModules();
+    const { scheduleCountInClicks } = await import('./audio.utils.js');
+    const context = createAudioContext('running', 4);
+    vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
+
+    const scheduled = await scheduleCountInClicks({ count: 4, intervalSeconds: 1.5 });
+    expect(scheduled.cancel).toEqual(expect.any(Function));
+
+    expect(context.createOscillator).toHaveBeenCalledTimes(8);
+    const startTimes = context.createOscillator.mock.results.map(({ value }) => value.start.mock.calls[0][0]);
+    expect(startTimes).toEqual([4.05, 4.05, 5.55, 5.55, 7.05, 7.05, 8.55, 8.55]);
+  });
+
+});

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { getExerciseControlConfig } from '../../../config/frets.config';
 import { useFretsStore } from '../../../store/useFretsStore';
-import { playCountInClick } from '../../../utils/audio.utils';
+import { scheduleCountInClicks } from '../../../utils/audio.utils';
 import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
 const EMPTY_SEQUENCE = Object.freeze([]);
@@ -17,27 +17,54 @@ const ExerciseToggleButton = () => {
     const toggleSequencePlayback = useFretsStore(state => state.toggleSequencePlayback);
     const tempoBpm = useFretsStore(state => state.tempoBpm ?? 40);
     const [countIn, setCountIn] = useState(null);
+    const cancelScheduledCountIn = useRef(null);
 
     useEffect(() => {
         if (countIn === null) return undefined;
 
-        try {
-            playCountInClick();
-        } catch (error) {
-            // Keep the countdown usable if audio is unavailable.
-        }
+        let cancelled = false;
+        let timeout;
 
-        const timeout = setTimeout(() => {
-            if (countIn > 1) {
-                setCountIn(countIn - 1);
-                return;
+        const scheduleNextCount = async () => {
+            // Schedule all clicks against one audio-clock timeline. Only do
+            // this once, at the start of a new count-in.
+            if (countIn === 4 && !cancelScheduledCountIn.current) {
+                try {
+                    const scheduled = await scheduleCountInClicks({
+                        count: 4,
+                        intervalSeconds: 60 / tempoBpm,
+                    });
+                    cancelScheduledCountIn.current = scheduled?.cancel ?? null;
+                    if (cancelled) {
+                        cancelScheduledCountIn.current?.();
+                        cancelScheduledCountIn.current = null;
+                    }
+                } catch (error) {
+                    // Keep the countdown usable if audio is unavailable.
+                }
             }
 
-            setCountIn(null);
-            toggleSequencePlayback();
-        }, 60000 / tempoBpm);
+            // The count-in may have been cancelled while audio resumed.
+            if (cancelled) return;
 
-        return () => clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (countIn > 1) {
+                    setCountIn(countIn - 1);
+                    return;
+                }
+
+                setCountIn(null);
+                cancelScheduledCountIn.current = null;
+                toggleSequencePlayback();
+            }, 60000 / tempoBpm);
+        };
+
+        scheduleNextCount();
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timeout);
+        };
     }, [countIn, tempoBpm, toggleSequencePlayback]);
 
     if (!exercise) return null;
@@ -51,6 +78,8 @@ const ExerciseToggleButton = () => {
         resumeTimerWarningAudio();
 
         if (countIn !== null) {
+            cancelScheduledCountIn.current?.();
+            cancelScheduledCountIn.current = null;
             setCountIn(null);
             return;
         }
