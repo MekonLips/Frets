@@ -17,6 +17,7 @@ const getSharedAudioContext = () => {
  */
 const scheduleCountInClickAt = (audioContext, startAt, volume) => {
   const endAt = startAt + 0.11;
+  const oscillators = [];
   const master = audioContext.createGain();
   master.gain.setValueAtTime(Math.max(0.001, volume), startAt);
   master.gain.exponentialRampToValueAtTime(0.0001, endAt);
@@ -33,11 +34,13 @@ const scheduleCountInClickAt = (audioContext, startAt, volume) => {
     partialGain.connect(master);
     oscillator.start(startAt);
     oscillator.stop(endAt);
+    oscillators.push(oscillator);
     oscillator.onended = () => {
       oscillator.disconnect();
       partialGain.disconnect();
     };
   });
+  return oscillators;
 };
 
 /**
@@ -65,10 +68,26 @@ export const scheduleCountInClicks = async ({ count = 4, intervalSeconds, volume
   if (audioContext.state !== 'running') return false;
 
   const firstClickAt = audioContext.currentTime + 0.05;
+  const scheduledOscillators = [];
   for (let index = 0; index < Math.max(0, Math.floor(count)); index += 1) {
-    scheduleCountInClickAt(audioContext, firstClickAt + index * intervalSeconds, volume);
+    const startAt = firstClickAt + index * intervalSeconds;
+    const oscillators = scheduleCountInClickAt(audioContext, startAt, volume);
+    oscillators.forEach(oscillator => scheduledOscillators.push({ oscillator, startAt }));
   }
-  return true;
+
+  return {
+    cancel: () => {
+      const now = audioContext.currentTime;
+      scheduledOscillators.forEach(({ oscillator, startAt }) => {
+        if (startAt <= now) return;
+        try {
+          oscillator.stop();
+        } catch (error) {
+          // The oscillator may already have been stopped or disconnected.
+        }
+      });
+    },
+  };
 };
 
 /**
