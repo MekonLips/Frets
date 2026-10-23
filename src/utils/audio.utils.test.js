@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { playCountInClick, playPluckedNote, scheduleCountInClicks } from './audio.utils.js';
+import { playPluckedNote } from './audio.utils.js';
 
 const createAudioContext = (state = 'running', currentTime = 2) => {
   const makeParam = () => ({
@@ -86,6 +86,8 @@ describe('playPluckedNote', () => {
 
 describe('playCountInClick', () => {
   it('waits for a suspended audio context to resume before scheduling the click', async () => {
+    vi.resetModules();
+    const { playCountInClick } = await import('./audio.utils.js');
     const context = createAudioContext('suspended', 4);
     context.resume.mockImplementation(async () => {
       await Promise.resolve();
@@ -102,6 +104,8 @@ describe('playCountInClick', () => {
     }
   });
   it('schedules every count-in click at fixed intervals on the audio timeline', async () => {
+    vi.resetModules();
+    const { scheduleCountInClicks } = await import('./audio.utils.js');
     const context = createAudioContext('running', 4);
     vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
 
