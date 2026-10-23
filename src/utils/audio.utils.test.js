@@ -105,7 +105,8 @@ describe('playCountInClick', () => {
     const context = createAudioContext('running', 4);
     vi.stubGlobal('window', { AudioContext: vi.fn(() => context) });
 
-    await expect(scheduleCountInClicks({ count: 4, intervalSeconds: 1.5 })).resolves.toBe(true);
+    const scheduled = await scheduleCountInClicks({ count: 4, intervalSeconds: 1.5 });
+    expect(scheduled.cancel).toEqual(expect.any(Function));
 
     expect(context.createOscillator).toHaveBeenCalledTimes(8);
     const startTimes = context.createOscillator.mock.results.map(({ value }) => value.start.mock.calls[0][0]);
