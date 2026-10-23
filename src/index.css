@@ -242,7 +242,7 @@
   .legacy-grid {
     @apply grid h-full w-full;
     background: linear-gradient(180deg, rgb(0 0 0 / 60%) 0%, transparent 20%, transparent 80%, rgb(0 0 0 / 60%) 100%);
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 1fr 4fr 1fr;
     grid-template-rows: repeat(3, minmax(0, 1fr));
   }
   .legacy-grid > div { @apply flex p-4; }
@@ -364,7 +364,7 @@
 /* Keep intrinsic content from expanding the legacy grid columns. */
 @layer components {
   .legacy-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 4fr) minmax(0, 1fr);
   }
   .legacy-grid > div {
     min-width: 0;
