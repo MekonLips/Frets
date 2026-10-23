@@ -15,10 +15,14 @@ const getSharedAudioContext = () => {
 /**
  * Plays a short, percussive woodblock-like click for exercise count-ins.
  */
-export const playCountInClick = ({ volume = 0.2 } = {}) => {
+export const playCountInClick = async ({ volume = 0.2 } = {}) => {
   const audioContext = getSharedAudioContext();
   if (!audioContext || audioContext.state === 'closed') return false;
-  if (audioContext.state === 'suspended') audioContext.resume();
+
+  // Resume must finish before scheduling the click. Otherwise the count-in
+  // timer can advance while the audio context is still suspended.
+  if (audioContext.state === 'suspended') await audioContext.resume();
+  if (audioContext.state !== 'running') return false;
 
   const startAt = audioContext.currentTime;
   const endAt = startAt + 0.11;
