@@ -5,7 +5,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { getExerciseControlConfig } from '../../../config/frets.config';
 import { useFretsStore } from '../../../store/useFretsStore';
-import { playCountInClick } from '../../../utils/audio.utils';
+import { scheduleCountInClicks } from '../../../utils/audio.utils';
 import { resumeTimerWarningAudio } from '../../../utils/timerWarningAudio.utils';
 
 const EMPTY_SEQUENCE = Object.freeze([]);
@@ -24,11 +24,18 @@ const ExerciseToggleButton = () => {
         let cancelled = false;
         let timeout;
 
-        const playBeatAndScheduleNext = async () => {
-            try {
-                await playCountInClick();
-            } catch (error) {
-                // Keep the countdown usable if audio is unavailable.
+        const scheduleNextCount = async () => {
+            // Schedule all clicks against one audio-clock timeline. Only do
+            // this once, at the start of a new count-in.
+            if (countIn === 4) {
+                try {
+                    await scheduleCountInClicks({
+                        count: 4,
+                        intervalSeconds: 60 / tempoBpm,
+                    });
+                } catch (error) {
+                    // Keep the countdown usable if audio is unavailable.
+                }
             }
 
             // The count-in may have been cancelled while audio resumed.
@@ -45,7 +52,7 @@ const ExerciseToggleButton = () => {
             }, 60000 / tempoBpm);
         };
 
-        playBeatAndScheduleNext();
+        scheduleNextCount();
 
         return () => {
             cancelled = true;
