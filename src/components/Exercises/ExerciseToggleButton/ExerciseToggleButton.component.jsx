@@ -21,23 +21,36 @@ const ExerciseToggleButton = () => {
     useEffect(() => {
         if (countIn === null) return undefined;
 
-        try {
-            playCountInClick();
-        } catch (error) {
-            // Keep the countdown usable if audio is unavailable.
-        }
+        let cancelled = false;
+        let timeout;
 
-        const timeout = setTimeout(() => {
-            if (countIn > 1) {
-                setCountIn(countIn - 1);
-                return;
+        const playBeatAndScheduleNext = async () => {
+            try {
+                await playCountInClick();
+            } catch (error) {
+                // Keep the countdown usable if audio is unavailable.
             }
 
-            setCountIn(null);
-            toggleSequencePlayback();
-        }, 60000 / tempoBpm);
+            // The count-in may have been cancelled while audio resumed.
+            if (cancelled) return;
 
-        return () => clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (countIn > 1) {
+                    setCountIn(countIn - 1);
+                    return;
+                }
+
+                setCountIn(null);
+                toggleSequencePlayback();
+            }, 60000 / tempoBpm);
+        };
+
+        playBeatAndScheduleNext();
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timeout);
+        };
     }, [countIn, tempoBpm, toggleSequencePlayback]);
 
     if (!exercise) return null;
