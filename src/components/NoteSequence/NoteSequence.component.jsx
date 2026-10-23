@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
 import { useFretsStore } from '../../store/useFretsStore';
 import { getNoteByIdx, getNoteSequenceMidiPitch } from '../../utils/note.utils';
@@ -49,10 +49,10 @@ const NoteSequenceComponent = () => {
         };
     }, [stage, sequence]);
 
-    const isFirstStage = value => value === 1;
-    const isLastStage = value => value === sequence.length;
-    const prevClickHandler = () => setStage(exercise, stage => !isFirstStage(stage) ? stage - 1 : stage);
-    const nextClickHandler = () => setStage(exercise, stage => !isLastStage(stage) ? stage + 1 : stage);
+    // const isFirstStage = value => value === 1;
+    // const isLastStage = value => value === sequence.length;
+    // const prevClickHandler = () => setStage(exercise, stage => !isFirstStage(stage) ? stage - 1 : stage);
+    // const nextClickHandler = () => setStage(exercise, stage => !isLastStage(stage) ? stage + 1 : stage);
     const clickNoteHandler = (e, idx) => {
         e.preventDefault();
         try {
